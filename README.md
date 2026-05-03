@@ -8,9 +8,9 @@
 
 **Keywords:** `NLP` `IAB Content Taxonomy` `AdTech` `Programmatic Advertising` `Real-Time Bidding (RTB)` `Audience Segmentation` `Multi-Label Text Classification` `TF-IDF` `Bidstream Processing` `Demand-Side Platform (DSP)` `Supply-Side Platform (SSP)` `OpenRTB` `User Interest Modeling` `Behavioral Targeting` `Contextual Advertising` `Machine Learning Pipeline` `XGBoost` `Logistic Regression` `Scikit-Learn` `Domain Classification` `CPM Optimization`
 
-A **foundation-level ML pipeline** for **programmatic advertising** that classifies website domains into **IAB Content Taxonomy v2.2** categories (~700 categories) using **NLP text classification** and generates high-value **audience segments** from **real-time bidstream** data. Built with **TF-IDF**, **multi-label classification** (Logistic Regression, XGBoost, Random Forest, SGD), **exponential time-decay scoring**, and a **two-tier real-time inference** architecture designed for AdTech-scale traffic. This notebook serves as a **foundation that can be extended into a production system** — the architecture, algorithms, and scoring logic are production-proven, while the synthetic data and local execution environment would be replaced with real data sources and distributed infrastructure for deployment.
+A **foundation-level ML pipeline** for **programmatic advertising** that classifies website domains into **IAB Content Taxonomy v2.2** categories (~700 categories) using **NLP text classification** and generates high-value **audience segments** from **real-time bidstream** data. Built with **TF-IDF**, **multi-label classification** (Logistic Regression, XGBoost, Random Forest, SGD), **exponential time-decay scoring**, and a **two-tier real-time inference** architecture designed for AdTech-scale traffic. This notebook serves as a **foundation that can be extended into a production system** -- the architecture, algorithms, and scoring logic are production-proven, while the synthetic data and local execution environment would be replaced with real data sources and distributed infrastructure for deployment.
 
-> **Production lineage:** The core architecture and scoring methodology in this project were designed and deployed at a real **AdTech company** by the author and an amazing engineering team. The model was deployed to calculate user interests in real time on bidstreams running at **8 million QPS**, enabled the company to detect intent and win bids earlier than competitors, and drove a fundamental shift in the **KV-store** data storage approach — from materialized segment memberships to compact probability vectors, reducing storage footprint by 3-8x. This repository is a clean-room reimplementation with synthetic data for educational and portfolio purposes — the pipeline design, two-tier lookup strategy, decay math, and segment economics are all drawn from that production system.
+> **Production lineage:** The core architecture and scoring methodology in this project were designed and deployed at a real **AdTech company** by the author and an amazing engineering team. The model was deployed to calculate user interests in real time on bidstreams running at **8 million QPS**, enabled the company to detect intent and win bids earlier than competitors, and drove a fundamental shift in the **KV-store** data storage approach -- from materialized segment memberships to compact probability vectors, reducing storage footprint by 3-8x. This repository is a clean-room reimplementation with synthetic data for educational and portfolio purposes -- the pipeline design, two-tier lookup strategy, decay math, and segment economics are all drawn from that production system.
 
 ---
 
@@ -33,7 +33,7 @@ A **foundation-level ML pipeline** for **programmatic advertising** that classif
 
 ## Problem Statement
 
-In **programmatic advertising**, every time someone loads a webpage, a **real-time bidding (RTB)** auction decides which ad to show — in under 100ms. **Demand-Side Platforms (DSPs)** and advertisers pay premiums to reach users whose browsing behavior signals genuine interest. The challenge: **how do you classify 200K+ domains into ~700 IAB categories, track 500M+ users in real time, and assign audience segments — all within a 10ms latency budget per bid request?**
+In **programmatic advertising**, every time someone loads a webpage, a **real-time bidding (RTB)** auction decides which ad to show -- in under 100ms. **Demand-Side Platforms (DSPs)** and advertisers pay premiums to reach users whose browsing behavior signals genuine interest. The challenge: **how do you classify 200K+ domains into ~700 IAB categories, track 500M+ users in real time, and assign audience segments -- all within a 10ms latency budget per bid request?**
 
 This system solves that by decomposing the problem into four interconnected components of an **AdTech ML pipeline**:
 
@@ -50,7 +50,7 @@ This system solves that by decomposing the problem into four interconnected comp
 
 - **2-5x CPM premiums** for well-classified audience segments vs. untargeted inventory
 - A Travel advertiser pays significantly more to reach users reliably classified into "IAB-20: Travel" than to show ads to a random audience
-- **Probability vector storage** (our approach) uses **3-8x less KV-store memory** than traditional materialized segment stores — ~600 bytes/user compressed vs. 5-20 KB/user
+- **Probability vector storage** (our approach) uses **3-8x less KV-store memory** than traditional materialized segment stores -- ~600 bytes/user compressed vs. 5-20 KB/user
 - **Real-time intent detection** spots user interest **hours to a full day before** competitors relying on batch-refreshed segment lists, winning impressions at lower clearing prices
 
 ---
@@ -62,7 +62,7 @@ This system solves that by decomposing the problem into four interconnected comp
 ║              IAB REAL-TIME AUDIENCE CLASSIFICATION PIPELINE              ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
- COMPONENT 1: DOMAIN CLASSIFICATION (Batch — Daily/Weekly)
+ COMPONENT 1: DOMAIN CLASSIFICATION (Batch -- Daily/Weekly)
  ┌──────────────────────────────────────────────────────────────────────┐
  │  Domain Corpus ──► TF-IDF Vectorizer ──► Multi-Label Classifier     │
  │  (200K domains)    (20K features,        (CalibratedCV + OneVsRest  │
@@ -75,7 +75,7 @@ This system solves that by decomposing the problem into four interconnected comp
  │                   ~120MB, fits in-memory on every bid node           │
  └──────────────────────────────────┬───────────────────────────────────┘
                                     │
- COMPONENT 2: REAL-TIME USER SCORING (Streaming — Per Bid Request)
+ COMPONENT 2: REAL-TIME USER SCORING (Streaming -- Per Bid Request)
  ┌──────────────────────────────────┼───────────────────────────────────┐
  │  Bidstream ──► Kafka ──► Bid Processor ──► Two-Tier Scoring         │
  │  (OpenRTB)     (by user_id)                                         │
@@ -94,7 +94,7 @@ This system solves that by decomposing the problem into four interconnected comp
  │    Education: 30 days│  News: 2 days    │  Technology: 14 days      │
  └──────────────────────────────────┬───────────────────────────────────┘
                                     │
- COMPONENT 4: AUDIENCE SEGMENT GENERATION (Periodic — Hourly)
+ COMPONENT 4: AUDIENCE SEGMENT GENERATION (Periodic -- Hourly)
  ┌──────────────────────────────────┼───────────────────────────────────┐
  │  For each user:                                                     │
  │    1. Apply decay to all scores                                     │
@@ -113,25 +113,25 @@ This system solves that by decomposing the problem into four interconnected comp
 
 The complete end-to-end pipeline in a single notebook (50 cells) covering every step:
 
-**Part 1 — Domain Classification**
-1. **Synthetic corpus generation** — 500 domains across 23 IAB Tier-1 categories with realistic, category-specific vocabulary pools (production: replace with web crawler output)
-2. **TF-IDF vectorization** — 20,000 features, unigrams + bigrams, sublinear TF scaling, with a worked example showing exact term-weight calculations
-3. **Model comparison** — 4 classifiers evaluated via stratified 5-fold cross-validation:
+**Part 1 -- Domain Classification**
+1. **Synthetic corpus generation** -- 500 domains across 23 IAB Tier-1 categories with realistic, category-specific vocabulary pools (production: replace with web crawler output)
+2. **TF-IDF vectorization** -- 20,000 features, unigrams + bigrams, sublinear TF scaling, with a worked example showing exact term-weight calculations
+3. **Model comparison** -- 4 classifiers evaluated via stratified 5-fold cross-validation:
    - Logistic Regression (OneVsRest + CalibratedClassifierCV)
    - SGD Classifier (linear SVM with hinge loss)
    - Random Forest
    - **XGBoost**
-4. **Full-data model training** — Best performer trained on full data, calibrated for probability output
-5. **Domain lookup table** — Pre-computed `{domain → {IAB_category: probability}}` mapping
+4. **Full-data model training** -- Best performer trained on full data, calibrated for probability output
+5. **Domain lookup table** -- Pre-computed `{domain → {IAB_category: probability}}` mapping
 
-**Part 2 — Scoring, Segments & Evaluation**
-6. **Bidstream simulation** — 100,000 events across 5,000 users with power-law activity distributions, diurnal traffic patterns, and ~5% unknown domains
-7. **Two-tier real-time scoring** — Tier 1 (lookup table, <1ms) with Tier 2 fallback (live TF-IDF inference via `RealTimeClassifier` with in-memory caching for unknown domains)
-8. **Exponential time-decay** — Category-specific half-lives reflecting real-world intent persistence
-9. **Audience segment generation** — Top-K thresholded assignment to named segments with size and confidence analysis
-10. **User journey trace** — End-to-end walkthrough of a single user's path from raw bid events through scoring, decay, and final segment assignment
-11. **Quality metrics** — Segment coverage, user distribution, score density analysis, and threshold sensitivity curves
-12. **Model interpretability** — TF-IDF feature importance showing which terms drive each IAB category prediction
+**Part 2 -- Scoring, Segments & Evaluation**
+6. **Bidstream simulation** -- 100,000 events across 5,000 users with power-law activity distributions, diurnal traffic patterns, and ~5% unknown domains
+7. **Two-tier real-time scoring** -- Tier 1 (lookup table, <1ms) with Tier 2 fallback (live TF-IDF inference via `RealTimeClassifier` with in-memory caching for unknown domains)
+8. **Exponential time-decay** -- Category-specific half-lives reflecting real-world intent persistence
+9. **Audience segment generation** -- Top-K thresholded assignment to named segments with size and confidence analysis
+10. **User journey trace** -- End-to-end walkthrough of a single user's path from raw bid events through scoring, decay, and final segment assignment
+11. **Quality metrics** -- Segment coverage, user distribution, score density analysis, and threshold sensitivity curves
+12. **Model interpretability** -- TF-IDF feature importance showing which terms drive each IAB category prediction
 
 ---
 
@@ -141,15 +141,15 @@ The pipeline generates 9 diagnostic plots covering every stage of the system:
 
 | Plot | What It Shows |
 |---|---|
-| ![Domain Corpus Overview](plots/01_domain_corpus_overview.png) | Category distribution across the domain corpus — monitors for class imbalance that degrades classifier performance |
-| ![TF-IDF Worked Example](plots/02_tfidf_worked_example.png) | Exact term weights for a single domain — the debugging view when a domain is misclassified |
-| ![Model Comparison](plots/03_model_comparison.png) | 4-model head-to-head on F1, AUC, training time, and inference latency — the model selection gate |
-| ![Confusion Matrix](plots/04_confusion_matrix.png) | Per-category precision/recall heatmap — identifies which IAB categories the classifier confuses |
-| ![Bidstream Patterns](plots/05_bidstream_patterns.png) | Simulated traffic with diurnal and power-law patterns — mirrors real-world monitoring dashboards |
-| ![Decay Curves](plots/06_decay_curves.png) | How category-specific half-lives shape score retention — the key business insight for segment freshness |
-| ![Audience Segments](plots/07_audience_segments.png) | Segment size distribution and score density — are segments large enough for programmatic scale? |
-| ![Threshold Analysis](plots/08_threshold_analysis.png) | Precision vs. coverage trade-off at different confidence thresholds — the tuning knob for segment quality |
-| ![Feature Importance](plots/09_feature_importance.png) | Top TF-IDF features per IAB category — interpretability for stakeholder buy-in and debugging |
+| ![Domain Corpus Overview](plots/01_domain_corpus_overview.png) | Category distribution across the domain corpus -- monitors for class imbalance that degrades classifier performance |
+| ![TF-IDF Worked Example](plots/02_tfidf_worked_example.png) | Exact term weights for a single domain -- the debugging view when a domain is misclassified |
+| ![Model Comparison](plots/03_model_comparison.png) | 4-model head-to-head on F1, AUC, training time, and inference latency -- the model selection gate |
+| ![Confusion Matrix](plots/04_confusion_matrix.png) | Per-category precision/recall heatmap -- identifies which IAB categories the classifier confuses |
+| ![Bidstream Patterns](plots/05_bidstream_patterns.png) | Simulated traffic with diurnal and power-law patterns -- mirrors real-world monitoring dashboards |
+| ![Decay Curves](plots/06_decay_curves.png) | How category-specific half-lives shape score retention -- the key business insight for segment freshness |
+| ![Audience Segments](plots/07_audience_segments.png) | Segment size distribution and score density -- are segments large enough for programmatic scale? |
+| ![Threshold Analysis](plots/08_threshold_analysis.png) | Precision vs. coverage trade-off at different confidence thresholds -- the tuning knob for segment quality |
+| ![Feature Importance](plots/09_feature_importance.png) | Top TF-IDF features per IAB category -- interpretability for stakeholder buy-in and debugging |
 
 ---
 
@@ -162,7 +162,7 @@ The pipeline generates 9 diagnostic plots covering every stage of the system:
 | **Model Comparison** | XGBoost, Random Forest, SGD | Evaluated for completeness; LR wins on calibration quality and inference speed at this scale |
 | **Bidstream Scoring** | Two-tier: dict lookup + live inference | O(1) for known domains (<1ms); graceful fallback for long-tail domains (~10ms with caching) |
 | **Score Decay** | Exponential decay (e^−λt) | Smooth, continuous; category-specific half-lives; computed lazily at read-time (no batch job) |
-| **Data Format** | Parquet (Apache Arrow) | Columnar, compressed, fast I/O — industry standard for ML pipelines |
+| **Data Format** | Parquet (Apache Arrow) | Columnar, compressed, fast I/O -- industry standard for ML pipelines |
 | **Serialization** | Pickle (cross-notebook artifacts) | Notebook-to-notebook dependency management; at scale, replace with MLflow/W&B |
 
 **For production deployment**, replace the local equivalents with:
@@ -234,11 +234,11 @@ uv pip install numpy pandas scikit-learn scipy matplotlib seaborn xgboost pyarro
 jupyter notebook notebooks/IAB_bidstream_user_classification.ipynb
 ```
 
-Run all cells top to bottom. The notebook is self-contained — no external dependencies beyond the installed packages.
+Run all cells top to bottom. The notebook is self-contained -- no external dependencies beyond the installed packages.
 
 ### From Foundation to Production
 
-This pipeline is designed as a **foundation that can be extended into a production system**. The core algorithms and architecture remain the same — what changes is the data source and infrastructure:
+This pipeline is designed as a **foundation that can be extended into a production system**. The core algorithms and architecture remain the same -- what changes is the data source and infrastructure:
 
 | This Repo (Foundation) | Production Extension |
 |---|---|
@@ -248,7 +248,7 @@ This pipeline is designed as a **foundation that can be extended into a producti
 | Simulated 10K bidstream events | Kafka stream of 50B+ daily OpenRTB bid requests |
 | Pickle artifacts | MLflow model registry with versioning and A/B deployment |
 
-The core algorithms — TF-IDF pipeline, model training, calibration, two-tier scoring logic, decay math, and segment generation — carry over directly and form the foundation for the production system.
+The core algorithms -- TF-IDF pipeline, model training, calibration, two-tier scoring logic, decay math, and segment generation -- carry over directly and form the foundation for the production system.
 
 ---
 
@@ -268,11 +268,11 @@ The architecture in this repo was designed for the following real-world constrai
 
 ### Key Design Decisions
 
-1. **TF-IDF over BERT** — 50x cheaper training/inference, only 2-3% accuracy gap, no GPU at bid time
-2. **Pre-computed lookup over real-time inference** — O(1) hash map lookup vs. 5-10ms model inference per request
-3. **Curated 200K domains over crawl-everything** — 85% bid volume coverage at 1/4 the cost with better quality control
-4. **Per-event exponential decay over batch reduction** — Smooth, category-specific, no nightly batch job sweeping 500M users
-5. **Probability vectors over materialized segments** — 3-8x less storage, 1 write per event (vs. 5-15), instant new segment activation
+1. **TF-IDF over BERT** -- 50x cheaper training/inference, only 2-3% accuracy gap, no GPU at bid time
+2. **Pre-computed lookup over real-time inference** -- O(1) hash map lookup vs. 5-10ms model inference per request
+3. **Curated 200K domains over crawl-everything** -- 85% bid volume coverage at 1/4 the cost with better quality control
+4. **Per-event exponential decay over batch reduction** -- Smooth, category-specific, no nightly batch job sweeping 500M users
+5. **Probability vectors over materialized segments** -- 3-8x less storage, 1 write per event (vs. 5-15), instant new segment activation
 
 ---
 
@@ -304,7 +304,7 @@ Built by **Nipun Batra**
 [![GitHub](https://img.shields.io/badge/GitHub-nbatra-181717?logo=github)](https://github.com/nbatra)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-nipunbatra-0A66C2?logo=linkedin)](https://www.linkedin.com/in/nipunbatra/)
 
-Built from real-world production experience designing and deploying IAB audience classification systems in programmatic advertising. The core pipeline — domain classification via TF-IDF, two-tier bid-time scoring, exponential decay with category-specific half-lives, and probability vector storage — was implemented at scale with a talented AdTech engineering team processing billions of daily bid requests.
+Built from real-world production experience designing and deploying IAB audience classification systems in programmatic advertising. The core pipeline -- domain classification via TF-IDF, two-tier bid-time scoring, exponential decay with category-specific half-lives, and probability vector storage -- was implemented at scale with a talented AdTech engineering team processing billions of daily bid requests.
 
 ---
 
