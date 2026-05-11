@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 1: Data Engineering & Feature Pipeline — IAB Audience Generation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #2c3e50;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            padding: 50px 60px;
+        }
+        h1 {
+            font-size: 2.6em;
+            color: #1a1a2e;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            border-left: 6px solid #667eea;
+            padding-left: 20px;
+            margin: 40px 0 20px 0;
+        }
+        h3 {
+            font-size: 1.4em;
+            color: #34495e;
+            margin: 25px 0 12px 0;
+        }
+        h4 {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin: 20px 0 10px 0;
+        }
+        p { margin: 10px 0; }
+        ul, ol { margin: 10px 0 10px 25px; }
+        li { margin: 5px 0; }
+        strong { color: #2c3e50; }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            font-size: 0.92em;
+        }
+
+        /* Hero / Concept Box */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 35px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        .hero-section h2 { color: white; border-left-color: rgba(255,255,255,0.5); }
+        .hero-section p { color: rgba(255,255,255,0.95); }
+        .hero-section ul { color: rgba(255,255,255,0.95); }
+        .hero-section strong { color: white; }
+
+        /* Step Boxes */
+        .step-box {
+            background: #e8f5e8;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 15px 0;
+            position: relative;
+        }
+        .step-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.95em;
+        }
+
+        /* Math / Code Box */
+        .math-box {
+            background: #e8f4fd;
+            border: 3px solid #3498db;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 15px 0;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+        }
+        .math-box h4 { color: #2980b9; }
+
+        /* Key Insight */
+        .key-insight {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fff5f5;
+            border-left: 4px solid #dc3545;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Decision Matrix */
+        .decision-matrix {
+            background: #f0f8ff;
+            border: 2px solid #4169e1;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 15px 0;
+        }
+        .decision-matrix h4 { color: #4169e1; }
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        .pros { background: #e8f5e9; padding: 15px; border-radius: 6px; }
+        .cons { background: #fff5f5; padding: 15px; border-radius: 6px; }
+        .pros h4 { color: #28a745; }
+        .cons h4 { color: #dc3545; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #f2f2f2;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        tr:nth-child(even) { background: #fafafa; }
+        tr:hover { background: #f0f0f0; }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            font-size: 0.88em;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+
+        /* Example Box */
+        .example-box {
+            background: #f8f9fa;
+            border: 2px solid #6c757d;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 15px 0;
+        }
+        .example-box h4 { color: #495057; }
+
+        /* Success Box */
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 15px 0;
+        }
+        .success-box h4 { color: #155724; }
+
+        /* Metric Badge */
+        .metric-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 2px 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Step 1: Data Engineering & Feature Pipeline</h1>
+    <p><em>IAB Category Audience Generation for Programmatic Advertising</em></p>
+
+    <!-- ============================================================ -->
+    <!-- HERO SECTION: Core Objective                                  -->
+    <!-- ============================================================ -->
+    <div class="hero-section">
+        <h2>&#127919; Core Objective</h2>
+        <p>Build the data foundation that ingests <strong>50 billion+ daily bid requests</strong> from programmatic ad exchanges, crawls <strong>200,000+ curated domains</strong> for content classification, and maintains <strong>500 million+ user score profiles</strong> &mdash; all feeding a real-time IAB audience generation engine that classifies users into ~700 IAB content categories for targeted advertising.</p>
+        <ul>
+            <li><strong>Bidstream Ingestion:</strong> Consume OpenRTB bid requests at 580K+ QPS with sub-second end-to-end latency</li>
+            <li><strong>Domain Crawl Pipeline:</strong> Systematically crawl and extract text from curated high-traffic domains for offline classification</li>
+            <li><strong>Data Quality Gate:</strong> Filter bot traffic, detect domain spoofing, validate consent signals, and ensure clean data reaches downstream models</li>
+            <li><strong>Storage Architecture:</strong> Multi-tier storage optimized for real-time lookups (&lt;5ms), streaming user score updates, and batch classification workloads</li>
+            <li><strong>Pipeline Monitoring:</strong> End-to-end observability across ingestion, crawl, quality, and storage layers with automated alerting</li>
+        </ul>
+        <p><strong>Why This Matters:</strong> Every downstream component &mdash; TF-IDF vectorization, domain classification, user score accumulation, audience segment generation &mdash; depends on the quality and timeliness of data flowing through this pipeline. A domain misclassification due to stale crawl data or a missed bid request due to ingestion lag directly erodes the CPM premiums our audience segments command (well-classified segments earn 2-5x higher CPMs).</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1.1 SCALE REALITY CHECK                                      -->
+    <!-- ============================================================ -->
+    <h2>&#128202; 1.1 Scale Reality Check</h2>
+
+    <p>Before designing any pipeline, we need to confront the raw numbers. Programmatic advertising operates at a scale that trivially breaks systems designed for "millions" of records. Our platform participates in the real-time bidding (RTB) ecosystem, receiving bid requests from dozens of SSPs (Supply-Side Platforms) simultaneously.</p>
+
+    <h3>The Layman's Analogy</h3>
+    <p>A post office receiving <strong>580,000 letters per second</strong>, where each letter contains information about a website a person just visited. The job: (a) open each letter, (b) check if it's legitimate or forged, (c) look up what category the website belongs to, (d) update a profile card for that person, and (e) file everything &mdash; all before the next 580,000 letters arrive one second later. That is the bidstream pipeline.</p>
+
+    <h3>Platform Scale Numbers</h3>
+    <table>
+        <tr>
+            <th>Data Dimension</th>
+            <th>Daily Volume</th>
+            <th>Peak Rate</th>
+            <th>Why This Volume</th>
+        </tr>
+        <tr>
+            <td><strong>Bid Requests</strong></td>
+            <td>50 billion / day</td>
+            <td>~580K QPS (sustained), 1.2M QPS (Black Friday peak)</td>
+            <td>Platform receives bids from 30+ SSPs globally; each page view generates multiple ad slot bid requests</td>
+        </tr>
+        <tr>
+            <td><strong>Unique Domains</strong></td>
+            <td>200K+ in regular rotation</td>
+            <td>~5K new domains / week</td>
+            <td>Long-tail publisher inventory; top 20K domains cover ~80% of traffic</td>
+        </tr>
+        <tr>
+            <td><strong>Unique Users</strong></td>
+            <td>500M+ monthly, ~120M daily active</td>
+            <td>~80M user profile lookups / hour at peak</td>
+            <td>Cross-device, multi-ID graph spans cookies, IDFA/GAID, probabilistic IDs</td>
+        </tr>
+        <tr>
+            <td><strong>IAB Categories</strong></td>
+            <td>~700 categories (Tier 1 + Tier 2)</td>
+            <td>N/A</td>
+            <td>IAB Content Taxonomy v2.2; domains can map to multiple categories</td>
+        </tr>
+        <tr>
+            <td><strong>Domain Crawl Data</strong></td>
+            <td>~15 GB raw text / full crawl cycle</td>
+            <td>~2,000 pages/min sustained crawl rate</td>
+            <td>HTML extracted to clean text; average 3-5 pages crawled per domain</td>
+        </tr>
+        <tr>
+            <td><strong>User Score Events</strong></td>
+            <td>~8 billion score updates / day</td>
+            <td>~95K updates/sec</td>
+            <td>Not all bid requests trigger score updates (filtered for bots, missing IDs, unclassified domains)</td>
+        </tr>
+        <tr>
+            <td><strong>Bid Request Payload</strong></td>
+            <td>~1.2 KB avg per request</td>
+            <td>~55 TB raw ingestion / day</td>
+            <td>OpenRTB JSON with device, geo, site/app, user, impression objects</td>
+        </tr>
+    </table>
+
+    <div class="warning-box">
+        <h4>&#9888;&#65039; Peak Traffic Multipliers</h4>
+        <p>Design for the peak, not the average. Key traffic multipliers we must handle:</p>
+        <ul>
+            <li><strong>Black Friday / Cyber Monday:</strong> 2.0-2.5x normal QPS &mdash; advertisers bid aggressively, more ad slots served</li>
+            <li><strong>Super Bowl / Major Live Events:</strong> 1.5-1.8x sustained for 4+ hours, with 3x micro-bursts during commercial breaks</li>
+            <li><strong>Holiday Shopping Season (Nov-Dec):</strong> 1.4x baseline for 6 weeks straight &mdash; this is not a spike, it is a sustained elevation</li>
+            <li><strong>New SSP Integration:</strong> Adding a new supply partner can jump volume 10-15% overnight</li>
+        </ul>
+        <p><strong>Rule of thumb:</strong> Provision infrastructure at 3x average daily QPS to handle peaks without backpressure. That means our ingestion layer must handle <strong>1.74M QPS</strong> burst capacity.</p>
+    </div>
+
+    <h3>Data Volume Breakdown: Where the Bytes Go</h3>
+
+    <div class="math-box">
+        <h4>Daily Storage Calculation</h4>
+        <pre>
+Raw Bid Requests:   50B requests × 1.2 KB avg    = ~55 TB / day
+Filtered Events:    8B valid events × 0.4 KB      = ~3.0 TB / day  (post-quality-gate)
+User Score Updates: 8B updates × 0.15 KB           = ~1.1 TB / day  (score deltas)
+Domain Lookup Table: 200K domains × 5 KB avg       = ~1.0 GB  (static, refreshed weekly)
+Crawl Text Corpus:  200K domains × 75 KB avg text  = ~15 GB   (refreshed bi-weekly)
+User Profile Store: 500M users × 3.2 KB avg        = ~1.5 TB  (persistent, updated continuously)
+
+Total Hot Storage (7-day window):
+  Filtered events:  3.0 TB × 7 days  = 21 TB
+  Score updates:    1.1 TB × 7 days  = 7.7 TB
+  User profiles:    1.5 TB           = 1.5 TB (point-in-time)
+  Domain lookup:    1.0 GB           = 0.001 TB
+  ─────────────────────────────────────────────
+  Hot tier total:                     ≈ 30 TB
+        </pre>
+    </div>
+
+    <div class="key-insight">
+        <h4>&#128161; Key Insight: The 84% Reduction</h4>
+        <p>Of the 55 TB of raw bid request data ingested daily, only about <strong>3.0 TB (roughly 5.5%)</strong> survives our quality gates as filtered events usable for score updates. The rest is discarded due to: bot traffic (~35%), missing/invalid user IDs (~25%), unconsented users under GDPR/CCPA (~12%), duplicate requests (~8%), and domains not yet in our classification table (~4%). This aggressive filtering is intentional &mdash; garbage in, garbage out is amplified at this scale, and every false score update degrades audience segment quality.</p>
+    </div>
+
+    <h3>Why These Numbers Matter for Architecture Decisions</h3>
+    <p>The scale numbers directly drive our technology choices:</p>
+    <ul>
+        <li><strong>580K QPS sustained</strong> eliminates single-node message brokers and requires horizontally-scalable streaming (Kafka with partitioning)</li>
+        <li><strong>55 TB/day raw ingestion</strong> rules out writing raw bid requests to a transactional database &mdash; we need append-only log storage with tiered compaction</li>
+        <li><strong>&lt;5ms domain lookup</strong> requirement mandates in-memory key-value stores (Redis/Aerospike), not disk-based databases</li>
+        <li><strong>500M user profiles</strong> with concurrent read/write at 95K updates/sec pushes us toward wide-column stores (Cassandra/ScyllaDB) or sharded Redis clusters</li>
+        <li><strong>200K domains × bi-weekly crawl</strong> is a modest batch workload that fits on a small Scrapy cluster &mdash; no need for distributed crawl infrastructure</li>
+    </ul>
+
+    <!-- ============================================================ -->
+    <!-- 1.2 DATA SOURCES                                              -->
+    <!-- ============================================================ -->
+    <h2>&#128230; 1.2 Data Sources: What Feeds the Pipeline</h2>
+
+    <p>Our data engineering pipeline consumes four distinct data sources, each with different characteristics, refresh cadences, and quality concerns. Understanding the shape of each source is critical before we design ingestion.</p>
+
+    <h3>Source 1: Bidstream (OpenRTB Bid Requests)</h3>
+
+    <p><strong>Conceptual Approach:</strong> The bidstream is the firehose. Every time a user loads a webpage with programmatic ad slots, the publisher's SSP sends a bid request to our platform via the OpenRTB protocol. Each request is a JSON payload containing information about the user, the site/app, the device, geography, and the ad impression opportunity.</p>
+
+    <div class="example-box">
+        <h4>&#128196; Sample OpenRTB Bid Request (Simplified)</h4>
+<pre><code>{
+  "id": "br-8a4f2e1c-9b3d",
+  "imp": [{
+    "id": "1",
+    "banner": {"w": 300, "h": 250},
+    "bidfloor": 0.85
+  }],
+  "site": {
+    "domain": "cnn.com",
+    "page": "https://cnn.com/travel/best-beaches-2026",
+    "cat": ["IAB20"],           // Publisher-declared IAB category
+    "content": {
+      "cat": ["IAB20-1"]       // Content-level IAB category
+    }
+  },
+  "device": {
+    "ua": "Mozilla/5.0 ... Chrome/120",
+    "ip": "203.0.113.42",
+    "ifa": "6D92078A-8246-4BA4-AE5B-76104861E7DC",  // IDFA
+    "devicetype": 1,
+    "geo": {"country": "USA", "region": "CA", "city": "Los Angeles"}
+  },
+  "user": {
+    "id": "usr-4829af1b",
+    "ext": {
+      "consent": "CPceAAAOPceAAGGABBENDaCgAAAAAAAAAAAAAAAAAAAA.YAAAAAAAAAA"
+    }
+  },
+  "bcat": ["IAB25", "IAB26"],  // Blocked categories from advertiser
+  "regs": {
+    "ext": {"gdpr": 1},
+    "coppa": 0
+  }
+}</code></pre>
+    </div>
+
+    <p><strong>What we extract from each bid request:</strong></p>
+    <table>
+        <tr>
+            <th>Field</th>
+            <th>Path in OpenRTB</th>
+            <th>Use in Our Pipeline</th>
+            <th>Required?</th>
+        </tr>
+        <tr>
+            <td><strong>Domain</strong></td>
+            <td><code>site.domain</code> or <code>app.bundle</code></td>
+            <td>Key for domain-to-IAB lookup table; primary classification input</td>
+            <td>Yes &mdash; discard if missing</td>
+        </tr>
+        <tr>
+            <td><strong>User ID</strong></td>
+            <td><code>device.ifa</code>, <code>user.id</code>, or <code>user.buyeruid</code></td>
+            <td>Key for user score array; needed to accumulate IAB affinity scores</td>
+            <td>Yes &mdash; discard if no usable ID</td>
+        </tr>
+        <tr>
+            <td><strong>Publisher IAB Category</strong></td>
+            <td><code>site.cat</code>, <code>site.content.cat</code></td>
+            <td>Supplementary signal; used when domain is not yet in our crawl table</td>
+            <td>No &mdash; available in ~40% of requests</td>
+        </tr>
+        <tr>
+            <td><strong>Timestamp</strong></td>
+            <td>Ingestion timestamp (not in payload)</td>
+            <td>Required for exponential time-decay calculation on user scores</td>
+            <td>Yes &mdash; assigned at ingestion</td>
+        </tr>
+        <tr>
+            <td><strong>Geo</strong></td>
+            <td><code>device.geo.country</code>, <code>device.geo.region</code></td>
+            <td>Contextual signal for regional category weighting (e.g., cricket content more relevant in India)</td>
+            <td>No &mdash; enrichment signal</td>
+        </tr>
+        <tr>
+            <td><strong>Consent String</strong></td>
+            <td><code>user.ext.consent</code> (TCF v2)</td>
+            <td>Legal gate: must parse and validate before processing user data under GDPR</td>
+            <td>Yes under GDPR &mdash; discard non-consented EU users</td>
+        </tr>
+        <tr>
+            <td><strong>Device Type</strong></td>
+            <td><code>device.devicetype</code></td>
+            <td>Identifies mobile vs desktop vs CTV; affects ID type and browsing patterns</td>
+            <td>No &mdash; metadata enrichment</td>
+        </tr>
+        <tr>
+            <td><strong>Blocked Categories</strong></td>
+            <td><code>bcat</code></td>
+            <td>Negative signal: advertisers block certain categories, useful for understanding segment market value</td>
+            <td>No &mdash; analytics signal</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <h4>&#128276; OpenRTB Category Fields: Free Signal, Noisy Signal</h4>
+        <p>About 40% of bid requests include publisher-declared IAB categories (<code>site.cat</code>). These are <em>free</em> in that they require no crawling or classification. However, they are <strong>notoriously unreliable</strong>: publishers often self-declare broad Tier-1 categories (e.g., "IAB1" for Arts &amp; Entertainment) or leave them stale for years. Our strategy: use publisher-declared categories as a <strong>supplementary signal</strong> when our own domain classification is unavailable, but never as the primary source. When both are available, our crawl-based classification takes precedence, and publisher-declared categories serve as a confidence booster if they agree.</p>
+    </div>
+
+    <h3>Source 2: Domain Crawl Data</h3>
+
+    <p><strong>Conceptual Approach:</strong> While bidstream data tells us <em>which</em> domains users visit, it does not tell us <em>what</em> those domains are about. To classify domains into IAB categories, we need the actual text content. We maintain a curated list of ~200K domains (covering ~96% of bidstream traffic by volume) and periodically crawl them to extract readable text.</p>
+
+    <table>
+        <tr>
+            <th>Crawl Attribute</th>
+            <th>Value</th>
+            <th>Rationale</th>
+        </tr>
+        <tr>
+            <td><strong>Domain List Size</strong></td>
+            <td>200,000 curated domains</td>
+            <td>Top domains by bid request volume; covers ~96% of impressions</td>
+        </tr>
+        <tr>
+            <td><strong>Pages per Domain</strong></td>
+            <td>3-5 representative pages</td>
+            <td>Homepage + top content pages; captures category distribution</td>
+        </tr>
+        <tr>
+            <td><strong>Crawl Frequency</strong></td>
+            <td>Bi-weekly full refresh; daily for top 5K domains</td>
+            <td>Balances freshness with crawl politeness; news sites need more frequent updates</td>
+        </tr>
+        <tr>
+            <td><strong>Text Extraction</strong></td>
+            <td>HTML &rarr; clean text via readability + BeautifulSoup</td>
+            <td>Strip nav, ads, boilerplate; keep article/content body only</td>
+        </tr>
+        <tr>
+            <td><strong>Average Text per Domain</strong></td>
+            <td>~75 KB clean text (across all crawled pages)</td>
+            <td>Sufficient for TF-IDF vectorization; diminishing returns beyond this</td>
+        </tr>
+        <tr>
+            <td><strong>Robots.txt Compliance</strong></td>
+            <td>Mandatory &mdash; honor all directives</td>
+            <td>Legal requirement and good citizenship; ~3% of domains restrict crawling</td>
+        </tr>
+        <tr>
+            <td><strong>Total Corpus Size</strong></td>
+            <td>~15 GB clean text per full crawl cycle</td>
+            <td>Fits in memory for TF-IDF vectorization on a single machine</td>
+        </tr>
+    </table>
+
+    <h4>What We Crawl vs. What We Skip</h4>
+    <div class="pros-cons">
+        <div class="pros">
+            <h4>&#9989; Crawled (Curated List)</h4>
+            <ul>
+                <li>Top 200K domains by bid request volume</li>
+                <li>Domains with 100+ daily bid requests</li>
+                <li>New domains appearing in bidstream for 3+ consecutive days</li>
+                <li>Domains flagged for reclassification by drift detection</li>
+            </ul>
+        </div>
+        <div class="cons">
+            <h4>&#10060; Not Crawled</h4>
+            <ul>
+                <li>Long-tail domains with &lt;100 daily bid requests (~4% of traffic)</li>
+                <li>Domains behind login walls (paywall, authentication)</li>
+                <li>Domains blocking our crawler via robots.txt</li>
+                <li>Known ad-fraud / MFA (Made-For-Advertising) domains</li>
+            </ul>
+        </div>
+    </div>
+
+    <p>For uncrawled domains, we fall back to: (1) OpenRTB publisher-declared categories, (2) URL/domain-name heuristics, or (3) a "General" catch-all category with low confidence.</p>
+
+    <h3>Source 3: IAB Content Taxonomy v2.2</h3>
+
+    <p>The IAB Content Taxonomy is a standardized hierarchical category system maintained by the Interactive Advertising Bureau. Version 2.2 defines approximately <strong>700 categories</strong> across two tiers.</p>
+
+    <div class="example-box">
+        <h4>&#127959;&#65039; IAB Taxonomy Structure Example</h4>
+<pre><code>Tier 1 (29 categories):
+  IAB1  - Arts & Entertainment
+  IAB2  - Automotive
+  IAB3  - Business
+  ...
+  IAB19 - Technology & Computing
+  IAB20 - Travel
+  ...
+
+Tier 2 (within each Tier 1):
+  IAB20    - Travel
+  IAB20-1  - Adventure Travel
+  IAB20-2  - Africa Travel
+  IAB20-3  - Air Travel
+  IAB20-4  - Australia & New Zealand Travel
+  ...
+  IAB20-27 - Travel Accessories & Gear
+
+Total: 29 Tier-1 categories × ~24 avg Tier-2 subcategories ≈ 700 categories</code></pre>
+    </div>
+
+    <p>We store this taxonomy as a <strong>static lookup</strong> (JSON/CSV) loaded into memory at service startup. It changes at most annually when IAB publishes updates. Our domain classification model outputs probability distributions across all ~700 categories.</p>
+
+    <h3>Source 4: OpenRTB Metadata (bcat / cat Fields)</h3>
+
+    <p>Beyond the primary site/content categories, the OpenRTB protocol carries additional category metadata that we can mine:</p>
+    <ul>
+        <li><strong><code>bcat</code> (Blocked Categories):</strong> Categories the advertiser does not want to appear alongside. If an advertiser blocks "IAB7" (Health &amp; Fitness), this tells us something about campaign brand safety, not about the user &mdash; but aggregated across many bid requests, it reveals which categories are commercially sensitive (and therefore high-CPM).</li>
+        <li><strong><code>site.cat</code> / <code>app.cat</code>:</strong> Publisher-declared categories, as discussed above.</li>
+        <li><strong><code>site.content.cat</code>:</strong> Content-level categories, more granular than site-level. Available in ~15% of requests but more accurate when present.</li>
+    </ul>
+
+    <div class="highlight-box">
+        <h4>&#128161; Source Priority Matrix</h4>
+        <p>When multiple category signals are available for a domain, we use this priority order:</p>
+        <ol>
+            <li><strong>Our crawl-based classification</strong> (highest confidence, freshest data)</li>
+            <li><strong><code>site.content.cat</code></strong> (content-level, more specific)</li>
+            <li><strong><code>site.cat</code></strong> (site-level, publisher-declared)</li>
+            <li><strong>URL heuristics</strong> (domain name keywords)</li>
+            <li><strong>"Unclassified" fallback</strong> (no score update for this event)</li>
+        </ol>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1.3 INGESTION ARCHITECTURE                                    -->
+    <!-- ============================================================ -->
+    <h2>&#9889; 1.3 Bidstream Ingestion Architecture</h2>
+
+    <p>Ingesting 50 billion bid requests per day &mdash; sustaining 580K QPS with bursts to 1.2M QPS &mdash; is the most demanding engineering challenge in this pipeline. Every design choice in this section is driven by three constraints: <strong>throughput</strong> (never drop bid requests), <strong>latency</strong> (end-to-end processing under 2 seconds), and <strong>cost</strong> (storage and compute must be economically viable at 55 TB/day).</p>
+
+    <h3>The Layman's Analogy</h3>
+    <p>Think of our ingestion layer as a massive postal sorting facility. Trucks arrive from 30+ delivery routes (SSPs) simultaneously. Each truck drops off hundreds of thousands of letters per second. The facility must: sort letters into categories, stamp each with a received-at timestamp, throw away junk mail (bots), verify addresses (user IDs), and forward good letters to the right department &mdash; all without letting a single truck idle in the parking lot because the building is full.</p>
+
+    <h3>High-Level Ingestion Flow</h3>
+
+    <div class="architecture-diagram">
+    ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+    │   SSP #1    │  │   SSP #2    │  │   SSP #30   │
+    │ (Google)    │  │ (Magnite)   │  │ (PubMatic)  │
+    └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+           │                │                │
+           ▼                ▼                ▼
+    ┌──────────────────────────────────────────────┐
+    │        Load Balancer (L4 / NLB)              │
+    │   Round-robin across ingestion fleet          │
+    │   Health checks every 5s, drains unhealthy   │
+    └──────────────────┬───────────────────────────┘
+                       │
+                       ▼
+    ┌──────────────────────────────────────────────┐
+    │    Ingestion Fleet (Stateless HTTP Servers)   │
+    │    200 pods × 16 cores each                   │
+    │    ┌──────────────────────────────┐           │
+    │    │ Per-request processing:      │           │
+    │    │  1. Parse OpenRTB JSON       │ ~0.3ms    │
+    │    │  2. Extract key fields       │ ~0.1ms    │
+    │    │  3. Validate schema          │ ~0.1ms    │
+    │    │  4. Assign ingestion ts      │ ~0.05ms   │
+    │    │  5. Serialize to Avro        │ ~0.2ms    │
+    │    │  6. Produce to Kafka         │ ~0.5ms    │
+    │    │     Total: ~1.3ms / request  │           │
+    │    └──────────────────────────────┘           │
+    └──────────────────┬───────────────────────────┘
+                       │
+                       ▼
+    ┌──────────────────────────────────────────────┐
+    │           Apache Kafka Cluster                │
+    │   Topic: bid-requests-raw                     │
+    │   Partitions: 512                             │
+    │   Replication Factor: 3                       │
+    │   Retention: 24 hours                         │
+    │   Throughput: ~580K msg/sec sustained          │
+    └──────┬───────────────┬───────────────┬───────┘
+           │               │               │
+           ▼               ▼               ▼
+    ┌────────────┐  ┌────────────┐  ┌────────────┐
+    │  Quality   │  │  Raw       │  │  Analytics  │
+    │  Filter    │  │  Archive   │  │  Tap        │
+    │  Consumer  │  │  (S3)      │  │  (Sampling) │
+    │  Group     │  │  Consumer  │  │  Consumer   │
+    └──────┬─────┘  └────────────┘  └────────────┘
+           │
+           ▼
+    ┌──────────────────────────────────────────────┐
+    │    Topic: bid-requests-filtered               │
+    │    (~8B events/day, post quality gate)         │
+    │    Partitions: 256                             │
+    └──────────────────────────────────────────────┘
+    </div>
+
+    <h3>Technology Decision: Message Broker</h3>
+
+    <div class="decision-matrix">
+        <h4>&#9878;&#65039; Why Apache Kafka?</h4>
+        <p><strong>Problem:</strong> We need a message broker that sustains 580K+ messages/sec, supports multiple consumer groups reading the same data, retains messages for replay, and handles 1.2M QPS bursts without data loss.</p>
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#9989; Apache Kafka (Chosen)</h4>
+                <ul>
+                    <li>Proven at &gt;1M msg/sec per cluster at LinkedIn, Uber, Netflix</li>
+                    <li>Partitioned log model: 512 partitions give us fine-grained parallelism</li>
+                    <li>Consumer groups allow independent readers (quality filter, archive, analytics)</li>
+                    <li>Replayable: if a consumer fails, it can re-read from an offset</li>
+                    <li>Tiered storage support: spill to S3 for retention beyond 24h</li>
+                    <li>Mature ecosystem: Kafka Connect, Schema Registry (Avro), exactly-once semantics</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#10060; Rejected Alternatives</h4>
+                <ul>
+                    <li><strong>Amazon Kinesis:</strong> 1MB/sec/shard limit means we'd need 700+ shards; resharding is slow and disruptive; higher per-shard cost at our scale</li>
+                    <li><strong>Apache Pulsar:</strong> Excellent on paper (tiered storage native, multi-tenancy), but smaller operational community; our team has deep Kafka expertise</li>
+                    <li><strong>RabbitMQ:</strong> Not designed for this throughput; single-queue model lacks Kafka's partitioned parallelism; no built-in replay</li>
+                    <li><strong>Google Pub/Sub:</strong> Managed simplicity is appealing, but at 50B msgs/day the cost is prohibitive (~$150K/month for messaging alone); also, message ordering guarantees are weaker</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Kafka Cluster Sizing: Worked Example</h3>
+
+    <div class="math-box">
+        <h4>Partition and Broker Calculation</h4>
+<pre>
+Target throughput:    580,000 msg/sec (sustained)
+                     1,200,000 msg/sec (burst)
+Avg message size:    1.2 KB (Avro-serialized, compressed)
+Replication factor:  3
+
+Per-broker throughput (modern NVMe SSD): ~80,000 msg/sec write
+Per-partition throughput (single consumer): ~5,000 msg/sec
+
+Brokers needed (sustained):
+  580,000 / 80,000 = 7.25 → 8 brokers minimum
+  With replication overhead (3x writes): 8 × 1.5 = 12 brokers
+  With burst headroom (2x):             12 × 2   = 24 brokers
+
+Partitions needed:
+  580,000 / 5,000 = 116 partitions minimum
+  For consumer parallelism and future growth: 512 partitions
+  (Power of 2 for even hashing; allows up to 512 parallel consumers)
+
+Cluster spec:
+  24 brokers × (32 cores, 128 GB RAM, 4 TB NVMe SSD each)
+  Topic: bid-requests-raw, 512 partitions, RF=3
+  Topic: bid-requests-filtered, 256 partitions, RF=3
+  Retention: 24h on SSD, overflow to S3 via tiered storage
+
+Network bandwidth:
+  Inbound:  580K × 1.2 KB = 696 MB/sec
+  Replicated: 696 × 3 = 2.1 GB/sec internal replication
+  → 10 Gbps NICs on each broker (headroom for burst)
+</pre>
+    </div>
+
+    <h3>Ingestion Fleet Design</h3>
+
+    <p>The ingestion fleet is a horizontally-scaled pool of <strong>stateless HTTP servers</strong> behind an L4 (TCP) load balancer. Each server does minimal processing: parse, validate, extract, serialize, produce to Kafka. No business logic, no database calls, no blocking I/O beyond the Kafka produce.</p>
+
+    <h4>Why Stateless?</h4>
+    <ul>
+        <li><strong>Horizontal scaling:</strong> Add pods to handle traffic spikes; remove them when traffic subsides. Kubernetes HPA scales from 200 to 400 pods during Black Friday.</li>
+        <li><strong>Fault tolerance:</strong> If a pod dies, the load balancer routes traffic to surviving pods within 5 seconds. No state to recover.</li>
+        <li><strong>Deployment simplicity:</strong> Rolling deploys replace pods one at a time with zero downtime. No coordination needed.</li>
+    </ul>
+
+    <div class="example-box">
+        <h4>&#128337; Worked Example: A Single Bid Request's Journey</h4>
+        <p>A user visits <code>cnn.com/travel/best-beaches-2026</code> on their iPhone in Los Angeles. The SSP (Google Ad Manager) sends a bid request:</p>
+        <ol>
+            <li><strong>T+0.0ms:</strong> Bid request arrives at NLB, routed to ingestion pod #147</li>
+            <li><strong>T+0.3ms:</strong> Pod parses the OpenRTB JSON (1.2 KB payload)</li>
+            <li><strong>T+0.4ms:</strong> Extracts fields: domain=<code>cnn.com</code>, ifa=<code>6D92078A...</code>, geo=US/CA, site.cat=[IAB20]</li>
+            <li><strong>T+0.5ms:</strong> Schema validation passes; ingestion timestamp assigned: <code>2026-04-04T14:23:01.847Z</code></li>
+            <li><strong>T+0.7ms:</strong> Serialized to Avro using Schema Registry (schema ID 42), compressed with Snappy</li>
+            <li><strong>T+1.2ms:</strong> Produced to Kafka topic <code>bid-requests-raw</code>, partition 317 (hash of domain + user_id)</li>
+            <li><strong>T+1.3ms:</strong> HTTP 204 returned to SSP &mdash; request complete</li>
+        </ol>
+        <p><strong>Total ingestion latency: 1.3ms</strong>. The bid request is now durably stored in Kafka, available for all downstream consumers.</p>
+    </div>
+
+    <h3>Serialization: Why Avro over JSON?</h3>
+
+    <div class="decision-matrix">
+        <h4>Serialization Format Decision</h4>
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#9989; Apache Avro (Chosen)</h4>
+                <ul>
+                    <li>Schema Registry enforces contract between producers and consumers</li>
+                    <li>Binary format: ~60% smaller than JSON for our bid request payloads (1.2 KB vs 3 KB)</li>
+                    <li>Schema evolution: add fields without breaking existing consumers</li>
+                    <li>At 580K msg/sec, the 60% size reduction saves ~420 MB/sec of network bandwidth</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#10060; Rejected Alternatives</h4>
+                <ul>
+                    <li><strong>JSON:</strong> Human-readable but 2.5x larger; parsing overhead at 580K QPS adds ~200ms/sec of CPU per pod</li>
+                    <li><strong>Protocol Buffers:</strong> Slightly better compression than Avro, but schema evolution is less flexible (field renumbering issues); Avro's self-describing schemas work better for our analytics consumers</li>
+                    <li><strong>MessagePack:</strong> No schema enforcement; schema drift has caused production incidents in past projects</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Backpressure and Overflow Strategy</h3>
+
+    <p>Even with generous provisioning, traffic can exceed capacity during compound events (Black Friday + major sporting event + new SSP onboarding simultaneously). Our backpressure strategy:</p>
+
+    <div class="step-box">
+        <p><span class="step-badge">1</span> <strong>Kafka Producer Buffering:</strong> Each ingestion pod buffers up to 64 MB of messages locally before blocking. This absorbs micro-bursts of 2-3 seconds duration.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">2</span> <strong>Async Produce with Retry:</strong> Kafka producer uses <code>acks=1</code> (leader acknowledgment) for speed. Retries up to 3 times with exponential backoff on transient failures.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">3</span> <strong>Load Shedding:</strong> If Kafka produce latency exceeds 500ms (indicating cluster saturation), ingestion pods begin sampling: accept 100% of requests from top-5K domains, 50% from remaining domains. This preserves the highest-value traffic.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">4</span> <strong>Overflow Queue:</strong> Shed requests are written to a local disk queue (bounded at 2 GB per pod). A background thread drains the overflow to Kafka when capacity recovers. If overflow fills, remaining requests are dropped with a counter metric.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">5</span> <strong>Circuit Breaker:</strong> If Kafka is completely unreachable for &gt;60 seconds, pods flip to "record to S3" mode, writing compressed Avro batches directly to S3. A recovery job replays these into Kafka once the cluster is healthy.</p>
+    </div>
+
+    <div class="warning-box">
+        <h4>&#9888;&#65039; Failure Scenario: Kafka Cluster Rolling Restart</h4>
+        <p>During a rolling broker restart (e.g., for version upgrades), partition leaders migrate between brokers. For a 24-broker cluster with 512 partitions:</p>
+        <ul>
+            <li>Each broker restart takes ~90 seconds (controlled shutdown + leader election)</li>
+            <li>During each restart, ~21 partitions (512/24) briefly have no leader</li>
+            <li>Producers experience 200-500ms of increased latency for affected partitions</li>
+            <li><strong>Mitigation:</strong> Kafka's <code>min.insync.replicas=2</code> ensures writes continue to replicas during leader migration. Producer retries absorb the transient failures. Total rolling restart of 24 brokers takes ~45 minutes with 30-second intervals between restarts.</li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1.4 DOMAIN CRAWL PIPELINE                                     -->
+    <!-- ============================================================ -->
+    <h2>&#128375;&#65039; 1.4 Domain Crawl Pipeline</h2>
+
+    <p>While the bidstream is our high-volume, real-time data source, the domain crawl pipeline is the <strong>foundation of classification quality</strong>. Without accurate, fresh text content from domains, our TF-IDF + classifier model cannot produce reliable IAB category assignments. This section covers how we systematically crawl 200K+ domains, extract clean text, handle edge cases, and keep content fresh.</p>
+
+    <h3>The Layman's Analogy</h3>
+    <p>A team of researchers visits 200,000 libraries every two weeks. At each library, they read the first few shelves (representative pages), take notes on what topics the library covers, and bring those notes back. Some libraries have locked doors (login walls), some have "Do Not Enter" signs (robots.txt), and some change their books daily (news sites). The challenge is keeping notes current without overwhelming any single library with too many visits.</p>
+
+    <h3>Crawl Pipeline Architecture</h3>
+
+    <div class="architecture-diagram">
+    ┌──────────────────────────────────────────────────────────────┐
+    │                    CRAWL ORCHESTRATOR                         │
+    │    (Airflow DAG, scheduled bi-weekly + daily for top 5K)     │
+    └───────────────────────┬──────────────────────────────────────┘
+                            │
+                            ▼
+    ┌──────────────────────────────────────────────────────────────┐
+    │                   DOMAIN QUEUE (Redis)                        │
+    │  Priority queue: news/top-5K domains = high priority          │
+    │  200K domains queued per full crawl cycle                     │
+    │  Deduplication: skip if crawled within min_refresh_interval   │
+    └───────────┬──────────────────────────┬───────────────────────┘
+                │                          │
+                ▼                          ▼
+    ┌──────────────────┐      ┌──────────────────────────┐
+    │  Robots.txt      │      │   URL Selection           │
+    │  Fetcher         │      │   (Per-domain strategy)   │
+    │  - Fetch & cache │      │   - Homepage always       │
+    │  - Parse rules   │      │   - Top 2-4 content pages │
+    │  - TTL: 24 hours │      │   - Sitemap.xml parsing   │
+    └───────┬──────────┘      └─────────┬──────────────────┘
+            │                           │
+            └───────────┬───────────────┘
+                        │
+                        ▼
+    ┌──────────────────────────────────────────────────────────────┐
+    │                SCRAPY CRAWL CLUSTER                           │
+    │    8 worker nodes × 4 concurrent spiders each                │
+    │    Rate limit: 1 request/sec/domain (polite crawling)        │
+    │    Timeout: 30 sec per page                                  │
+    │    User-Agent: "IABAudienceBot/1.0 (+https://example.com)"   │
+    │                                                              │
+    │    Per-page pipeline:                                        │
+    │    ┌─────────────┐  ┌───────────────┐  ┌─────────────────┐  │
+    │    │ Fetch HTML   │→ │ Extract Text  │→ │ Language Detect │  │
+    │    │ (requests)   │  │ (readability  │  │ (fastText)      │  │
+    │    │              │  │  + BS4)       │  │ Keep EN only    │  │
+    │    └─────────────┘  └───────────────┘  └────────┬────────┘  │
+    │                                                  │           │
+    │    ┌──────────────┐  ┌───────────────┐          │           │
+    │    │ Dedup/Deboil │← │ Text Cleaning │←─────────┘           │
+    │    │ (simhash)    │  │ (strip ads,   │                      │
+    │    │              │  │  nav, scripts) │                      │
+    │    └──────┬───────┘  └───────────────┘                      │
+    └───────────┼──────────────────────────────────────────────────┘
+                │
+                ▼
+    ┌──────────────────────────────────────────────────────────────┐
+    │              CRAWL DATA STORE (S3 + PostgreSQL)               │
+    │                                                              │
+    │  S3: s3://crawl-data/{domain}/{date}/text.json.gz            │
+    │      Full text corpus, versioned by crawl date               │
+    │                                                              │
+    │  PostgreSQL: crawl_metadata table                             │
+    │    domain | last_crawled | status | pages_crawled |           │
+    │    text_size | language | robots_status | error_msg           │
+    └──────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Technology Decision: Crawl Framework</h3>
+
+    <div class="decision-matrix">
+        <h4>&#9878;&#65039; Why Scrapy?</h4>
+        <p><strong>Problem:</strong> Crawl 200K domains reliably, respecting robots.txt, rate limits, and error handling, with clean text extraction. Throughput requirement: ~2,000 pages/minute sustained.</p>
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#9989; Scrapy (Chosen)</h4>
+                <ul>
+                    <li>Mature Python crawl framework with built-in robots.txt compliance</li>
+                    <li>Async I/O (Twisted reactor): single spider handles 16+ concurrent requests</li>
+                    <li>Middleware pipeline: pluggable text extraction, deduplication, rate limiting</li>
+                    <li>8 workers × 4 spiders = 32 concurrent spiders → ~2,000 pages/min</li>
+                    <li>Integrates with our Python ML stack (TF-IDF, scikit-learn)</li>
+                    <li>ScrapyD for distributed deployment and job management</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#10060; Rejected Alternatives</h4>
+                <ul>
+                    <li><strong>Apache Nutch:</strong> Designed for full-web crawls (billions of pages); massive overhead for our curated 200K domain list; Java-based, doesn't integrate with our Python ML stack</li>
+                    <li><strong>Selenium/Playwright (headless browser):</strong> Needed for JavaScript-rendered pages, but 10x slower and resource-intensive; only ~5% of our curated domains require JS rendering, which we handle as a special case</li>
+                    <li><strong>Common Crawl (pre-crawled data):</strong> Free but stale (1-3 months old), incomplete coverage of our specific domain list, and we have no control over crawl frequency or page selection</li>
+                    <li><strong>Custom Go/Rust crawler:</strong> Higher throughput per node, but Scrapy's middleware ecosystem (robots.txt, retry, dedup) saves months of development; our crawl volume doesn't justify custom infrastructure</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Text Extraction Pipeline: From HTML to Clean Text</h3>
+
+    <p>Raw HTML is useless for TF-IDF vectorization. We need clean, readable text that represents the domain's actual content. Our extraction pipeline processes each fetched page through five stages:</p>
+
+    <div class="step-box">
+        <p><span class="step-badge">1</span> <strong>HTML Fetch:</strong> Download the page with a 30-second timeout. Follow up to 3 redirects. Store the raw HTML hash for change detection on future crawls.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">2</span> <strong>Boilerplate Removal:</strong> Use the <code>readability-lxml</code> library to extract the main content area, stripping navigation, sidebars, footers, and ad containers. This algorithm identifies the densest text block in the DOM tree.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">3</span> <strong>Tag Stripping:</strong> Use BeautifulSoup to remove all remaining HTML tags, scripts, styles, and non-text elements. Convert HTML entities (&amp;amp; &rarr; &amp;). Normalize whitespace.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">4</span> <strong>Language Detection:</strong> Run the extracted text through fastText's language identification model. Keep only English-language content (our classifier is English-only in v1). Non-English pages are flagged for future multilingual expansion.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">5</span> <strong>Deduplication:</strong> Compute a SimHash of the extracted text. If the hash matches the previous crawl within a Hamming distance of 3, mark the domain as "unchanged" and skip re-classification. This saves ~40% of classification compute on stable domains.</p>
+    </div>
+
+    <div class="example-box">
+        <h4>&#128337; Worked Example: Crawling cnn.com</h4>
+        <p>Domain <code>cnn.com</code> is in our top-5K list (crawled daily). Here is one crawl cycle:</p>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Output</th><th>Duration</th></tr>
+            <tr>
+                <td>URL Selection</td>
+                <td>Parse sitemap.xml, select homepage + top 4 content pages by recency</td>
+                <td>5 URLs: /, /world, /politics, /travel/best-beaches-2026, /business/markets</td>
+                <td>200ms</td>
+            </tr>
+            <tr>
+                <td>Robots.txt</td>
+                <td>Fetch and parse /robots.txt (cached from 18 hours ago)</td>
+                <td>Allows our User-Agent; disallows /cnn-hierarchical-sitemap*</td>
+                <td>0ms (cached)</td>
+            </tr>
+            <tr>
+                <td>Page Fetch</td>
+                <td>Download 5 pages (1 req/sec rate limit)</td>
+                <td>5 HTML pages, avg 180 KB each = 900 KB total</td>
+                <td>5.2 sec</td>
+            </tr>
+            <tr>
+                <td>Text Extract</td>
+                <td>readability + BS4 on each page</td>
+                <td>5 text documents, avg 12 KB each = 60 KB clean text</td>
+                <td>800ms</td>
+            </tr>
+            <tr>
+                <td>Language</td>
+                <td>fastText detection on concatenated text</td>
+                <td>EN with 0.98 confidence</td>
+                <td>15ms</td>
+            </tr>
+            <tr>
+                <td>Dedup Check</td>
+                <td>SimHash comparison with yesterday's crawl</td>
+                <td>Hamming distance = 14 (content changed significantly)</td>
+                <td>2ms</td>
+            </tr>
+            <tr>
+                <td>Store</td>
+                <td>Write to S3 + update PostgreSQL metadata</td>
+                <td>s3://crawl-data/cnn.com/2026-04-04/text.json.gz (18 KB compressed)</td>
+                <td>120ms</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td></td>
+                <td><strong>60 KB clean text, ready for TF-IDF vectorization</strong></td>
+                <td><strong>~6.3 sec</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>Crawl Scheduling Strategy</h3>
+
+    <table>
+        <tr>
+            <th>Domain Tier</th>
+            <th>Count</th>
+            <th>Crawl Frequency</th>
+            <th>Rationale</th>
+        </tr>
+        <tr>
+            <td><strong>Tier A: News &amp; High-Churn</strong></td>
+            <td>~5,000</td>
+            <td>Daily</td>
+            <td>News sites change content hourly; categories can shift (CNN Travel section vs. Politics)</td>
+        </tr>
+        <tr>
+            <td><strong>Tier B: Popular Domains</strong></td>
+            <td>~15,000</td>
+            <td>Weekly</td>
+            <td>E-commerce, social, major publishers; content changes but categories are stable</td>
+        </tr>
+        <tr>
+            <td><strong>Tier C: Standard Domains</strong></td>
+            <td>~80,000</td>
+            <td>Bi-weekly</td>
+            <td>Niche publishers, blogs, forums; moderate traffic, stable categories</td>
+        </tr>
+        <tr>
+            <td><strong>Tier D: Long-Tail</strong></td>
+            <td>~100,000</td>
+            <td>Monthly</td>
+            <td>Low-traffic domains; minimal category change; crawl resources better spent on higher tiers</td>
+        </tr>
+        <tr>
+            <td><strong>On-Demand</strong></td>
+            <td>Variable</td>
+            <td>Triggered by bidstream</td>
+            <td>New domains appearing in bidstream for 3+ consecutive days are queued immediately</td>
+        </tr>
+    </table>
+
+    <div class="math-box">
+        <h4>Crawl Volume Calculation</h4>
+<pre>
+Daily crawl workload:
+  Tier A: 5,000 domains × 5 pages   = 25,000 pages / day
+  Tier B: 15,000 / 7 × 5 pages      = 10,714 pages / day
+  Tier C: 80,000 / 14 × 4 pages     = 22,857 pages / day
+  Tier D: 100,000 / 30 × 3 pages    = 10,000 pages / day
+  On-Demand: ~500 domains × 5 pages  = 2,500 pages / day
+  ─────────────────────────────────────────────────
+  Total:                              ≈ 71,071 pages / day
+                                      ≈ 49.4 pages / minute
+                                      (well within our 2,000 pages/min capacity)
+
+Headroom utilization: 49.4 / 2,000 = 2.5% of capacity
+→ Crawl cluster is deliberately over-provisioned for burst re-crawls
+   (e.g., reclassify 50K domains after model update)
+</pre>
+    </div>
+
+    <h3>Handling Crawl Failures</h3>
+
+    <div class="warning-box">
+        <h4>&#9888;&#65039; Crawl Failure Scenarios and Recovery</h4>
+        <table>
+            <tr>
+                <th>Failure Type</th>
+                <th>Frequency</th>
+                <th>Detection</th>
+                <th>Recovery Strategy</th>
+            </tr>
+            <tr>
+                <td><strong>HTTP 403/429 (Blocked/Rate Limited)</strong></td>
+                <td>~3% of domains</td>
+                <td>HTTP status code</td>
+                <td>Exponential backoff: retry after 1h, 4h, 24h. If blocked 3x consecutively, mark domain as "uncrawlable" and fall back to OpenRTB category signals.</td>
+            </tr>
+            <tr>
+                <td><strong>Timeout (>30s)</strong></td>
+                <td>~2% of pages</td>
+                <td>Request timeout</td>
+                <td>Retry once with 60s timeout. If persistent, reduce pages-per-domain to 2 (homepage + 1 content page).</td>
+            </tr>
+            <tr>
+                <td><strong>Empty/Minimal Text (<100 chars)</strong></td>
+                <td>~5% of pages</td>
+                <td>Post-extraction length check</td>
+                <td>Page is JS-rendered. Queue for Playwright headless browser re-crawl (separate pipeline, 10x slower but handles SPA sites).</td>
+            </tr>
+            <tr>
+                <td><strong>Domain Expired/Parked</strong></td>
+                <td>~1% of domains per month</td>
+                <td>Parked page detection (keyword patterns: "this domain is for sale")</td>
+                <td>Remove from classification table. Flag all users with scores from this domain for gradual decay.</td>
+            </tr>
+            <tr>
+                <td><strong>Content Changed Dramatically</strong></td>
+                <td>~0.5% of crawls</td>
+                <td>SimHash distance > 50 (complete content overhaul)</td>
+                <td>Trigger immediate re-classification. If new category differs from old by more than 2 Tier-1 categories, flag for human review before updating lookup table.</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1.5 DATA QUALITY: FILTERING AND VALIDATION                    -->
+    <!-- ============================================================ -->
+    <h2>&#128737;&#65039; 1.5 Data Quality: The Filtering Gauntlet</h2>
+
+    <p>Raw bidstream data is a minefield. At 50 billion bid requests per day, even a 1% error rate means 500 million bad records polluting our user score arrays. Every invalid event that slips through degrades audience segment quality and erodes the CPM premiums our segments command. The quality filter stage sits between the raw Kafka topic and the filtered topic, processing every event through a series of validation checks.</p>
+
+    <h3>The Layman's Analogy</h3>
+    <p>Airport security screening is the closest analogy. Every passenger (bid request) must pass through multiple checkpoints. Some are obviously fake (bot traffic &mdash; like someone wearing a rubber mask). Some have invalid passports (missing user IDs). Some are not allowed to fly today (no GDPR consent). Some are trying to sneak in through a back door (domain spoofing). Only passengers who pass ALL checkpoints board the plane (reach the filtered topic).</p>
+
+    <h3>Quality Filter Pipeline</h3>
+
+    <div class="architecture-diagram">
+    Raw Bid Request (from Kafka: bid-requests-raw)
+         │
+         ▼
+    ┌─────────────────────────────────────┐
+    │  Gate 1: SCHEMA VALIDATION          │  Reject: ~2%
+    │  - Required fields present?          │  (malformed JSON, missing imp[])
+    │  - Domain non-empty?                 │
+    │  - Valid OpenRTB version?            │
+    └─────────────┬───────────────────────┘
+                  │ Pass
+                  ▼
+    ┌─────────────────────────────────────┐
+    │  Gate 2: BOT & IVT DETECTION        │  Reject: ~35%
+    │  - IAB/TAG bot list (User-Agent)     │  (largest filter by volume)
+    │  - IP reputation (datacenter IPs)    │
+    │  - Behavioral signals (rate/device)  │
+    │  - ads.txt / sellers.json check      │
+    └─────────────┬───────────────────────┘
+                  │ Pass
+                  ▼
+    ┌─────────────────────────────────────┐
+    │  Gate 3: USER ID VALIDATION         │  Reject: ~25%
+    │  - Has device.ifa OR user.id?        │  (no ID = can't update score array)
+    │  - ID not in known-fake list?        │
+    │  - ID format valid? (UUID/hash)      │
+    │  - Not "00000000-0000..." (zeroed)?  │
+    └─────────────┬───────────────────────┘
+                  │ Pass
+                  ▼
+    ┌─────────────────────────────────────┐
+    │  Gate 4: CONSENT VALIDATION         │  Reject: ~12%
+    │  - GDPR scope? Parse TCF string      │  (EU users without consent)
+    │  - Consent for Purpose 1 (storage)?  │
+    │  - CCPA: check us_privacy string     │
+    │  - COPPA: reject if coppa=1          │
+    └─────────────┬───────────────────────┘
+                  │ Pass
+                  ▼
+    ┌─────────────────────────────────────┐
+    │  Gate 5: DOMAIN VALIDATION          │  Reject: ~8%
+    │  - Domain in known domain list?      │  (spoofing, unknown domains)
+    │  - Domain not in fraud blacklist?    │
+    │  - Domain spoofing check             │
+    │    (app-ads.txt / sellers.json)      │
+    └─────────────┬───────────────────────┘
+                  │ Pass
+                  ▼
+    ┌─────────────────────────────────────┐
+    │  Gate 6: DEDUPLICATION              │  Reject: ~8%
+    │  - Bloom filter on (user_id+domain   │
+    │    +minute_bucket)                   │
+    │  - Same user, same domain, within    │
+    │    60 seconds = duplicate            │
+    └─────────────┬───────────────────────┘
+                  │ Pass
+                  ▼
+    Filtered Event → Kafka: bid-requests-filtered
+    (~8B events/day, ~16% pass-through rate)
+    </div>
+
+    <h3>Gate-by-Gate Deep Dive</h3>
+
+    <h4>Gate 2: Bot & Invalid Traffic (IVT) Detection</h4>
+    <p>This is our most impactful filter, removing ~35% of all traffic. Bot traffic inflates impressions, wastes compute, and — most critically for us — creates false user behavior signals that corrupt audience segments. If a bot "visits" travel websites 10,000 times, it should not be classified as a travel enthusiast.</p>
+
+    <p><strong>Detection layers:</strong></p>
+    <ul>
+        <li><strong>IAB/TAG Bot List (General IVT):</strong> Maintained by the industry consortium; contains ~2,000 known bot User-Agent signatures. Updated weekly. Catches crawlers (Googlebot, Bingbot), SEO tools, monitoring services. This alone catches ~15% of traffic.</li>
+        <li><strong>IP Reputation Database:</strong> Purchased from threat intelligence providers (e.g., Digital Element, MaxMind). Flags datacenter IPs, known proxy/VPN exits, and TOR exit nodes. Datacenter traffic accounts for ~12% of bid requests and is almost entirely non-human.</li>
+        <li><strong>Behavioral Heuristics (Sophisticated IVT):</strong> Flagged by rate anomalies: a single user_id generating &gt;100 bid requests/minute across &gt;50 unique domains is almost certainly a bot. Similarly, identical device fingerprints appearing across multiple geo regions simultaneously indicate spoofed requests.</li>
+        <li><strong>ads.txt / sellers.json Validation:</strong> Verify that the SSP sending the bid request is authorized to sell inventory for the declared domain. If cnn.com's ads.txt does not list the SSP as an authorized seller, the request is likely spoofed inventory.</li>
+    </ul>
+
+    <div class="example-box">
+        <h4>&#128337; Worked Example: Bot Detection in Action</h4>
+        <p>At 2:00 AM EST, our pipeline sees a spike of bid requests with these characteristics:</p>
+        <ul>
+            <li>User-Agent: <code>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36</code> (looks legitimate)</li>
+            <li>device.ifa: <code>A1B2C3D4-E5F6-7890-ABCD-EF1234567890</code></li>
+            <li>400 bid requests in the last 60 seconds, across 180 unique domains</li>
+            <li>All from IP range 45.33.32.0/24 (known Linode datacenter block)</li>
+        </ul>
+        <p><strong>Gate 2 verdict:</strong></p>
+        <ol>
+            <li>User-Agent: passes IAB bot list check (not a known bot signature)</li>
+            <li>IP: <strong>FLAGGED</strong> &mdash; datacenter IP in reputation database</li>
+            <li>Behavioral: <strong>FLAGGED</strong> &mdash; 400 req/min far exceeds 100 req/min threshold</li>
+            <li>Result: <strong>REJECTED</strong> as Sophisticated IVT. Counter incremented: <code>ivt.datacenter_ip</code> +1, <code>ivt.rate_anomaly</code> +1</li>
+        </ol>
+        <p>Without this filter, this single bot would have generated 400 false score updates, potentially pushing its (fake) user profile into multiple high-value audience segments.</p>
+    </div>
+
+    <h4>Gate 4: Consent Validation (GDPR / CCPA / COPPA)</h4>
+    <p>Privacy compliance is non-negotiable. Processing user data without proper consent exposes the company to fines of up to 4% of annual revenue under GDPR. Our consent validation parses the IAB Transparency and Consent Framework (TCF) v2 consent string.</p>
+
+    <div class="math-box">
+        <h4>TCF v2 Consent String Parsing</h4>
+<pre>
+Consent string example:
+  "CPceAAAOPceAAGGABBENDaCgAAAAAAAAAAAAAAAAAAAA.YAAAAAAAAAA"
+
+Decoded fields relevant to us:
+  - CMP ID: 14 (known, valid Consent Management Platform)
+  - Purpose Consents bitfield:
+      Purpose 1 (Store/Access device): ✓ GRANTED
+      Purpose 3 (Create personalized ads): ✓ GRANTED
+      Purpose 4 (Content personalization): ✓ GRANTED
+  - Vendor Consents: Our vendor ID (hypothetical 542): ✓ GRANTED
+
+Decision logic:
+  IF regs.ext.gdpr == 1:
+    IF Purpose 1 AND (Purpose 3 OR Purpose 4) AND our_vendor_id consented:
+      → PASS (process user data)
+    ELSE:
+      → REJECT (do not store/update user score array)
+
+  IF us_privacy string present (CCPA):
+    Parse: "1YNN" → version=1, notice=Y, opt-out=N, LSPA=N
+    IF opt-out == "Y":
+      → REJECT (user opted out of sale of personal information)
+
+  IF regs.coppa == 1:
+    → REJECT (child-directed content, never process)
+</pre>
+    </div>
+
+    <h4>Gate 5: Domain Spoofing Detection</h4>
+    <p><strong>Domain spoofing</strong> is a pervasive ad fraud technique where a low-quality domain masquerades as a premium domain (e.g., a spam site claims to be <code>nytimes.com</code>) to command higher CPMs. For our system, spoofed domains are doubly dangerous: they not only waste ad spend, but they also inject incorrect IAB category signals into user profiles.</p>
+
+    <p>Our spoofing detection uses three signals:</p>
+    <ul>
+        <li><strong>ads.txt cross-reference:</strong> Check that the SSP sending the bid request is listed as an authorized seller in the domain's ads.txt file. We cache ads.txt files for all 200K curated domains (refreshed weekly). A domain-SSP mismatch is a strong spoofing signal.</li>
+        <li><strong>sellers.json verification:</strong> The SSP's sellers.json file lists all publishers authorized to sell through that SSP. Cross-reference the claimed domain against this list.</li>
+        <li><strong>Historical pattern check:</strong> If a domain suddenly appears from a new SSP that has never sent traffic for that domain before, and the volume is significant, flag for manual review.</li>
+    </ul>
+
+    <h4>Gate 6: Deduplication</h4>
+    <p>A single page load can generate 3-8 bid requests (one per ad slot on the page). We do not want to count a single page visit as 8 separate browsing events. Our deduplication uses a <strong>Bloom filter</strong> keyed on <code>(user_id, domain, minute_bucket)</code>.</p>
+
+    <div class="math-box">
+        <h4>Bloom Filter Sizing</h4>
+<pre>
+Expected items per minute: 580,000 QPS × 60 sec = 34.8M items
+Target false positive rate: 0.1% (1 in 1,000)
+Window: 1 minute (rotate Bloom filter every minute)
+
+Bloom filter size:
+  m = -(n × ln(p)) / (ln(2))²
+  m = -(34,800,000 × ln(0.001)) / (0.693)²
+  m = -(34,800,000 × -6.908) / 0.480
+  m = 500,700,000 bits ≈ 60 MB per filter
+
+Number of hash functions:
+  k = (m/n) × ln(2) = (500.7M / 34.8M) × 0.693 = 10 hash functions
+
+Implementation: Two rotating Bloom filters (current minute + previous minute)
+Memory: 2 × 60 MB = 120 MB per filter worker node
+</pre>
+    </div>
+
+    <h3>Quality Filter Performance Budget</h3>
+
+    <p>The quality filter consumer group must keep pace with the 580K msg/sec production rate. Our latency budget per event:</p>
+
+    <table>
+        <tr>
+            <th>Gate</th>
+            <th>Operation</th>
+            <th>Latency (P99)</th>
+            <th>Implementation</th>
+        </tr>
+        <tr>
+            <td>Gate 1: Schema</td>
+            <td>Field presence check</td>
+            <td>0.05ms</td>
+            <td>In-process validation, no I/O</td>
+        </tr>
+        <tr>
+            <td>Gate 2: Bot/IVT</td>
+            <td>User-Agent regex + IP lookup + rate check</td>
+            <td>0.3ms</td>
+            <td>In-memory tries (UA), hash map (IP), sliding window counter (rate)</td>
+        </tr>
+        <tr>
+            <td>Gate 3: User ID</td>
+            <td>Format validation + known-fake set lookup</td>
+            <td>0.05ms</td>
+            <td>Regex + in-memory hash set (~50K known-fake IDs)</td>
+        </tr>
+        <tr>
+            <td>Gate 4: Consent</td>
+            <td>TCF string decode + bitfield check</td>
+            <td>0.15ms</td>
+            <td>IAB TCF library, in-process decoding</td>
+        </tr>
+        <tr>
+            <td>Gate 5: Domain</td>
+            <td>ads.txt cache lookup + sellers.json check</td>
+            <td>0.2ms</td>
+            <td>In-memory hash map of domain→authorized_sellers (200K entries, ~50 MB)</td>
+        </tr>
+        <tr>
+            <td>Gate 6: Dedup</td>
+            <td>Bloom filter insert/check</td>
+            <td>0.05ms</td>
+            <td>In-memory Bloom filter (120 MB)</td>
+        </tr>
+        <tr>
+            <td><strong>Total</strong></td>
+            <td></td>
+            <td><strong>0.8ms P99</strong></td>
+            <td>All in-memory; no disk or network I/O in hot path</td>
+        </tr>
+    </table>
+
+    <div class="key-insight">
+        <h4>&#128161; Key Insight: All Quality Gates Are In-Memory</h4>
+        <p>Every quality filter gate operates on in-memory data structures: hash maps, Bloom filters, precompiled regex, and locally-cached lookup tables. There are <strong>zero network calls</strong> in the per-event hot path. The lookup data (IP reputation database, bot list, ads.txt cache, known-fake IDs) is refreshed asynchronously in the background every 15-60 minutes, depending on the source. This design ensures that the quality filter never becomes a latency bottleneck, even at 580K QPS.</p>
+    </div>
+
+    <h3>Quality Metrics Dashboard</h3>
+
+    <p>We continuously track filter rates to detect anomalies. A sudden change in any filter's rejection rate signals either a data quality issue upstream or a misconfigured gate.</p>
+
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Normal Range</th>
+            <th>Alert Threshold</th>
+            <th>What It Indicates</th>
+        </tr>
+        <tr>
+            <td>Overall Pass Rate</td>
+            <td>14-18%</td>
+            <td>&lt;10% or &gt;25%</td>
+            <td>&lt;10%: overly aggressive filtering or broken gate. &gt;25%: bot detection may have failed.</td>
+        </tr>
+        <tr>
+            <td>Bot Rejection Rate</td>
+            <td>33-37%</td>
+            <td>&lt;25% or &gt;45%</td>
+            <td>&lt;25%: bot list may be stale. &gt;45%: DDoS attack or new bot wave.</td>
+        </tr>
+        <tr>
+            <td>Consent Rejection Rate</td>
+            <td>10-14%</td>
+            <td>&lt;5% or &gt;20%</td>
+            <td>&lt;5%: consent parsing may be broken (passing everything). &gt;20%: CMP changes or new regulation.</td>
+        </tr>
+        <tr>
+            <td>Domain Spoofing Rate</td>
+            <td>1-3%</td>
+            <td>&gt;5%</td>
+            <td>New supply source with high fraud rate; investigate SSP.</td>
+        </tr>
+        <tr>
+            <td>Dedup Rate</td>
+            <td>6-10%</td>
+            <td>&lt;3% or &gt;15%</td>
+            <td>&lt;3%: dedup may be broken. &gt;15%: SSP is sending more ad slots per page or retrying requests.</td>
+        </tr>
+    </table>
+
+    <!-- ============================================================ -->
+    <!-- 1.6 STORAGE STRATEGY                                         -->
+    <!-- ============================================================ -->
+    <h2>&#128451;&#65039; 1.6 Storage Strategy: Multi-Tier Architecture</h2>
+
+    <p>Our system manages five fundamentally different data types, each with different access patterns, latency requirements, retention needs, and cost sensitivities. A single storage technology cannot optimally serve all of them. We use a <strong>multi-tier storage architecture</strong> that matches each data type to the most appropriate technology.</p>
+
+    <h3>The Layman's Analogy</h3>
+    <p>Think of a restaurant kitchen. The chef keeps salt and pepper on the counter (hot tier &mdash; instant access, tiny volume). The walk-in fridge holds today's ingredients (warm tier &mdash; fast access, moderate volume). The dry storage room holds bulk supplies for the week (cold tier &mdash; slower access, large volume). And the warehouse across town stores seasonal ingredients used once a year (archive tier &mdash; slow access, cheapest storage). Each location is optimized for its access pattern and cost.</p>
+
+    <h3>Storage Tier Overview</h3>
+
+    <table>
+        <tr>
+            <th>Tier</th>
+            <th>Technology</th>
+            <th>Data Types</th>
+            <th>Access Pattern</th>
+            <th>Retention</th>
+            <th>Latency</th>
+            <th>Est. Cost/Month</th>
+        </tr>
+        <tr>
+            <td><strong>&#128308; Hot</strong></td>
+            <td>Redis Cluster (ElastiCache)</td>
+            <td>Domain→IAB lookup table, user score arrays (active users)</td>
+            <td>Point lookups at 95K+ reads/sec</td>
+            <td>Persistent (with TTL eviction)</td>
+            <td>&lt;5ms P99</td>
+            <td>~$18K</td>
+        </tr>
+        <tr>
+            <td><strong>&#128992; Warm</strong></td>
+            <td>ScyllaDB (Cassandra-compatible)</td>
+            <td>Full user profiles (500M+), bid event history (7-day window)</td>
+            <td>Write-heavy (95K writes/sec), range scans for user history</td>
+            <td>7-30 days</td>
+            <td>&lt;10ms P99</td>
+            <td>~$25K</td>
+        </tr>
+        <tr>
+            <td><strong>&#128309; Cold</strong></td>
+            <td>S3 + Apache Parquet (via Athena/Spark)</td>
+            <td>Historical bid events, crawl corpus, classification results, model artifacts</td>
+            <td>Batch analytics, model retraining, compliance audits</td>
+            <td>90 days - 1 year</td>
+            <td>Seconds to minutes</td>
+            <td>~$4K</td>
+        </tr>
+        <tr>
+            <td><strong>&#9898; Archive</strong></td>
+            <td>S3 Glacier Deep Archive</td>
+            <td>Raw bid request logs (regulatory), old model versions, crawl history</td>
+            <td>Rare retrieval (compliance, forensics)</td>
+            <td>2-7 years</td>
+            <td>Hours</td>
+            <td>~$0.5K</td>
+        </tr>
+    </table>
+
+    <h3>Hot Tier Deep Dive: Redis Cluster for Real-Time Lookups</h3>
+
+    <p>Two critical data structures live in Redis, both serving the real-time bidstream processing path where every millisecond matters:</p>
+
+    <h4>1. Domain→IAB Lookup Table</h4>
+
+    <div class="example-box">
+        <h4>&#128196; Data Structure: Domain Lookup Entry</h4>
+<pre><code>Key:   domain:cnn.com
+Value: {
+  "categories": {
+    "IAB12":  0.42,   // News
+    "IAB20":  0.18,   // Travel
+    "IAB3":   0.15,   // Business
+    "IAB11":  0.10,   // Law, Government & Politics
+    "IAB1":   0.08    // Arts & Entertainment
+  },
+  "confidence": 0.87,
+  "last_classified": "2026-04-03T08:00:00Z",
+  "source": "crawl_classifier_v3",
+  "tier": "A"
+}
+
+Size per entry: ~250 bytes (JSON, compressed in practice)
+Total entries:  200,000 domains
+Total memory:   200K × 250 bytes = ~50 MB
+                (trivially fits in a single Redis node;
+                 replicated across 3 nodes for read throughput)
+</code></pre>
+    </div>
+
+    <h4>2. User Score Arrays (Active Users)</h4>
+
+    <div class="example-box">
+        <h4>&#128196; Data Structure: User Score Array</h4>
+<pre><code>Key:   user:6D92078A-8246-4BA4-AE5B-76104861E7DC
+Value: {
+  "scores": {
+    "IAB20":  3.72,   // Travel (highest affinity)
+    "IAB12":  2.84,   // News
+    "IAB3":   1.95,   // Business
+    "IAB19":  1.41,   // Technology & Computing
+    "IAB1":   0.88    // Arts & Entertainment
+    // ... only non-zero categories stored (sparse representation)
+  },
+  "last_updated": "2026-04-04T14:23:01Z",
+  "event_count": 847,
+  "top_segments": ["IAB20", "IAB12", "IAB3"]  // Precomputed top-K
+}
+
+Avg categories per user: ~15-20 non-zero (out of 700)
+Size per entry: ~500 bytes
+Active users in Redis: ~120M (daily active)
+Total memory: 120M × 500 bytes = ~56 GB
+→ Redis cluster: 6 primary shards × 32 GB each = 192 GB capacity
+   (3 replicas each = 18 total nodes for HA)
+</code></pre>
+    </div>
+
+    <div class="decision-matrix">
+        <h4>&#9878;&#65039; Why Redis for Hot Tier?</h4>
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#9989; Redis Cluster (Chosen)</h4>
+                <ul>
+                    <li>Sub-millisecond reads: P99 &lt;2ms for point lookups</li>
+                    <li>Native hash operations: HGET/HSET for individual score updates without reading entire object</li>
+                    <li>Cluster mode: automatic sharding across 6+ primaries</li>
+                    <li>Persistence options: RDB snapshots + AOF for durability</li>
+                    <li>Atomic operations: HINCRBY for score accumulation without read-modify-write race conditions</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#10060; Rejected Alternatives</h4>
+                <ul>
+                    <li><strong>Aerospike:</strong> Excellent SSD-backed performance, but our active dataset (56 GB) fits comfortably in RAM; Aerospike's SSD advantage is unnecessary here and adds operational complexity</li>
+                    <li><strong>DynamoDB:</strong> Managed convenience, but cost at 95K writes/sec with on-demand pricing is ~$45K/month; also, P99 latency is 5-10ms vs Redis's &lt;2ms</li>
+                    <li><strong>Memcached:</strong> Faster for pure reads, but no persistence, no atomic increment operations, no clustering with automatic resharding</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Warm Tier Deep Dive: ScyllaDB for User Profiles</h3>
+
+    <p>While Redis holds active users for real-time scoring, <strong>ScyllaDB</strong> serves as the persistent store for all 500M+ user profiles and the 7-day bid event history.</p>
+
+    <h4>Why ScyllaDB over Apache Cassandra?</h4>
+    <p>ScyllaDB is a C++ rewrite of Apache Cassandra, wire-compatible with the CQL protocol but with 5-10x better throughput per node due to its shard-per-core architecture. At our scale (95K writes/sec), this means we need ~15 ScyllaDB nodes versus ~60+ Cassandra nodes for equivalent performance &mdash; a significant operational and cost advantage.</p>
+
+    <div class="example-box">
+        <h4>&#128196; ScyllaDB Schema: User Profiles</h4>
+<pre><code>CREATE TABLE user_profiles (
+    user_id         UUID,
+    iab_scores      MAP&lt;TEXT, FLOAT&gt;,     -- category → score
+    last_updated    TIMESTAMP,
+    event_count     INT,
+    top_segments    LIST&lt;TEXT&gt;,            -- precomputed top-K
+    first_seen      TIMESTAMP,
+    geo_primary     TEXT,                   -- most frequent country
+    device_types    SET&lt;TEXT&gt;,              -- {'mobile', 'desktop'}
+    PRIMARY KEY (user_id)
+) WITH compaction = {'class': 'TimeWindowCompactionStrategy',
+                     'compaction_window_unit': 'DAYS',
+                     'compaction_window_size': 1}
+   AND default_time_to_live = 7776000;   -- 90-day TTL
+
+-- Cluster: 15 nodes × (16 cores, 64 GB RAM, 2 TB NVMe SSD)
+-- Replication factor: 3
+-- Consistency: LOCAL_QUORUM for writes, LOCAL_ONE for reads</code></pre>
+    </div>
+
+    <div class="example-box">
+        <h4>&#128196; ScyllaDB Schema: Bid Event History</h4>
+<pre><code>CREATE TABLE bid_events (
+    user_id         UUID,
+    event_time      TIMESTAMP,
+    domain          TEXT,
+    iab_categories  MAP&lt;TEXT, FLOAT&gt;,     -- from domain lookup
+    geo_country     TEXT,
+    device_type     TEXT,
+    source_ssp      TEXT,
+    PRIMARY KEY (user_id, event_time)
+) WITH CLUSTERING ORDER BY (event_time DESC)
+   AND compaction = {'class': 'TimeWindowCompactionStrategy',
+                     'compaction_window_unit': 'DAYS',
+                     'compaction_window_size': 1}
+   AND default_time_to_live = 604800;    -- 7-day TTL
+
+-- This table enables:
+--   1. User-level event timeline for debugging/auditing
+--   2. Backfill of user scores after model re-classification
+--   3. Input for batch decay computation jobs</code></pre>
+    </div>
+
+    <h3>Cold Tier: S3 + Parquet for Analytics and Retraining</h3>
+
+    <p>All data beyond the warm tier's 7-30 day window flows to S3 in columnar Parquet format, partitioned for efficient querying.</p>
+
+    <div class="math-box">
+        <h4>S3 Partition Strategy</h4>
+<pre>
+S3 path structure:
+  s3://iab-audience-data/
+    ├── bid-events/
+    │   └── dt=2026-04-04/
+    │       └── hour=14/
+    │           └── ssp=google/
+    │               └── part-00001.parquet  (Snappy compressed)
+    │
+    ├── crawl-corpus/
+    │   └── domain=cnn.com/
+    │       └── crawl_date=2026-04-04/
+    │           └── text.json.gz
+    │
+    ├── domain-classifications/
+    │   └── model_version=v3/
+    │       └── dt=2026-04-04/
+    │           └── classifications.parquet
+    │
+    └── user-snapshots/
+        └── dt=2026-04-04/
+            └── part-00001.parquet
+
+Daily cold storage growth:
+  Bid events (Parquet, compressed): ~3 TB × 0.3 compression = ~900 GB / day
+  Crawl corpus:                     ~15 GB / full cycle (bi-weekly)
+  Classifications:                  ~200 MB / refresh
+  User snapshots:                   ~150 GB / daily snapshot
+
+90-day retention at cold tier: ~900 GB × 90 = ~81 TB
+Annual S3 Standard cost: 81 TB × $0.023/GB = ~$1,860/month
+Transition to S3 IA after 30 days: drops to ~$0.0125/GB, saving ~45%
+</pre>
+    </div>
+
+    <h3>Data Flow Between Tiers</h3>
+
+    <div class="architecture-diagram">
+    ┌─────────────────────────────────────────────────────────────────┐
+    │                     DATA TIER FLOW                              │
+    │                                                                 │
+    │  Bidstream → Kafka (24h) → Quality Filter                       │
+    │                               │                                 │
+    │                    ┌──────────┼──────────┐                      │
+    │                    ▼          ▼          ▼                      │
+    │              ┌──────────┐ ┌────────┐ ┌────────┐                │
+    │              │  Redis   │ │ScyllaDB│ │  S3    │                │
+    │              │  (HOT)   │ │ (WARM) │ │ (COLD) │                │
+    │              └────┬─────┘ └───┬────┘ └───┬────┘                │
+    │                   │           │          │                      │
+    │  TTL eviction     │    TTL    │   Lifecycle│                    │
+    │  after 24h idle   │   7-30d   │    rule   │                    │
+    │                   │           │          ▼                      │
+    │                   │           │    ┌──────────┐                 │
+    │                   │           │    │ Glacier  │                 │
+    │                   │           │    │(ARCHIVE) │                 │
+    │                   ▼           ▼    └──────────┘                 │
+    │              Redis → ScyllaDB (async writeback on every update) │
+    │              ScyllaDB → S3 (nightly Spark export job)           │
+    │              S3 Standard → S3 IA (30d lifecycle rule)           │
+    │              S3 IA → Glacier (90d lifecycle rule)               │
+    └─────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h4>Redis-to-ScyllaDB Writeback Pattern</h4>
+    <p>Every score update in Redis is also asynchronously written to ScyllaDB. This ensures durability: if a Redis node fails, the user profile can be reconstructed from ScyllaDB. The writeback uses a <strong>batched async writer</strong> that accumulates updates for 100ms, then sends a batch CQL INSERT to ScyllaDB. This reduces write amplification from 95K individual writes/sec to ~10K batched writes/sec.</p>
+
+    <div class="warning-box">
+        <h4>&#9888;&#65039; Failure Scenario: Redis Node Failure</h4>
+        <p>When a Redis primary shard fails:</p>
+        <ol>
+            <li><strong>T+0s:</strong> Redis Sentinel detects primary unreachable (health check every 1s)</li>
+            <li><strong>T+5s:</strong> Sentinel promotes replica to primary (automatic failover)</li>
+            <li><strong>T+5-10s:</strong> Clients reconnect to new primary. During this window, ~500K score updates are buffered in the consuming application's in-memory queue.</li>
+            <li><strong>T+10s:</strong> Buffered updates are drained to new primary. Data loss window: last 1-2 seconds of writes that hadn't replicated to the promoted replica.</li>
+            <li><strong>Recovery:</strong> For the ~2 seconds of lost writes, the affected user profiles are slightly stale. The next bid request from those users will trigger a fresh score update. No manual intervention needed.</li>
+        </ol>
+        <p><strong>Worst case:</strong> Full Redis cluster failure (all shards). Recovery: warm-load all 120M active user profiles from ScyllaDB. At ScyllaDB's read throughput of 100K reads/sec, this takes ~20 minutes. During warm-up, score updates are queued in Kafka (retention: 24h), then replayed.</p>
+    </div>
+
+    <h3>Storage Cost Summary</h3>
+
+    <table>
+        <tr>
+            <th>Component</th>
+            <th>Technology</th>
+            <th>Data Volume</th>
+            <th>Monthly Cost</th>
+            <th>% of Total</th>
+        </tr>
+        <tr>
+            <td>Hot: Domain Lookup + Active Users</td>
+            <td>Redis Cluster (18 nodes)</td>
+            <td>~56 GB RAM</td>
+            <td>$18,000</td>
+            <td>37.9%</td>
+        </tr>
+        <tr>
+            <td>Warm: User Profiles + Event History</td>
+            <td>ScyllaDB (15 nodes)</td>
+            <td>~25 TB SSD</td>
+            <td>$25,000</td>
+            <td>52.6%</td>
+        </tr>
+        <tr>
+            <td>Cold: Analytics + Retraining</td>
+            <td>S3 Standard/IA</td>
+            <td>~81 TB</td>
+            <td>$4,000</td>
+            <td>8.4%</td>
+        </tr>
+        <tr>
+            <td>Archive: Compliance</td>
+            <td>S3 Glacier Deep Archive</td>
+            <td>~200 TB cumulative</td>
+            <td>$500</td>
+            <td>1.1%</td>
+        </tr>
+        <tr>
+            <td><strong>Total Storage</strong></td>
+            <td></td>
+            <td></td>
+            <td><strong>$47,500</strong></td>
+            <td><strong>100%</strong></td>
+        </tr>
+    </table>
+
+    <div class="key-insight">
+        <h4>&#128161; Key Insight: 90% of Cost in Hot + Warm Tiers</h4>
+        <p>Redis and ScyllaDB account for 90% of storage costs despite holding only a fraction of total data volume. This is the price of low-latency access. The cold and archive tiers hold 95%+ of data by volume but cost under $5K/month. This cost distribution is typical for real-time ML systems and is justified by the revenue impact: a 10ms increase in score lookup latency could cause us to miss bid response deadlines, directly reducing monetizable impressions.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1.7 DATA MONITORING & OBSERVABILITY                          -->
+    <!-- ============================================================ -->
+    <h2>&#128200; 1.7 Pipeline Monitoring & Observability</h2>
+
+    <p>A data pipeline at this scale is only as good as your ability to detect when it breaks. At 580K events per second, a silent failure can corrupt millions of user profiles before anyone notices. Our monitoring strategy follows the principle: <strong>detect in minutes, not hours; recover in minutes, not days.</strong></p>
+
+    <h3>Monitoring Architecture</h3>
+
+    <div class="architecture-diagram">
+    ┌──────────────────────────────────────────────────────────────────┐
+    │                    MONITORING STACK                               │
+    │                                                                   │
+    │  ┌─────────────┐   ┌─────────────┐   ┌───────────────────────┐  │
+    │  │ Prometheus   │   │  Grafana    │   │   PagerDuty           │  │
+    │  │ (Metrics)    │──→│ (Dashboards)│   │   (Alerting)          │  │
+    │  └──────┬──────┘   └─────────────┘   └───────────┬───────────┘  │
+    │         │                                         │              │
+    │         │    ┌────────────────────────┐           │              │
+    │         └───→│  AlertManager         │───────────┘              │
+    │              │  (Routing + Dedup)     │                          │
+    │              └────────────────────────┘                          │
+    │                                                                   │
+    │  Metric Sources:                                                 │
+    │  ├── Kafka: consumer lag, throughput, partition health            │
+    │  ├── Ingestion pods: QPS, latency, error rate, backpressure      │
+    │  ├── Quality filter: per-gate rejection rates, total pass rate    │
+    │  ├── Redis: hit rate, memory usage, replication lag               │
+    │  ├── ScyllaDB: write latency, compaction backlog, disk usage     │
+    │  ├── Crawl pipeline: pages/min, failure rate, queue depth        │
+    │  └── Custom: data freshness, domain classification coverage      │
+    └──────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Critical SLAs and Alert Thresholds</h3>
+
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>SLA Target</th>
+            <th>Warning Threshold</th>
+            <th>Critical Threshold</th>
+            <th>Escalation</th>
+        </tr>
+        <tr>
+            <td><strong>Kafka Consumer Lag</strong> (quality filter group)</td>
+            <td>&lt;30 sec behind production</td>
+            <td>&gt;60 sec</td>
+            <td>&gt;300 sec (5 min)</td>
+            <td>Auto-scale consumer instances; page on-call if unresolved in 10 min</td>
+        </tr>
+        <tr>
+            <td><strong>Ingestion QPS</strong></td>
+            <td>±15% of expected baseline</td>
+            <td>Drop &gt;20%</td>
+            <td>Drop &gt;40%</td>
+            <td>Check SSP connectivity; verify load balancer health; potential SSP outage</td>
+        </tr>
+        <tr>
+            <td><strong>Quality Filter Pass Rate</strong></td>
+            <td>14-18%</td>
+            <td>&lt;12% or &gt;22%</td>
+            <td>&lt;8% or &gt;30%</td>
+            <td>Investigate per-gate rates to identify which gate shifted; rollback if recent deploy</td>
+        </tr>
+        <tr>
+            <td><strong>Redis Score Lookup Latency</strong></td>
+            <td>&lt;5ms P99</td>
+            <td>&gt;8ms P99</td>
+            <td>&gt;15ms P99</td>
+            <td>Check for hot keys, memory pressure, network saturation; consider emergency shard rebalance</td>
+        </tr>
+        <tr>
+            <td><strong>Domain Classification Coverage</strong></td>
+            <td>&gt;95% of bid requests hit a classified domain</td>
+            <td>&lt;93%</td>
+            <td>&lt;90%</td>
+            <td>New high-traffic domains entered rotation without being crawled; trigger on-demand crawl</td>
+        </tr>
+        <tr>
+            <td><strong>Crawl Success Rate</strong></td>
+            <td>&gt;92% pages successfully crawled</td>
+            <td>&lt;88%</td>
+            <td>&lt;80%</td>
+            <td>Check crawler infrastructure, DNS resolution, or widespread blocking by CDN providers</td>
+        </tr>
+        <tr>
+            <td><strong>Data Freshness: User Scores</strong></td>
+            <td>Score reflects events from &lt;5 min ago</td>
+            <td>&gt;10 min stale</td>
+            <td>&gt;30 min stale</td>
+            <td>Consumer group is stuck or Redis writeback pipeline is backed up</td>
+        </tr>
+        <tr>
+            <td><strong>Data Freshness: Domain Table</strong></td>
+            <td>All Tier-A domains classified within 24h</td>
+            <td>&gt;48h stale for any Tier-A domain</td>
+            <td>&gt;72h stale</td>
+            <td>Crawl scheduler may have failed; check Airflow DAG health</td>
+        </tr>
+    </table>
+
+    <h3>Data Freshness Monitoring: The Canary Event Pattern</h3>
+
+    <p>Monitoring throughput alone does not guarantee data correctness. We inject <strong>canary events</strong> &mdash; synthetic bid requests with known domains and user IDs &mdash; every 60 seconds across all Kafka partitions. These canary events flow through the entire pipeline (ingestion &rarr; quality filter &rarr; score update &rarr; Redis/ScyllaDB) and are verified at each stage.</p>
+
+    <div class="step-box">
+        <p><span class="step-badge">1</span> <strong>Canary Injector:</strong> Produces a synthetic bid request with domain=<code>canary-test.internal</code>, user_id=<code>canary-{partition_id}</code> to each of the 512 Kafka partitions. (512 canary events / minute)</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">2</span> <strong>Quality Filter Pass-Through:</strong> Canary events are whitelisted by domain (bypass bot/spoofing checks) but still exercise consent validation and dedup paths.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">3</span> <strong>Score Update Verification:</strong> After a canary event is processed, the verifier reads the canary user's score from Redis and ScyllaDB. It checks that the score was updated within expected latency.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">4</span> <strong>End-to-End Latency Measurement:</strong> The verifier computes the time from injection to confirmed score update. This gives us a <strong>true end-to-end pipeline latency</strong> metric, more meaningful than per-component latencies.</p>
+    </div>
+
+    <div class="math-box">
+        <h4>Canary Health Metrics</h4>
+<pre>
+Expected end-to-end canary latency breakdown:
+  Kafka produce:          ~1.3ms
+  Kafka → consumer lag:   ~500ms (batched consumption)
+  Quality filter:         ~0.8ms
+  Kafka → score consumer: ~500ms
+  Domain lookup (Redis):  ~2ms
+  Score update (Redis):   ~1ms
+  ScyllaDB writeback:     ~5ms (async, non-blocking)
+  ────────────────────────────────────────
+  Total end-to-end:       ~1.0 second
+
+Alert: If any canary event takes >5 seconds end-to-end
+       → WARNING
+       If >30 seconds or canary event is never seen
+       → CRITICAL (pipeline may be broken)
+
+Missing canary rate:
+  Normal: 0 missing out of 512/min
+  Warning: >5 missing (partition-level issue)
+  Critical: >50 missing (cluster-level issue)
+</pre>
+    </div>
+
+    <h3>Grafana Dashboard Layout</h3>
+
+    <p>Our primary operations dashboard shows four rows:</p>
+
+    <div class="info-box">
+        <h4>&#128202; Dashboard: "IAB Pipeline Health"</h4>
+        <ul>
+            <li><strong>Row 1 &mdash; Ingestion:</strong> QPS by SSP (stacked area chart), ingestion latency P50/P95/P99 (line chart), error rate (single stat with threshold colors)</li>
+            <li><strong>Row 2 &mdash; Quality:</strong> Per-gate rejection rates (stacked bar), overall pass rate (gauge, green 14-18%, yellow 12-22%, red outside), bot detection breakdown (pie chart)</li>
+            <li><strong>Row 3 &mdash; Storage:</strong> Redis memory usage and hit rate (gauges), ScyllaDB write latency and compaction backlog (line charts), Kafka consumer lag (area chart with critical threshold line)</li>
+            <li><strong>Row 4 &mdash; Freshness:</strong> Canary end-to-end latency (line chart), domain classification coverage % (single stat), crawl pipeline throughput (bar chart), stale domain count by tier (table)</li>
+        </ul>
+    </div>
+
+    <h3>Failure Scenario: Cascading Pipeline Failure</h3>
+
+    <div class="warning-box">
+        <h4>&#9888;&#65039; Scenario: ScyllaDB Compaction Storm Causes Cascading Latency</h4>
+        <p>This is a real failure mode we design against:</p>
+        <ol>
+            <li><strong>T+0:</strong> ScyllaDB triggers major compaction on 3 nodes simultaneously (normal maintenance, but timing is unfortunate)</li>
+            <li><strong>T+30s:</strong> Write latency on affected nodes spikes from 5ms to 200ms. Async writeback from Redis begins buffering.</li>
+            <li><strong>T+2min:</strong> Writeback buffer reaches 500 MB. Score update consumers begin slowing down because their writeback calls are blocking (back-pressure).</li>
+            <li><strong>T+5min:</strong> Kafka consumer lag for score-update group exceeds 60 seconds. WARNING alert fires.</li>
+            <li><strong>T+8min:</strong> Consumer lag exceeds 300 seconds. CRITICAL alert pages on-call engineer.</li>
+        </ol>
+        <p><strong>Recovery strategy:</strong></p>
+        <ul>
+            <li>Score update consumer detects ScyllaDB latency &gt;100ms and switches to <strong>fire-and-forget mode</strong>: writes to ScyllaDB become fully async with no blocking. Some writes may be lost, but Redis remains the source of truth.</li>
+            <li>Once compaction completes (~15-30 minutes), latency normalizes. A reconciliation job compares Redis and ScyllaDB for the affected time window and backfills any missing writes.</li>
+            <li><strong>Prevention:</strong> Configure ScyllaDB compaction to run during low-traffic hours (3-6 AM). Stagger compaction across nodes using per-node scheduling.</li>
+        </ul>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1.8 END-TO-END ARCHITECTURE SUMMARY                          -->
+    <!-- ============================================================ -->
+    <h2>&#127959;&#65039; 1.8 End-to-End Architecture: Putting It All Together</h2>
+
+    <p>With each component covered individually, the following traces a complete data flow from bid request arrival to user score update, showing how all components interact.</p>
+
+    <div class="architecture-diagram">
+    ┌────────────────────────────────────────────────────────────────────────────────┐
+    │                    COMPLETE DATA ENGINEERING PIPELINE                           │
+    │                                                                                │
+    │  SSPs (30+)                                                                    │
+    │    │                                                                           │
+    │    ▼                                                                           │
+    │  ┌──────────────────┐     ┌────────────────────────────────────────────┐       │
+    │  │ NLB + Ingestion  │────→│  Kafka: bid-requests-raw (512 partitions) │       │
+    │  │ Fleet (200 pods) │     └──────┬────────────────┬────────────┬──────┘       │
+    │  │ ~1.3ms/request   │            │                │            │              │
+    │  └──────────────────┘            ▼                ▼            ▼              │
+    │                          ┌──────────────┐  ┌──────────┐ ┌──────────┐         │
+    │                          │Quality Filter│  │S3 Archive│ │Analytics │         │
+    │                          │ (~0.8ms/evt) │  │  (raw)   │ │(1% smpl) │         │
+    │                          └──────┬───────┘  └──────────┘ └──────────┘         │
+    │                                 │                                              │
+    │                                 ▼                                              │
+    │                   ┌──────────────────────────────────┐                         │
+    │                   │ Kafka: bid-requests-filtered      │                        │
+    │                   │ (~8B events/day, 256 partitions)  │                        │
+    │                   └──────────────┬───────────────────┘                         │
+    │                                  │                                              │
+    │                                  ▼                                              │
+    │                   ┌──────────────────────────────────┐                         │
+    │                   │     SCORE UPDATE CONSUMER         │                        │
+    │                   │                                   │                        │
+    │                   │  1. Extract domain from event     │                        │
+    │                   │  2. Lookup domain in Redis ──────────→ ┌──────────────┐   │
+    │                   │     (<2ms)                        │    │ Redis:       │   │
+    │                   │  3. Get IAB probability vector    │    │ Domain→IAB   │   │
+    │                   │  4. Lookup user score array ─────────→ │ Lookup Table │   │
+    │                   │     (<2ms)                        │    │ (~50 MB)     │   │
+    │                   │  5. Add category scores to user   │    │              │   │
+    │                   │  6. Write updated scores to ─────────→ │ User Score   │   │
+    │                   │     Redis (<1ms)                  │    │ Arrays       │   │
+    │                   │  7. Async writeback to ──────────────→ │ (~56 GB)     │   │
+    │                   │     ScyllaDB (non-blocking)       │    └──────────────┘   │
+    │                   └──────────────────────────────────┘            │            │
+    │                                                                   │            │
+    │                                                                   ▼            │
+    │                                                           ┌──────────────┐    │
+    │                                                           │  ScyllaDB    │    │
+    │                                                           │  (500M+ user │    │
+    │                                                           │   profiles)  │    │
+    │  ┌────────────────────────────────────────────┐           └──────────────┘    │
+    │  │         DOMAIN CRAWL PIPELINE (Batch)       │                              │
+    │  │                                             │                              │
+    │  │  Airflow DAG → Scrapy Cluster → S3          │                              │
+    │  │       │                            │        │                              │
+    │  │       ▼                            ▼        │                              │
+    │  │  Extract Text → TF-IDF → Classify → Update ──→ Redis Domain Lookup Table  │
+    │  │  (bi-weekly for full corpus)                 │                              │
+    │  └────────────────────────────────────────────┘                               │
+    └────────────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Worked Example: End-to-End Event Processing</h3>
+
+    <div class="example-box">
+        <h4>&#128337; Scenario: User Visits expedia.com/flights</h4>
+        <p>A user with IDFA <code>6D92078A...</code> loads <code>expedia.com/flights/nyc-to-london</code> on their iPhone in Los Angeles. Here is how this event flows through the entire pipeline.</p>
+
+        <table>
+            <tr><th>Time</th><th>Component</th><th>Action</th><th>Duration</th></tr>
+            <tr>
+                <td>T+0ms</td>
+                <td>SSP (Google)</td>
+                <td>Sends OpenRTB bid request to our platform</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>T+0.5ms</td>
+                <td>NLB</td>
+                <td>Routes to ingestion pod #83 (round-robin)</td>
+                <td>0.5ms</td>
+            </tr>
+            <tr>
+                <td>T+1.8ms</td>
+                <td>Ingestion Pod</td>
+                <td>Parse JSON, extract fields, serialize Avro, produce to Kafka partition 201</td>
+                <td>1.3ms</td>
+            </tr>
+            <tr>
+                <td>T+502ms</td>
+                <td>Quality Filter Consumer</td>
+                <td>Consume from partition 201 (batched, ~500ms consumer poll interval)</td>
+                <td>~500ms wait</td>
+            </tr>
+            <tr>
+                <td>T+502.8ms</td>
+                <td>Quality Filter</td>
+                <td>Gate 1 (schema): PASS. Gate 2 (bot): PASS (real device UA, residential IP). Gate 3 (user ID): PASS (valid IDFA). Gate 4 (consent): PASS (US user, no GDPR). Gate 5 (domain): PASS (expedia.com in curated list, ads.txt valid). Gate 6 (dedup): PASS (first request this minute).</td>
+                <td>0.8ms</td>
+            </tr>
+            <tr>
+                <td>T+503ms</td>
+                <td>Filtered Kafka Topic</td>
+                <td>Event written to bid-requests-filtered, partition 112</td>
+                <td>0.2ms</td>
+            </tr>
+            <tr>
+                <td>T+1003ms</td>
+                <td>Score Update Consumer</td>
+                <td>Consume from partition 112 (~500ms poll interval)</td>
+                <td>~500ms wait</td>
+            </tr>
+            <tr>
+                <td>T+1005ms</td>
+                <td>Redis: Domain Lookup</td>
+                <td>GET domain:expedia.com → {IAB20: 0.65, IAB20-3: 0.20, IAB3: 0.10, IAB20-18: 0.05}</td>
+                <td>1.8ms</td>
+            </tr>
+            <tr>
+                <td>T+1007ms</td>
+                <td>Redis: User Score Read</td>
+                <td>HGETALL user:6D92078A... → current scores: {IAB20: 3.72, IAB12: 2.84, IAB3: 1.95, ...}</td>
+                <td>1.5ms</td>
+            </tr>
+            <tr>
+                <td>T+1008ms</td>
+                <td>Score Accumulation</td>
+                <td>Add domain IAB vector to user scores: IAB20: 3.72 + 0.65 = 4.37, IAB3: 1.95 + 0.10 = 2.05, etc.</td>
+                <td>0.1ms</td>
+            </tr>
+            <tr>
+                <td>T+1009ms</td>
+                <td>Redis: User Score Write</td>
+                <td>HMSET user:6D92078A... IAB20 4.37 IAB3 2.05 IAB20-3 (new) 0.20 ...</td>
+                <td>0.8ms</td>
+            </tr>
+            <tr>
+                <td>T+1009ms</td>
+                <td>ScyllaDB Writeback</td>
+                <td>Async batch insert (non-blocking, buffered for 100ms)</td>
+                <td>~5ms (async)</td>
+            </tr>
+            <tr>
+                <td><strong>T+1009ms</strong></td>
+                <td><strong>COMPLETE</strong></td>
+                <td><strong>User 6D92078A's Travel affinity score updated from 3.72 to 4.37</strong></td>
+                <td><strong>Total: ~1.0 sec</strong></td>
+            </tr>
+        </table>
+
+        <p><strong>Breakdown:</strong> Of the ~1.0 second end-to-end latency, approximately 1 second is consumer poll wait time (Kafka batching), and only ~6ms is actual processing. The user's updated score is available for audience segment targeting within 1 second of their page load &mdash; well within the requirements for subsequent bid requests on the same browsing session.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1.9 SECTION SUMMARY                                           -->
+    <!-- ============================================================ -->
+    <h2>&#9989; 1.9 Section Summary</h2>
+
+    <div class="success-box">
+        <h4>&#127942; Step 1 Key Outcomes</h4>
+        <ul>
+            <li>&#9989; <strong>Bidstream Ingestion:</strong> 580K+ QPS sustained, 1.2M burst capacity via 200-pod stateless fleet + 24-broker Kafka cluster with 512 partitions</li>
+            <li>&#9989; <strong>Domain Crawl Pipeline:</strong> 200K curated domains crawled on tiered schedule (daily to monthly) via 8-node Scrapy cluster, producing ~15 GB clean text per cycle</li>
+            <li>&#9989; <strong>Data Quality:</strong> 6-gate filtering gauntlet reducing 50B raw events to ~8B clean events/day (16% pass rate), with in-memory processing at 0.8ms P99 per event</li>
+            <li>&#9989; <strong>Storage Architecture:</strong> 4-tier strategy (Redis → ScyllaDB → S3 → Glacier) with &lt;5ms hot lookups, 7-30 day warm retention, and 2+ year archive at $47.5K/month total</li>
+            <li>&#9989; <strong>Monitoring:</strong> End-to-end observability with canary events, per-gate quality metrics, and SLA-driven alerting via Prometheus + Grafana + PagerDuty</li>
+            <li>&#9989; <strong>Resilience:</strong> Backpressure handling (5-stage overflow strategy), Redis failover (&lt;10 sec recovery), and ScyllaDB compaction storm mitigation</li>
+        </ul>
+    </div>
+
+    <h3>Technology Decisions Summary</h3>
+
+    <table>
+        <tr>
+            <th>Component</th>
+            <th>Chosen Technology</th>
+            <th>Key Rejected Alternative</th>
+            <th>Primary Reason for Choice</th>
+        </tr>
+        <tr>
+            <td>Message Broker</td>
+            <td>Apache Kafka</td>
+            <td>Kinesis, Pulsar, Pub/Sub</td>
+            <td>Proven at 1M+ msg/sec; partitioned log model; replay capability; team expertise</td>
+        </tr>
+        <tr>
+            <td>Serialization</td>
+            <td>Apache Avro</td>
+            <td>JSON, Protobuf, MessagePack</td>
+            <td>60% smaller than JSON; schema registry enforcement; schema evolution</td>
+        </tr>
+        <tr>
+            <td>Crawl Framework</td>
+            <td>Scrapy</td>
+            <td>Nutch, Playwright, Common Crawl</td>
+            <td>Python ML stack integration; built-in robots.txt; middleware pipeline</td>
+        </tr>
+        <tr>
+            <td>Hot Storage</td>
+            <td>Redis Cluster</td>
+            <td>Aerospike, DynamoDB, Memcached</td>
+            <td>&lt;2ms reads; atomic HINCRBY for score updates; 56 GB fits in RAM</td>
+        </tr>
+        <tr>
+            <td>Warm Storage</td>
+            <td>ScyllaDB</td>
+            <td>Cassandra, DynamoDB, PostgreSQL</td>
+            <td>5-10x Cassandra throughput per node; wire-compatible CQL; 15 nodes vs 60+</td>
+        </tr>
+        <tr>
+            <td>Cold Storage</td>
+            <td>S3 + Parquet</td>
+            <td>HDFS, BigQuery, Snowflake</td>
+            <td>Cheapest per-TB; Parquet columnar for analytics; Athena serverless queries</td>
+        </tr>
+    </table>
+
+    <h3>Related: Feature Engineering</h3>
+
+    <div class="info-box">
+        <h4>&#128073; Related: Feature Engineering</h4>
+        <p>The data engineering foundation feeds directly into <strong>Feature Engineering</strong> &mdash; transforming the raw data flowing through this pipeline into features suitable for the ML models:</p>
+        <ul>
+            <li><strong>Domain text &rarr; TF-IDF vectors:</strong> Converting the crawled text corpus (15 GB) into the TF-IDF feature matrix used by the IAB classifier</li>
+            <li><strong>Bid events &rarr; User visit features:</strong> Aggregating filtered bid events into per-user browsing patterns (visit frequency, recency, diversity)</li>
+            <li><strong>IAB score arrays &rarr; Audience features:</strong> Transforming raw accumulated scores into normalized, decay-adjusted feature vectors for segment assignment</li>
+            <li><strong>Domain metadata features:</strong> Enriching domain classifications with traffic volume, category diversity, and temporal patterns</li>
+        </ul>
+        <p>The quality of features directly depends on the data quality gates built here. Every bot event filtered, every stale crawl refreshed, and every spoofed domain caught in this step protects the integrity of the features and models downstream.</p>
+    </div>
+
+</div>
+</body>
+</html>

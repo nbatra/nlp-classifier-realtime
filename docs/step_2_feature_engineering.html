@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 2: Feature Engineering — IAB Audience Generation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #2c3e50;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            padding: 50px 60px;
+        }
+
+        h1 {
+            font-size: 2.6em;
+            color: #2c3e50;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            border-left: 6px solid #667eea;
+            padding-left: 20px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+        }
+
+        h3 {
+            font-size: 1.4em;
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 35px;
+            border-radius: 12px;
+            margin-bottom: 35px;
+        }
+
+        .hero-section h2 {
+            color: white;
+            border-left: 6px solid rgba(255, 255, 255, 0.6);
+            margin-top: 0;
+            font-size: 2em;
+        }
+
+        .hero-section p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .hero-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .hero-section ul li {
+            padding: 6px 0;
+            font-size: 1.05em;
+        }
+
+        .hero-section ul li::before {
+            content: "✦ ";
+            opacity: 0.8;
+        }
+
+        .step-box {
+            background: #e8f5e8;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .step-box .step-number {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .step-box h4 {
+            display: inline;
+            color: #1e7e34;
+            font-size: 1.15em;
+        }
+
+        .step-box p, .step-box pre {
+            margin-top: 10px;
+            margin-left: 44px;
+        }
+
+        .math-box {
+            background: #e8f4fd;
+            border: 3px solid #3498db;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 20px 0;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.95em;
+            overflow-x: auto;
+        }
+
+        .math-box h4 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #2980b9;
+            margin-top: 0;
+        }
+
+        .key-insight {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 18px 22px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .key-insight strong {
+            color: #1e7e34;
+        }
+
+        .warning-box {
+            background: #fff5f5;
+            border-left: 4px solid #dc3545;
+            padding: 18px 22px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box strong {
+            color: #dc3545;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 18px 22px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 18px 22px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .decision-matrix {
+            background: #f0f8ff;
+            border: 2px solid #4169e1;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .decision-matrix h4 {
+            color: #4169e1;
+            margin-top: 0;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .pros {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .pros h4 {
+            color: #28a745;
+        }
+
+        .cons {
+            background: #fff5f5;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .cons h4 {
+            color: #dc3545;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+
+        th {
+            background: #f2f2f2;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ddd;
+        }
+
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+
+        ul, ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .architecture-diagram {
+            background: #1e1e2e;
+            color: #a6e3a1;
+            padding: 25px;
+            border-radius: 10px;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.85em;
+            overflow-x: auto;
+            margin: 20px 0;
+            line-height: 1.4;
+            white-space: pre;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 30px 0;
+        }
+
+        .success-box h4 {
+            color: #1e7e34;
+            margin-top: 0;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .metric-card .value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .metric-card .label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            border: 2px solid #6c757d;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 20px 0;
+        }
+
+        .example-box h4 {
+            color: #495057;
+            margin-top: 0;
+        }
+
+        .nav-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 5px 0;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Step 2: Feature Engineering</h1>
+    <p style="font-size:1.1em; color:#6c757d;">IAB Category Audience Generation for Programmatic Advertising &mdash; Transforming raw bidstream data and crawled web content into production ML features</p>
+
+    <!-- ================================================================== -->
+    <!-- HERO SECTION -->
+    <!-- ================================================================== -->
+    <div class="hero-section">
+        <h2>&#x1F3AF; Core Objective</h2>
+        <p>Feature engineering is the bridge between raw data (bid requests, crawled HTML, OpenRTB metadata) and the ML models that classify domains into IAB categories and score users for audience targeting. In this step we design <strong>every feature</strong> that flows into the system &mdash; from TF-IDF text vectors for domain classification to cyclical time encodings on bid requests to the per-user IAB score arrays that power audience segmentation.</p>
+        <ul>
+            <li>Build a TF-IDF vectorization pipeline that converts crawled website text into sparse feature vectors over ~700 IAB categories</li>
+            <li>Engineer domain-level, bid-request-level, and user-level features at a scale of <strong>50 billion bid requests/day</strong></li>
+            <li>Design a multi-tier feature storage strategy serving &lt;5ms domain lookups and &lt;10ms user score reads</li>
+            <li>Ensure feature quality through drift detection, staleness monitoring, and graceful degradation</li>
+        </ul>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 2.1 SCALE REALITY CHECK -->
+    <!-- ================================================================== -->
+    <h2>&#x1F4CA; 2.1 Scale Reality Check &mdash; Feature Volume at Platform Scale</h2>
+
+    <p>Before writing a single line of feature-engineering code, we need to understand the sheer volume of features this system must compute, serve, and store. The numbers below are derived from the platform scale established in Step 1 (Data Engineering).</p>
+
+    <h3>Platform Baseline Numbers</h3>
+
+    <div class="metric-grid">
+        <div class="metric-card">
+            <div class="value">50B+</div>
+            <div class="label">Bid Requests / Day</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">~580K</div>
+            <div class="label">Bid Requests / Second (avg)</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">500M+</div>
+            <div class="label">Unique User Profiles</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">200K+</div>
+            <div class="label">Active Domains</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">~700</div>
+            <div class="label">IAB Categories (v2.2)</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">&lt;5ms</div>
+            <div class="label">Domain Lookup SLA</div>
+        </div>
+    </div>
+
+    <h3>Feature Volume Breakdown</h3>
+
+    <table>
+        <tr>
+            <th>Feature Category</th>
+            <th>Count / Dimensions</th>
+            <th>Storage Per Entity</th>
+            <th>Total Storage</th>
+            <th>Update Frequency</th>
+        </tr>
+        <tr>
+            <td><strong>TF-IDF Text Vectors</strong> (per domain)</td>
+            <td>50,000-dim sparse vector</td>
+            <td>~2 KB avg (sparse, ~500 non-zero)</td>
+            <td>~400 MB (200K domains)</td>
+            <td>Weekly batch re-crawl</td>
+        </tr>
+        <tr>
+            <td><strong>IAB Probability Array</strong> (per domain)</td>
+            <td>700 float32 values</td>
+            <td>2.8 KB</td>
+            <td>~560 MB (200K domains)</td>
+            <td>Weekly after re-classification</td>
+        </tr>
+        <tr>
+            <td><strong>Domain Metadata Features</strong></td>
+            <td>~25 features</td>
+            <td>~200 bytes</td>
+            <td>~40 MB</td>
+            <td>Weekly with crawl</td>
+        </tr>
+        <tr>
+            <td><strong>User IAB Score Array</strong></td>
+            <td>700 float32 + 700 timestamp</td>
+            <td>~8.4 KB (scores + last-update times)</td>
+            <td>~4.2 TB (500M users)</td>
+            <td>Real-time (every bid request)</td>
+        </tr>
+        <tr>
+            <td><strong>User Visit Frequency Features</strong></td>
+            <td>~15 features</td>
+            <td>~120 bytes</td>
+            <td>~60 GB</td>
+            <td>Real-time</td>
+        </tr>
+        <tr>
+            <td><strong>Bid Request Features</strong> (transient)</td>
+            <td>~40 features per request</td>
+            <td>~320 bytes</td>
+            <td>~16 TB/day (not stored long-term)</td>
+            <td>Per event, ephemeral</td>
+        </tr>
+    </table>
+
+    <div class="key-insight">
+        <strong>Key Insight:</strong> The dominant storage cost is user IAB score arrays at <strong>~4.2 TB</strong> for 500M users. This is the single largest feature artifact in the system. Domain-level features (TF-IDF vectors + IAB probabilities) are comparatively tiny at ~1 GB total &mdash; small enough to fit entirely in a Redis cluster's memory for sub-millisecond lookups.
+    </div>
+
+    <h3>Peak Load Feature Computation</h3>
+
+    <table>
+        <tr>
+            <th>Scenario</th>
+            <th>Bid QPS</th>
+            <th>Feature Lookups/sec</th>
+            <th>User Score Writes/sec</th>
+            <th>Network Bandwidth</th>
+        </tr>
+        <tr>
+            <td>Weekday average</td>
+            <td>~580K</td>
+            <td>~580K domain + 580K user</td>
+            <td>~580K</td>
+            <td>~370 MB/s</td>
+        </tr>
+        <tr>
+            <td>Evening peak (US)</td>
+            <td>~1.2M</td>
+            <td>~1.2M domain + 1.2M user</td>
+            <td>~1.2M</td>
+            <td>~770 MB/s</td>
+        </tr>
+        <tr>
+            <td>Black Friday / Super Bowl</td>
+            <td>~5M+</td>
+            <td>~5M domain + 5M user</td>
+            <td>~5M</td>
+            <td>~3.2 GB/s</td>
+        </tr>
+    </table>
+
+    <div class="warning-box">
+        <strong>&#x26A0; Peak Load Warning:</strong> During events like Black Friday, feature-serving infrastructure must handle <strong>10 million lookups per second</strong> (domain + user combined) while maintaining the &lt;5ms domain and &lt;10ms user SLA. Any feature computation that cannot be pre-computed and cached is a non-starter at this scale. This is why we pre-compute domain &rarr; IAB probability arrays in batch and store them in Redis, rather than computing TF-IDF + classify in real-time.
+    </div>
+
+    <h3>Why Pre-Computation Is Non-Negotiable</h3>
+
+    <p>Computing TF-IDF features in real-time for each bid request would be prohibitively expensive:</p>
+
+    <div class="math-box">
+        <h4>Real-Time TF-IDF Cost Analysis</h4>
+<pre>
+Per bid request (if done real-time):
+  1. Fetch crawled page text:          ~50ms (network + storage I/O)
+  2. Tokenize + clean text:            ~5ms  (CPU)
+  3. Compute TF-IDF against vocab:     ~10ms (CPU, 50K-dim sparse multiply)
+  4. Run classifier inference:         ~3ms  (CPU, logistic regression)
+  5. Total per request:                ~68ms
+
+At 580K QPS:
+  CPU cores needed:    580,000 × 0.018s (CPU only) = 10,440 cores
+  Network I/O:         580,000 × 50KB page text = 29 GB/s
+  Cost (AWS c6i.xlarge @ $0.17/hr):  ~2,610 instances = $443K/month
+
+With pre-computed lookup table:
+  1. Redis GET domain_iab:{domain}:    ~1ms
+  CPU cores needed:    ~minimal (Redis handles it)
+  Cost (Redis cluster):                ~$8K/month
+
+Savings: ~98% cost reduction, ~68x latency reduction
+</pre>
+    </div>
+
+    <div class="key-insight">
+        <strong>Key Insight:</strong> Pre-computing domain &rarr; IAB probability arrays and caching them in Redis reduces per-request feature latency from ~68ms to ~1ms and monthly compute costs from ~$443K to ~$8K. This is the fundamental architectural decision that makes real-time bidstream processing feasible.
+    </div>
+
+
+    <!-- ================================================================== -->
+    <!-- 2.2 TECHNOLOGY SELECTION: TEXT VECTORIZATION -->
+    <!-- ================================================================== -->
+    <h2>&#x1F9EA; 2.2 Text Vectorization &mdash; Why TF-IDF Over Alternatives</h2>
+
+    <p>The most critical feature engineering decision in this system is how we convert crawled website text into numerical feature vectors for domain classification. <strong>A librarian assigning every book in a massive library to one of 700 genre categories</strong> could read every book cover-to-cover and develop a deep semantic understanding (like BERT), or quickly scan for distinctive keywords that reliably signal genre &mdash; "recipe," "preheat," "tablespoon" almost certainly means Cooking. TF-IDF takes the keyword-scanning approach, and for this use case, it is dramatically more effective per compute dollar.</p>
+
+    <h3>Decision: TF-IDF Vectorization</h3>
+
+    <div class="decision-matrix">
+        <h4>&#x1F4CB; Technology Decision: Text Feature Extraction Method</h4>
+        <p><strong>Problem:</strong> Convert crawled website text (avg 5,000 words per page) into fixed-size numerical vectors for a classifier that maps domains to ~700 IAB content categories.</p>
+        <p><strong>Chosen:</strong> TF-IDF with n-grams (unigrams + bigrams), vocabulary size 50,000</p>
+
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#x2705; Why TF-IDF Wins</h4>
+                <ul>
+                    <li><strong>Inference speed:</strong> Sparse matrix multiply &mdash; ~10ms per document on CPU</li>
+                    <li><strong>Interpretable:</strong> Top features are human-readable terms like "mortgage rate" or "flight booking"</li>
+                    <li><strong>Minimal infrastructure:</strong> No GPU cluster needed; scikit-learn on standard VMs</li>
+                    <li><strong>Batch-friendly:</strong> Vectorize 200K domains in &lt;2 hours on 8 cores</li>
+                    <li><strong>Sparse storage:</strong> ~500 non-zero values out of 50K dims = 99% sparse = ~2 KB per domain</li>
+                    <li><strong>Strong baseline accuracy:</strong> TF-IDF + Linear SVM achieves 85-90% top-1 accuracy on IAB classification (industry benchmarks)</li>
+                    <li><strong>Debuggable:</strong> When classification is wrong, inspect top TF-IDF terms to understand why</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Limitations (Acceptable)</h4>
+                <ul>
+                    <li>No semantic understanding &mdash; "car" and "automobile" are separate features</li>
+                    <li>Bag-of-words loses word order</li>
+                    <li>Cannot handle unseen vocabulary (OOV words get 0 weight)</li>
+                    <li>Bigrams partially mitigate but don't fully solve context issues</li>
+                    <li>Vocabulary must be periodically refreshed as web content evolves</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Rejected Alternative 1: Word2Vec / FastText Embeddings</h3>
+
+    <div class="decision-matrix">
+        <h4>&#x274C; Rejected: Word2Vec / FastText Averaged Document Embeddings</h4>
+        <p><strong>Approach:</strong> Train or use pre-trained word embeddings (300-dim), average all word vectors in a document to get a document-level representation.</p>
+
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#x2705; Potential Benefits</h4>
+                <ul>
+                    <li>Captures semantic similarity ("car" &#x2248; "automobile")</li>
+                    <li>Dense 300-dim vector &mdash; smaller per-domain storage</li>
+                    <li>Handles some OOV words (FastText subword approach)</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Why We Rejected It</h4>
+                <ul>
+                    <li><strong>Information loss:</strong> Averaging word vectors collapses a 5,000-word document into 300 dims &mdash; loses topic-discriminative keywords</li>
+                    <li><strong>Poor for multi-topic pages:</strong> A CNN.com homepage about politics AND sports averages to a meaningless middle ground</li>
+                    <li><strong>Not interpretable:</strong> Cannot inspect "why was this domain classified as Travel?"</li>
+                    <li><strong>Marginal accuracy gain:</strong> Benchmarks show &lt;2% improvement over TF-IDF for topic classification tasks, not worth the complexity</li>
+                    <li><strong>Requires pre-trained model management:</strong> Must version, store, and load embedding matrices (~1.2 GB for 4M-word FastText)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Rejected Alternative 2: BERT / Transformer Embeddings</h3>
+
+    <div class="decision-matrix">
+        <h4>&#x274C; Rejected: BERT-based Document Embeddings</h4>
+        <p><strong>Approach:</strong> Use a pre-trained BERT model (or fine-tuned variant) to encode crawled page text into 768-dim contextualized embeddings.</p>
+
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#x2705; Potential Benefits</h4>
+                <ul>
+                    <li>State-of-the-art semantic understanding</li>
+                    <li>Captures context, negation, nuance</li>
+                    <li>Transfer learning from massive pre-training corpus</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Why We Rejected It</h4>
+                <ul>
+                    <li><strong>Inference cost:</strong> ~200ms per document on GPU, ~2 seconds on CPU &mdash; vectorizing 200K domains would take 111 GPU-hours (~$350 per batch run)</li>
+                    <li><strong>512 token limit:</strong> BERT truncates at 512 tokens; our crawled pages average 5,000 words. Sliding window approaches add 10x complexity</li>
+                    <li><strong>GPU infrastructure required:</strong> Need persistent GPU cluster for weekly re-classification &mdash; adds $15-30K/month in infrastructure</li>
+                    <li><strong>Overkill for topic classification:</strong> BERT excels at nuanced NLU tasks (sentiment, entailment). For "is this page about Travel or Sports?" keyword signals suffice</li>
+                    <li><strong>Not interpretable:</strong> 768-dim dense vector provides no insight into classification reasoning</li>
+                    <li><strong>Diminishing returns:</strong> Studies on topic classification show BERT improves over TF-IDF+SVM by ~3-5%, but at 50-100x the compute cost</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Rejected Alternative 3: LLM-based Classification (GPT-4, Claude)</h3>
+
+    <div class="decision-matrix">
+        <h4>&#x274C; Rejected: LLM API Classification</h4>
+        <p><strong>Approach:</strong> Send crawled page text to a large language model API with a prompt like "Classify this webpage into IAB categories" and parse the response.</p>
+
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#x2705; Potential Benefits</h4>
+                <ul>
+                    <li>Highest accuracy for ambiguous/edge cases</li>
+                    <li>Zero training data needed &mdash; works out-of-the-box</li>
+                    <li>Can provide reasoning for each classification</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Why We Rejected It</h4>
+                <ul>
+                    <li><strong>Cost:</strong> ~$0.01-0.03 per domain classification &times; 200K domains = $2,000-6,000 per weekly batch &mdash; vs ~$5 for TF-IDF+SVM on CPU</li>
+                    <li><strong>Latency:</strong> 2-10 seconds per classification &mdash; 200K domains = 55-278 hours even with parallelization</li>
+                    <li><strong>Rate limits:</strong> API rate limits restrict throughput to ~1,000-3,000 requests/minute</li>
+                    <li><strong>Non-deterministic:</strong> Same input can produce different outputs across API calls, making evaluation and debugging unreliable</li>
+                    <li><strong>Vendor lock-in:</strong> Entire classification pipeline depends on third-party API availability and pricing</li>
+                    <li><strong>Privacy concerns:</strong> Sending crawled website content to external APIs may violate data processing agreements</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <strong>Note on Hybrid Approaches:</strong> We do use LLMs selectively for <strong>labeling the training set</strong> (see Step 4: Model Training). A small set of ~5,000 domains is labeled using LLM classification to bootstrap the training data. But the production classification pipeline uses TF-IDF + traditional ML classifier for the reasons above. The LLM is a labeling tool, not a production inference tool.
+    </div>
+
+    <h3>Technology Decision Summary</h3>
+
+    <table>
+        <tr>
+            <th>Method</th>
+            <th>Accuracy (Topic Classif.)</th>
+            <th>Cost per 200K Domains</th>
+            <th>Latency per Doc</th>
+            <th>Interpretable</th>
+            <th>Infrastructure</th>
+        </tr>
+        <tr style="background: #e8f5e9;">
+            <td><strong>TF-IDF + SVM &#x2705;</strong></td>
+            <td>85-90%</td>
+            <td>~$5 (CPU)</td>
+            <td>~10ms</td>
+            <td>Yes</td>
+            <td>CPU VMs only</td>
+        </tr>
+        <tr>
+            <td>Word2Vec Avg</td>
+            <td>86-91%</td>
+            <td>~$15 (CPU)</td>
+            <td>~15ms</td>
+            <td>No</td>
+            <td>CPU VMs + embedding files</td>
+        </tr>
+        <tr>
+            <td>BERT</td>
+            <td>89-93%</td>
+            <td>~$350 (GPU)</td>
+            <td>~200ms (GPU)</td>
+            <td>No</td>
+            <td>GPU cluster</td>
+        </tr>
+        <tr>
+            <td>LLM API</td>
+            <td>92-96%</td>
+            <td>$2,000-6,000</td>
+            <td>2-10s</td>
+            <td>Yes (with prompting)</td>
+            <td>External API dependency</td>
+        </tr>
+    </table>
+
+
+    <!-- ================================================================== -->
+    <!-- 2.3 TF-IDF VECTORIZATION PIPELINE -->
+    <!-- ================================================================== -->
+    <h2>&#x1F4D6; 2.3 TF-IDF Vectorization Pipeline &mdash; From Raw Text to Feature Vectors</h2>
+
+    <p>The TF-IDF pipeline converts crawled website text into the sparse feature vectors the classifier consumes. The following covers every stage &mdash; text extraction, cleaning, tokenization, vocabulary selection, IDF computation, and final vector generation &mdash; with concrete design choices and their justifications.</p>
+
+    <h3>Pipeline Overview</h3>
+
+    <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                     TF-IDF VECTORIZATION PIPELINE (BATCH)                       │
+│                                                                                 │
+│  ┌──────────┐    ┌──────────────┐    ┌────────────┐    ┌──────────────────┐    │
+│  │ Raw HTML  │───>│ Text Extract  │───>│ Tokenize + │───>│ TF-IDF Vector   │    │
+│  │ (S3/GCS)  │    │ + Clean       │    │ N-gram Gen │    │ Generation       │    │
+│  └──────────┘    └──────────────┘    └────────────┘    └──────────────────┘    │
+│       │                │                    │                    │               │
+│   200K pages      ~5K words/page     ~12K tokens/page     50K-dim sparse      │
+│   ~50 GB total    strip HTML tags    unigrams+bigrams     ~500 non-zero       │
+│                   remove boilerplate  stopword removal     ~2 KB per domain    │
+│                   language detect                                               │
+│                                                                                 │
+│  Timing: ~2 hours end-to-end on 8-core VM for 200K domains                     │
+│  Schedule: Weekly (Sunday 02:00 UTC) after domain re-crawl completes            │
+└─────────────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Stage 1: Text Extraction and Cleaning</h3>
+
+    <p>Raw crawled HTML is messy. A typical webpage contains navigation menus, ad scripts, cookie banners, footers, and boilerplate that has nothing to do with the page's topical content. If we vectorize all of this text, our TF-IDF features will be dominated by noise terms like "cookie policy," "subscribe," "all rights reserved," and "privacy."</p>
+
+    <div class="step-box">
+        <span class="step-number">1</span>
+        <h4>HTML Tag Stripping and Boilerplate Removal</h4>
+        <p>We use a <strong>content-extraction library</strong> (trafilatura or readability-lxml) rather than naive HTML tag stripping. These libraries use heuristic rules to identify the "main content" block and discard navigation, sidebars, headers, and footers.</p>
+<pre>
+Input:  Full HTML page for expedia.com/flights (~85 KB HTML)
+        Contains: nav menu, search form, hero banner, footer,
+                  cookie banner, ads, promotional content, main text
+
+After boilerplate removal:
+        "Book cheap flights and airline tickets. Search hundreds
+         of travel sites at once for deals on flights to anywhere.
+         Compare flight prices from major airlines and travel
+         agents. Find the best flight deals for your next trip.
+         Popular destinations: New York, Los Angeles, London..."
+
+Retained: ~5,200 words (main content)
+Removed:  ~12,000 words (boilerplate, navigation, scripts)
+Ratio:    ~30% of raw text retained — the 30% that matters
+</pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-number">2</span>
+        <h4>Language Detection and Filtering</h4>
+        <p>We classify extracted text using <strong>langdetect</strong> (or fastText language ID). For v1, we process <strong>English-only</strong> content. Non-English domains are assigned IAB categories using URL/metadata heuristics only (covered in Section 2.4).</p>
+<pre>
+Language distribution across 200K crawled domains:
+  English:    ~72% (144K domains) → Full TF-IDF pipeline
+  Spanish:     ~8% (16K domains)  → Metadata-only classification
+  German:      ~4% (8K domains)   → Metadata-only classification
+  French:      ~3% (6K domains)   → Metadata-only classification
+  Other:      ~13% (26K domains)  → Metadata-only classification
+
+Design decision: English-first gets us 72% coverage by domain count,
+but ~85% by bid request volume (English domains dominate ad inventory).
+Multi-language TF-IDF is a Phase 2 enhancement (separate vocabularies).
+</pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-number">3</span>
+        <h4>Text Normalization</h4>
+        <p>After extraction, we apply a normalization pipeline to reduce vocabulary size and improve feature quality:</p>
+<pre>
+Normalization steps (in order):
+  1. Lowercase:           "New York Flights" → "new york flights"
+  2. Remove URLs:         "visit http://..." → "visit"
+  3. Remove emails:       "contact@site.com" → ""
+  4. Remove numbers:      "save $299 on flights" → "save on flights"
+     (exception: keep numbers in specific patterns like "5-star", "top-10")
+  5. Remove punctuation:  "world-class" → "world class"
+     (exception: preserve hyphens in compound terms detected by frequency)
+  6. Remove short tokens: tokens < 2 characters dropped
+  7. Collapse whitespace: multiple spaces → single space
+
+Result: Clean, lowercase, alphabetic text ready for tokenization
+</pre>
+    </div>
+
+    <h3>Stage 2: Tokenization and N-gram Generation</h3>
+
+    <div class="step-box">
+        <span class="step-number">4</span>
+        <h4>Tokenization Strategy</h4>
+        <p>We use <strong>whitespace + punctuation tokenization</strong> (not subword/BPE) because TF-IDF operates on complete meaningful terms. We do NOT apply stemming or lemmatization &mdash; here is why:</p>
+<pre>
+Why no stemming/lemmatization:
+  - "flights" and "flight" → "flight" (stemmed) — OK, these are synonymous
+  - "cooking" and "cook" → "cook" (stemmed) — OK for topic signal
+  BUT:
+  - "university" and "universe" → "univers" (Porter stemmer) — WRONG,
+    conflates Education and Science
+  - "organization" and "organ" → "organ" (aggressive stemmer) — WRONG,
+    conflates different IAB categories
+
+For IAB topic classification, we WANT the vocabulary to distinguish
+"automotive" from "automation" and "finance" from "fine dining."
+Stemming reduces vocabulary by ~30% but introduces ~5% category confusion.
+
+Decision: No stemming. Accept larger vocabulary; rely on IDF weighting
+to handle related forms. Bigrams capture multi-word topic signals.
+</pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-number">5</span>
+        <h4>N-gram Generation: Unigrams + Bigrams</h4>
+        <p>We generate both <strong>unigrams (single words)</strong> and <strong>bigrams (two-word phrases)</strong>. Trigrams were tested but rejected.</p>
+<pre>
+Example: "book cheap flights to new york from los angeles"
+
+Unigrams: ["book", "cheap", "flights", "new", "york", "from", "los", "angeles"]
+Bigrams:  ["book cheap", "cheap flights", "flights new", "new york",
+           "york from", "from los", "los angeles"]
+
+Why bigrams matter for IAB classification:
+  "new york"      → Travel/Destinations (unigram "new" alone is useless)
+  "real estate"   → Real Estate (unigram "real" alone is ambiguous)
+  "credit card"   → Personal Finance
+  "climate change" → Science/Environment
+  "machine learning" → Technology/Computing
+  "video games"   → Gaming
+
+Why NOT trigrams:
+  - Vocabulary explodes: 50K unigrams + bigrams → 250K+ with trigrams
+  - Most trigrams are too specific / low-frequency to be useful
+  - Tested: trigrams added ~0.5% accuracy but increased vocab 5x
+  - Decision: Not worth the storage and computation cost
+</pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-number">6</span>
+        <h4>Stopword Removal</h4>
+        <p>We use a <strong>custom stopword list</strong> that extends the standard English stopwords with web-specific terms:</p>
+<pre>
+Standard English stopwords (NLTK, ~180 words):
+  "the", "is", "at", "which", "on", "a", "an", "and", "or", ...
+
+Web-specific additions (~120 words):
+  "click", "subscribe", "share", "comment", "login", "signup",
+  "cookie", "privacy", "terms", "copyright", "reserved", "menu",
+  "search", "home", "contact", "about", "next", "previous", "page",
+  "advertisement", "sponsored", "partner", "affiliate", ...
+
+Domain-specific exclusions (words we KEEP despite being common):
+  "free"        → Keep: signals Free Software, Freemium services
+  "best"        → Keep: signals review/comparison content
+  "top"         → Keep: signals ranking/list content
+  "news"        → Keep: critical for News/Current Events IAB category
+  "health"      → Keep: critical for Health &amp; Fitness category
+
+Total stopword list: ~300 words
+Impact: Reduces token count per page by ~40%, vocabulary by ~8%
+</pre>
+    </div>
+
+    <h3>Stage 3: Vocabulary Selection</h3>
+
+    <p>After tokenization, we have millions of unique terms across 200K domains. We must select a <strong>fixed vocabulary of 50,000 terms</strong> that maximizes classification signal while keeping computation tractable.</p>
+
+    <div class="math-box">
+        <h4>Vocabulary Selection Criteria</h4>
+<pre>
+Raw vocabulary after tokenization of 144K English domains:
+  Total unique unigrams:    ~2.1 million
+  Total unique bigrams:     ~18.4 million
+  Combined:                 ~20.5 million unique terms
+
+Selection process:
+  1. Minimum document frequency (min_df=5):
+     Remove terms appearing in fewer than 5 domains
+     → Eliminates typos, domain-specific jargon, proper nouns
+     → Reduces to ~850K terms
+
+  2. Maximum document frequency (max_df=0.85):
+     Remove terms appearing in >85% of domains
+     → Eliminates near-universal terms missed by stopword list
+     → Reduces to ~780K terms
+
+  3. Select top 50,000 by TF-IDF score sum across corpus:
+     For each surviving term, sum its TF-IDF weight across all documents
+     → Ranks terms by overall discriminative power
+     → Selects final 50,000 vocabulary
+
+Why 50,000 dimensions:
+  - 30,000: Tested — loses ~2% accuracy due to missing niche IAB terms
+  - 50,000: Sweet spot — captures topic-discriminative terms across all 700 IAB cats
+  - 100,000: Tested — gains &lt;0.3% accuracy, doubles storage and compute
+  - 200,000: Dominated by low-frequency terms that add noise
+
+Final vocabulary composition:
+  Unigrams:   ~35,000 (70%)
+  Bigrams:    ~15,000 (30%)
+</pre>
+    </div>
+
+    <h3>Stage 4: TF-IDF Computation</h3>
+
+    <p>With the vocabulary fixed, the next step is computing TF-IDF weights. The math here matters &mdash; these formulas determine the quality of every downstream feature.</p>
+
+    <div class="math-box">
+        <h4>TF-IDF Formula</h4>
+<pre>
+TF-IDF(t, d) = TF(t, d) × IDF(t)
+
+Where:
+  TF(t, d)  = Term Frequency of term t in document d
+  IDF(t)    = Inverse Document Frequency of term t across corpus
+
+TF computation (sublinear):
+  TF(t, d) = 1 + log(raw_count(t, d))    if raw_count > 0
+           = 0                             if raw_count = 0
+
+  Why sublinear? A term appearing 100 times is not 100x more important
+  than appearing once. The log dampens frequency inflation from verbose pages.
+
+IDF computation (smoothed):
+  IDF(t) = log((1 + N) / (1 + df(t))) + 1
+
+  Where:
+    N     = total number of documents in corpus (144,000 English domains)
+    df(t) = number of documents containing term t
+
+  The +1 smoothing prevents division by zero and ensures terms appearing
+  in all documents still get non-zero (though low) IDF weight.
+
+L2 normalization (per document):
+  v_normalized = v / ||v||₂
+
+  This ensures that long documents and short documents produce vectors
+  of equal magnitude — preventing a 10,000-word page from dominating
+  a 500-word page purely due to length.
+</pre>
+    </div>
+
+    <h3>Worked Example: TF-IDF for expedia.com</h3>
+
+    <p>Here is the full TF-IDF computation for a real domain, step by step.</p>
+
+    <div class="example-box">
+        <h4>&#x1F4DD; Worked Example: Vectorizing expedia.com</h4>
+<pre>
+Step 1: Crawled text (after cleaning and extraction, first 100 words shown):
+
+  "book cheap flights and airline tickets search hundreds of travel sites
+   at once for deals on flights to anywhere compare flight prices from
+   major airlines and travel agents find the best flight deals for your
+   next trip popular destinations new york los angeles london paris tokyo
+   hotels vacation rentals car rentals cruises vacation packages all
+   inclusive resorts last minute travel deals spring break deals summer
+   vacation deals..."
+
+Step 2: After stopword removal and tokenization (sample tokens):
+
+  Unigrams: ["book", "cheap", "flights", "airline", "tickets", "travel",
+             "sites", "deals", "flights", "compare", "flight", "prices",
+             "airlines", "travel", "agents", "best", "flight", "deals",
+             "trip", "destinations", "york", "angeles", "london", "paris",
+             "tokyo", "hotels", "vacation", "rentals", "car", "cruises",
+             "packages", "resorts", "minute", "travel", "deals", "spring",
+             "break", "summer", "vacation"]
+
+  Bigrams:  ["cheap flights", "airline tickets", "travel sites", "flight deals",
+             "flight prices", "travel agents", "best flight", "popular destinations",
+             "new york", "los angeles", "vacation rentals", "car rentals",
+             "vacation packages", "last minute", "summer vacation"]
+
+Step 3: Raw term counts (top terms):
+
+  "flights"          : 4   |  "cheap flights"     : 1
+  "travel"           : 3   |  "flight deals"      : 2
+  "deals"            : 4   |  "vacation rentals"  : 1
+  "flight"           : 3   |  "airline tickets"   : 1
+  "vacation"         : 2   |  "travel sites"      : 1
+  "hotels"           : 1   |  "car rentals"       : 1
+  "airline"          : 1   |  "new york"          : 1
+
+Step 4: Sublinear TF:
+
+  TF("flights")      = 1 + log(4) = 1 + 1.386 = 2.386
+  TF("travel")       = 1 + log(3) = 1 + 1.099 = 2.099
+  TF("deals")        = 1 + log(4) = 1 + 1.386 = 2.386
+  TF("hotels")       = 1 + log(1) = 1 + 0     = 1.000
+  TF("cheap flights")= 1 + log(1) = 1 + 0     = 1.000
+
+Step 5: IDF values (from our 144K domain corpus):
+
+  "flights":          df = 2,800 domains
+    IDF = log((1 + 144000) / (1 + 2800)) + 1 = log(51.43) + 1 = 4.940
+
+  "travel":           df = 8,500 domains
+    IDF = log((1 + 144000) / (1 + 8500)) + 1 = log(16.94) + 1 = 3.830
+
+  "deals":            df = 15,200 domains
+    IDF = log((1 + 144000) / (1 + 15200)) + 1 = log(9.48) + 1 = 3.249
+
+  "hotels":           df = 3,100 domains
+    IDF = log((1 + 144000) / (1 + 3100)) + 1 = log(46.46) + 1 = 4.838
+
+  "cheap flights":    df = 420 domains
+    IDF = log((1 + 144000) / (1 + 420)) + 1 = log(342.0) + 1 = 6.836
+
+  "mortgage":         df = 1,900 domains (appears 0 times in expedia.com)
+    TF = 0, so TF-IDF = 0 regardless of IDF
+
+Step 6: TF-IDF weights:
+
+  "flights":          2.386 × 4.940 = 11.787
+  "travel":           2.099 × 3.830 =  8.039
+  "deals":            2.386 × 3.249 =  7.752
+  "hotels":           1.000 × 4.838 =  4.838
+  "cheap flights":    1.000 × 6.836 =  6.836
+
+Step 7: After L2 normalization (vector magnitude = ~42.3):
+
+  "flights":          11.787 / 42.3 = 0.279
+  "travel":            8.039 / 42.3 = 0.190
+  "deals":             7.752 / 42.3 = 0.183
+  "cheap flights":     6.836 / 42.3 = 0.162
+  "hotels":            4.838 / 42.3 = 0.114
+  ...
+  (remaining ~495 non-zero terms have progressively smaller weights)
+
+Step 8: Top 10 features for expedia.com (after full TF-IDF):
+
+  1. "flights"          0.279   ← Strong Travel signal
+  2. "travel"           0.190   ← Strong Travel signal
+  3. "deals"            0.183   ← Moderate (cross-category)
+  4. "cheap flights"    0.162   ← Strong Travel signal
+  5. "vacation"         0.148   ← Strong Travel signal
+  6. "hotels"           0.114   ← Strong Travel signal
+  7. "airline tickets"  0.108   ← Strong Travel signal
+  8. "destinations"     0.095   ← Strong Travel signal
+  9. "car rentals"      0.087   ← Travel/Automotive signal
+  10. "vacation rentals" 0.082  ← Strong Travel signal
+
+Classifier will clearly map this to:
+  IAB-1 (Travel): ~0.89 probability
+  IAB-2 (Automotive): ~0.04 (from "car rentals")
+  IAB-3 (Shopping): ~0.03 (from "deals")
+</pre>
+    </div>
+
+    <div class="key-insight">
+        <strong>Key Insight &mdash; Why This Works:</strong> Notice how the bigram "cheap flights" has a much higher IDF (6.836) than the unigram "flights" (4.940). Bigrams that combine a qualifier with a topic term are highly discriminative &mdash; they appear in far fewer domains than generic unigrams. This is exactly why we include bigrams in our vocabulary despite the extra storage cost.
+    </div>
+
+    <h3>Sparse Vector Storage</h3>
+
+    <p>The 50,000-dimensional TF-IDF vector for each domain is extremely sparse &mdash; on average, only ~500 of the 50,000 positions are non-zero. Storing it as a dense float32 array would waste 198 KB per domain. Instead, we use <strong>sparse representation</strong>:</p>
+
+    <div class="math-box">
+        <h4>Sparse Storage Format</h4>
+<pre>
+Dense representation:  50,000 × 4 bytes = 200,000 bytes (200 KB) per domain
+Sparse representation: ~500 non-zero × (4 bytes index + 4 bytes value) = ~4,000 bytes (~4 KB)
+                       But with compressed sparse row (CSR): ~2 KB avg
+
+Storage savings: 200 KB → 2 KB = 99% reduction
+
+For 200K domains:
+  Dense:  200K × 200 KB = 40 GB   ← Does not fit in a single Redis node
+  Sparse: 200K × 2 KB   = 400 MB  ← Easily fits in a single Redis node
+
+Sparse format used (Protocol Buffers):
+  message DomainTfIdfVector {
+    string domain = 1;
+    repeated uint32 indices = 2 [packed=true];  // vocabulary indices
+    repeated float values = 3 [packed=true];    // TF-IDF weights
+    int64 computed_at = 4;                      // Unix timestamp
+    string vocab_version = 5;                   // Vocabulary hash
+  }
+</pre>
+    </div>
+
+
+    <!-- ================================================================== -->
+    <!-- 2.4 DOMAIN-LEVEL FEATURES -->
+    <!-- ================================================================== -->
+    <h2>&#x1F310; 2.4 Domain-Level Features &mdash; Beyond Page Text</h2>
+
+    <p>TF-IDF text vectors are the primary feature for domain classification, but they are not the only signal. Crawled HTML contains structured metadata &mdash; meta tags, OpenGraph data, URL structure, and content statistics &mdash; that provides strong supplementary features, especially for domains where main content extraction is noisy or sparse.</p>
+
+    <h3>Feature Inventory: Domain Metadata</h3>
+
+    <table>
+        <tr>
+            <th>Feature Name</th>
+            <th>Type</th>
+            <th>Source</th>
+            <th>Example (expedia.com)</th>
+            <th>IAB Classification Value</th>
+        </tr>
+        <tr>
+            <td><code>meta_description_tfidf</code></td>
+            <td>Sparse vector (5K dim)</td>
+            <td>&lt;meta name="description"&gt;</td>
+            <td>"Find cheap flights, hotels, and car rentals..."</td>
+            <td>High &mdash; curated by publisher, topic-dense</td>
+        </tr>
+        <tr>
+            <td><code>meta_keywords</code></td>
+            <td>Multi-hot vector (50K dim)</td>
+            <td>&lt;meta name="keywords"&gt;</td>
+            <td>"travel, flights, hotels, vacation"</td>
+            <td>Medium &mdash; often spammy, but useful when present</td>
+        </tr>
+        <tr>
+            <td><code>og_type</code></td>
+            <td>Categorical (one-hot, 12 values)</td>
+            <td>og:type OpenGraph tag</td>
+            <td>"website"</td>
+            <td>Low &mdash; most sites are "website" or "article"</td>
+        </tr>
+        <tr>
+            <td><code>og_title_tfidf</code></td>
+            <td>Sparse vector (5K dim)</td>
+            <td>og:title OpenGraph tag</td>
+            <td>"Expedia Travel: Search Hotels, Flights..."</td>
+            <td>High &mdash; concise, topically focused</td>
+        </tr>
+        <tr>
+            <td><code>url_tokens</code></td>
+            <td>Multi-hot from URL path segments</td>
+            <td>Domain URL structure</td>
+            <td>"expedia", "com"</td>
+            <td>Medium &mdash; brand names can signal category</td>
+        </tr>
+        <tr>
+            <td><code>tld_category</code></td>
+            <td>Categorical (one-hot, 8 groups)</td>
+            <td>Top-level domain</td>
+            <td>.com → "commercial"</td>
+            <td>Low &mdash; .edu → Education, .gov → Government useful</td>
+        </tr>
+        <tr>
+            <td><code>content_word_count</code></td>
+            <td>Numeric (log-scaled)</td>
+            <td>Extracted text length</td>
+            <td>5,200 words</td>
+            <td>Low &mdash; longer pages are often news/article sites</td>
+        </tr>
+        <tr>
+            <td><code>has_video_embed</code></td>
+            <td>Binary</td>
+            <td>Presence of video tags/embeds</td>
+            <td>0 (no video)</td>
+            <td>Low &mdash; signals entertainment/media</td>
+        </tr>
+        <tr>
+            <td><code>link_density</code></td>
+            <td>Numeric (0-1)</td>
+            <td>Ratio of link text to total text</td>
+            <td>0.35</td>
+            <td>Low &mdash; high link density → aggregator/directory</td>
+        </tr>
+        <tr>
+            <td><code>image_count</code></td>
+            <td>Numeric (log-scaled)</td>
+            <td>Number of img tags</td>
+            <td>42</td>
+            <td>Low &mdash; image-heavy → shopping, food, travel</td>
+        </tr>
+        <tr>
+            <td><code>schema_org_types</code></td>
+            <td>Multi-hot (30 common types)</td>
+            <td>JSON-LD / microdata</td>
+            <td>["TravelAgency", "WebSite"]</td>
+            <td>High &mdash; structured data is highly reliable</td>
+        </tr>
+        <tr>
+            <td><code>language</code></td>
+            <td>Categorical (one-hot, 15 languages)</td>
+            <td>langdetect on extracted text</td>
+            <td>"en"</td>
+            <td>Low for classification, high for pipeline routing</td>
+        </tr>
+    </table>
+
+    <h3>Feature Importance: TF-IDF Body Text vs. Metadata</h3>
+
+    <div class="math-box">
+        <h4>Ablation Study Results (on 5,000-domain labeled test set)</h4>
+<pre>
+Feature Set                              | Accuracy | F1 (macro) | Δ vs Baseline
+─────────────────────────────────────────|──────────|────────────|──────────────
+Body text TF-IDF only (baseline)         |  87.2%   |   0.823    |     —
++ meta description TF-IDF               |  89.1%   |   0.849    |   +1.9%
++ og:title TF-IDF                        |  89.5%   |   0.855    |   +2.3%
++ schema.org types                       |  89.9%   |   0.862    |   +2.7%
++ TLD category                           |  90.0%   |   0.863    |   +2.8%
++ all remaining metadata features        |  90.3%   |   0.867    |   +3.1%
+
+Key finding: meta_description + og:title + schema.org provide ~90% of
+the metadata improvement. The remaining 12 features add only 0.4%.
+We include them anyway — they are cheap to compute and help edge cases.
+</pre>
+    </div>
+
+    <div class="key-insight">
+        <strong>Key Insight:</strong> Metadata features improve accuracy by ~3.1% over body text alone. The single most valuable metadata feature is the <strong>meta description</strong>, which is curated by the publisher and contains a topically dense summary. Schema.org structured data is the most <em>reliable</em> signal (near-100% precision when present) but is only available on ~35% of domains.
+    </div>
+
+    <h3>Handling Missing Metadata</h3>
+
+    <p>Not all domains provide all metadata fields. Our pipeline must handle missing values gracefully:</p>
+
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>Coverage (% of 200K domains)</th>
+            <th>Missing Value Strategy</th>
+        </tr>
+        <tr>
+            <td>Body text</td>
+            <td>~95%</td>
+            <td>If empty after extraction, fall back to raw text with aggressive cleaning</td>
+        </tr>
+        <tr>
+            <td>meta description</td>
+            <td>~78%</td>
+            <td>Zero vector (5K-dim) &mdash; classifier learns to ignore when absent</td>
+        </tr>
+        <tr>
+            <td>og:title</td>
+            <td>~62%</td>
+            <td>Fall back to HTML &lt;title&gt; tag (95% coverage)</td>
+        </tr>
+        <tr>
+            <td>schema.org</td>
+            <td>~35%</td>
+            <td>Zero vector (30-dim) &mdash; model learns this is uninformative</td>
+        </tr>
+        <tr>
+            <td>meta keywords</td>
+            <td>~25%</td>
+            <td>Zero vector &mdash; largely deprecated by publishers, low reliance</td>
+        </tr>
+    </table>
+
+    <div class="warning-box">
+        <strong>&#x26A0; Failure Scenario: Crawl Failures and Empty Content</strong>
+        <p>~5% of domains (10K) return empty or near-empty content after extraction due to JavaScript-rendered pages, bot-blocking, or CDN errors. For these domains:</p>
+        <ul>
+            <li><strong>Primary fallback:</strong> Classify using metadata features only (meta description, TLD, schema.org)</li>
+            <li><strong>Secondary fallback:</strong> Use OpenRTB <code>cat</code> and <code>bcat</code> fields from bid requests containing the domain (crowdsourced from SSP-declared categories)</li>
+            <li><strong>Tertiary fallback:</strong> Assign "Unknown" category and rely on user-level score aggregation from other visits to infer interests</li>
+            <li><strong>Re-crawl queue:</strong> Schedule failed domains for re-crawl with headless Chrome (Playwright) for JS rendering. ~60% success rate on retry.</li>
+        </ul>
+    </div>
+
+    <h3>Worked Example: Domain Feature Vector Assembly</h3>
+
+    <div class="example-box">
+        <h4>&#x1F4DD; Worked Example: Complete Feature Vector for bankrate.com</h4>
+<pre>
+Domain: bankrate.com
+Crawled: 2026-03-29T04:12:00Z
+Content length: 6,800 words extracted
+
+Feature assembly:
+
+1. Body text TF-IDF (50K-dim sparse):
+   Top terms: "mortgage" (0.31), "rates" (0.24), "credit card" (0.19),
+              "savings" (0.17), "loan" (0.15), "refinance" (0.14),
+              "interest rate" (0.12), "apr" (0.11), "bank" (0.10)
+   Non-zero entries: 612
+   Storage: 4.9 KB (sparse)
+
+2. Meta description TF-IDF (5K-dim sparse):
+   Text: "Compare mortgage rates, credit cards, savings accounts,
+          CD rates, and money market accounts. Bankrate provides
+          financial tools and advice."
+   Top terms: "mortgage rates" (0.42), "credit cards" (0.35),
+              "savings accounts" (0.28)
+   Non-zero entries: 18
+   Storage: 144 bytes
+
+3. OpenGraph title TF-IDF (5K-dim sparse):
+   Text: "Bankrate: Compare Today's Rates | Mortgages, CDs, Savings"
+   Top terms: "rates" (0.51), "mortgages" (0.39), "savings" (0.33)
+   Non-zero entries: 8
+   Storage: 64 bytes
+
+4. Schema.org types:
+   Found: ["FinancialService", "WebSite"]
+   Multi-hot: [0,0,...,1,...,0,...,1,...,0]  (2 of 30 slots set)
+   Storage: 30 bytes
+
+5. TLD category: .com → "commercial" → one-hot [0,1,0,0,0,0,0,0]
+   Storage: 8 bytes
+
+6. Content statistics:
+   word_count (log): log(6800) = 8.82
+   link_density: 0.28
+   image_count (log): log(15) = 2.71
+   has_video: 0
+   Storage: 16 bytes
+
+7. Language: "en" → one-hot [1,0,0,...,0]
+   Storage: 15 bytes
+
+Total feature vector size: ~5.2 KB (sparse)
+Classification result: IAB-6 (Personal Finance) → 0.91 probability
+</pre>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 2.5 BID REQUEST FEATURES -->
+    <!-- ================================================================== -->
+    <h2>&#x1F4E1; 2.5 Bid Request Features &mdash; Real-Time Signals from the Bidstream</h2>
+
+    <p>Every bid request arriving via the OpenRTB protocol carries contextual signals beyond just the domain. These features do not directly feed into the domain classifier (which runs in batch), but they <strong>enrich the user-level IAB score updates</strong> performed in real-time. Think of it this way: knowing that a user visited expedia.com is good, but knowing they visited expedia.com <em>on a mobile device, from New York, at 10pm on a Friday</em> makes the Travel affinity signal even stronger.</p>
+
+    <h3>OpenRTB Bid Request Feature Extraction</h3>
+
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>OpenRTB Field</th>
+            <th>Encoding</th>
+            <th>Dimensions</th>
+            <th>Usage</th>
+        </tr>
+        <tr>
+            <td><strong>Domain</strong></td>
+            <td><code>site.domain</code> / <code>app.bundle</code></td>
+            <td>Lookup key (not a feature itself)</td>
+            <td>—</td>
+            <td>Key for domain→IAB probability lookup</td>
+        </tr>
+        <tr>
+            <td><strong>SSP-declared categories</strong></td>
+            <td><code>site.cat</code>, <code>site.pagecat</code></td>
+            <td>Multi-hot over IAB taxonomy</td>
+            <td>700</td>
+            <td>Supplement/validate domain classification</td>
+        </tr>
+        <tr>
+            <td><strong>Blocked categories</strong></td>
+            <td><code>bcat</code></td>
+            <td>Multi-hot over IAB taxonomy</td>
+            <td>700</td>
+            <td>Negative signal — if bcat includes "Gambling," domain likely IS Gambling-adjacent</td>
+        </tr>
+        <tr>
+            <td><strong>Device type</strong></td>
+            <td><code>device.devicetype</code></td>
+            <td>One-hot (7 OpenRTB types)</td>
+            <td>7</td>
+            <td>Mobile vs Desktop correlates with category (mobile → social, entertainment)</td>
+        </tr>
+        <tr>
+            <td><strong>OS</strong></td>
+            <td><code>device.os</code></td>
+            <td>One-hot (iOS, Android, Windows, macOS, Other)</td>
+            <td>5</td>
+            <td>Platform-specific content preferences</td>
+        </tr>
+        <tr>
+            <td><strong>Geo (country)</strong></td>
+            <td><code>device.geo.country</code></td>
+            <td>One-hot (top 30 countries + Other)</td>
+            <td>31</td>
+            <td>Country-specific IAB category distributions</td>
+        </tr>
+        <tr>
+            <td><strong>Geo (region)</strong></td>
+            <td><code>device.geo.region</code></td>
+            <td>Embedding (learned, 16-dim)</td>
+            <td>16</td>
+            <td>Regional content preferences</td>
+        </tr>
+        <tr>
+            <td><strong>Hour of day</strong></td>
+            <td><code>derived from timestamp</code></td>
+            <td>Cyclical (sin/cos)</td>
+            <td>2</td>
+            <td>Time-of-day patterns (news=morning, entertainment=evening)</td>
+        </tr>
+        <tr>
+            <td><strong>Day of week</strong></td>
+            <td><code>derived from timestamp</code></td>
+            <td>Cyclical (sin/cos)</td>
+            <td>2</td>
+            <td>Weekday vs weekend browsing patterns</td>
+        </tr>
+        <tr>
+            <td><strong>App vs Web</strong></td>
+            <td><code>site</code> vs <code>app</code> object presence</td>
+            <td>Binary</td>
+            <td>1</td>
+            <td>App traffic has different category distribution</td>
+        </tr>
+        <tr>
+            <td><strong>Connection type</strong></td>
+            <td><code>device.connectiontype</code></td>
+            <td>One-hot (WiFi, Cellular, Ethernet, Other)</td>
+            <td>4</td>
+            <td>WiFi=home/office, Cellular=on-the-go (different content patterns)</td>
+        </tr>
+    </table>
+
+    <h3>Cyclical Time Encoding: Why Sin/Cos Over One-Hot</h3>
+
+    <p>Time features (hour-of-day, day-of-week) are inherently cyclical &mdash; 11pm is close to midnight, Sunday is close to Monday. One-hot encoding treats these as unrelated categories, losing the cyclic proximity. We use sin/cos encoding instead:</p>
+
+    <div class="math-box">
+        <h4>Cyclical Time Encoding</h4>
+<pre>
+Hour of day (0-23):
+  hour_sin = sin(2π × hour / 24)
+  hour_cos = cos(2π × hour / 24)
+
+Day of week (0-6, Monday=0):
+  dow_sin = sin(2π × day / 7)
+  dow_cos = cos(2π × day / 7)
+
+Example calculations:
+  Midnight (hour=0):   sin=0.000,  cos=1.000
+  6am (hour=6):        sin=1.000,  cos=0.000
+  Noon (hour=12):      sin=0.000,  cos=-1.000
+  6pm (hour=18):       sin=-1.000, cos=0.000
+  11pm (hour=23):      sin=-0.259, cos=0.966  ← Close to midnight!
+
+Why this matters for IAB:
+  - 11pm and midnight users have similar browsing patterns (entertainment,
+    social media). One-hot would treat them as maximally distant.
+  - Friday evening and Saturday morning shoppers are similar audiences.
+    Cyclical encoding preserves this proximity.
+
+Dimensionality comparison:
+  One-hot hour: 24 dimensions
+  Cyclical hour: 2 dimensions  ← 12x reduction, better distance metric
+</pre>
+    </div>
+
+    <h3>SSP Category Signal Integration</h3>
+
+    <p>OpenRTB bid requests often contain SSP-declared content categories in the <code>site.cat</code> and <code>site.pagecat</code> fields. These are IAB category codes declared by the supply-side platform (SSP) or publisher. We integrate these as supplementary signals:</p>
+
+    <div class="step-box">
+        <span class="step-number">1</span>
+        <h4>Extract SSP categories from bid request</h4>
+        <p>Parse <code>site.cat</code> (site-level) and <code>site.pagecat</code> (page-level) arrays. Map IAB category codes to our internal taxonomy IDs.</p>
+    </div>
+
+    <div class="step-box">
+        <span class="step-number">2</span>
+        <h4>Compute confidence-weighted blend</h4>
+        <p>SSP categories are often inaccurate (publishers self-declare, sometimes for ad revenue optimization). We weight them below our own classification:</p>
+<pre>
+final_iab_score[category] =
+    0.80 × our_classification[category]    // TF-IDF classifier output
+  + 0.15 × ssp_cat_signal[category]        // SSP-declared (binary → 1.0 if declared)
+  + 0.05 × bcat_inverse_signal[category]   // Inverse bcat (if blocked, domain is likely adjacent)
+
+Why 80/15/5 weighting:
+  - Our classification: Trained on crawled text, covers all 700 categories, most reliable
+  - SSP signal: Often accurate but sometimes gaming/miscategorized (~70% agreement rate)
+  - bcat signal: Weak but free signal; advertisers blocking "Gambling" on a site
+    suggests the site has Gambling-adjacent content
+</pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-number">3</span>
+        <h4>Handle unknown domains via SSP-only classification</h4>
+        <p>For domains not in our pre-computed lookup table (~15% of bid request domains), SSP categories become the <strong>primary signal</strong> for the user score update, weighted at 1.0 instead of 0.15.</p>
+    </div>
+
+    <div class="warning-box">
+        <strong>&#x26A0; Challenge: SSP Category Gaming</strong>
+        <p>Some publishers deliberately miscategorize their sites (e.g., declaring a low-quality content farm as "News") to attract higher-CPM ad campaigns. Our defense:</p>
+        <ul>
+            <li><strong>Cross-SSP validation:</strong> If the same domain is declared as different categories by different SSPs, flag as unreliable</li>
+            <li><strong>Our classification as ground truth:</strong> When our TF-IDF classifier disagrees with the SSP category, we trust our classifier (80/15 weighting)</li>
+            <li><strong>Drift monitoring:</strong> Track agreement rate between our classification and SSP declarations over time. Alert if agreement drops below 60%</li>
+        </ul>
+    </div>
+
+
+    <!-- ================================================================== -->
+    <!-- 2.6 USER-LEVEL FEATURES -->
+    <!-- ================================================================== -->
+    <h2>&#x1F464; 2.6 User-Level Features &mdash; IAB Score Arrays and Behavioral Signals</h2>
+
+    <p>User-level features are the ultimate output of the feature engineering pipeline. Every domain classification and every bid request enrichment ultimately flows into a <strong>per-user IAB score array</strong> that represents the user's interest profile across ~700 IAB categories. This score array is what the audience segmentation system reads to decide which segments a user belongs to.</p>
+
+    <p>Think of it as a <strong>fingerprint of interests</strong>: a 700-dimensional vector where each dimension represents the user's affinity for one IAB category, accumulated from their browsing history and decayed over time.</p>
+
+    <h3>IAB Score Array Structure</h3>
+
+    <div class="math-box">
+        <h4>Per-User Data Structure</h4>
+<pre>
+UserProfile {
+  user_id:          string       // Device ID (IDFA/GAID) or cookie ID
+  id_type:          enum         // "idfa", "gaid", "cookie", "probabilistic"
+
+  // Core IAB score array — the primary feature
+  iab_scores:       float32[700] // Accumulated affinity scores per category
+  iab_last_update:  int64[700]   // Unix timestamp of last update per category
+  iab_event_count:  uint16[700]  // Number of events contributing to each category
+
+  // Aggregate behavioral features
+  total_events:     uint32       // Total bid requests observed for this user
+  distinct_domains: uint16       // Number of unique domains visited
+  first_seen:       int64        // Timestamp of first observation
+  last_seen:        int64        // Timestamp of most recent observation
+  active_days_30d:  uint8        // Days with at least 1 event in last 30 days
+
+  // Device/context features (from most recent bid requests)
+  primary_device:   enum         // Most common device type
+  primary_os:       enum         // Most common OS
+  primary_geo:      string       // Most common country code
+  app_web_ratio:    float32      // Fraction of events from app vs web
+
+  // Score metadata
+  profile_version:  uint32       // Schema version for backward compatibility
+  decay_applied_at: int64        // Last time full decay sweep was applied
+}
+
+Storage per user:
+  iab_scores:       700 × 4 bytes  = 2,800 bytes
+  iab_last_update:  700 × 8 bytes  = 5,600 bytes
+  iab_event_count:  700 × 2 bytes  = 1,400 bytes
+  Behavioral feats: ~50 bytes
+  Metadata:         ~30 bytes
+  ─────────────────────────────────────────
+  Total:            ~9,880 bytes (~9.7 KB per user)
+
+For 500M users:
+  Total storage:    500M × 9.7 KB = ~4.85 TB
+</pre>
+    </div>
+
+    <h3>Score Accumulation: How User Scores Update in Real-Time</h3>
+
+    <p>When a bid request arrives for a known user visiting a classified domain, the user's IAB score array is updated. The update rule must be fast (computed in &lt;3ms as part of the &lt;10ms user score SLA) and must balance recency against historical signal.</p>
+
+    <div class="math-box">
+        <h4>Score Update Formula</h4>
+<pre>
+On each bid request event for user U visiting domain D at time T:
+
+  1. Look up domain IAB probabilities: P[D] = float32[700]
+     (Pre-computed by TF-IDF classifier, stored in Redis)
+
+  2. Apply confidence weighting:
+     confidence = min(1.0, P[D][max_category])
+     // High confidence when dominant category has probability > 0.5
+     // Low confidence when categories are evenly split (ambiguous domain)
+
+  3. For each IAB category i where P[D][i] > threshold (0.01):
+
+     // Apply time decay to existing score first
+     elapsed = T - iab_last_update[U][i]
+     λ_i = decay_rate[i]    // Category-specific decay rate
+     decayed_score = iab_scores[U][i] × exp(-λ_i × elapsed)
+
+     // Add new signal
+     iab_scores[U][i] = decayed_score + (confidence × P[D][i])
+
+     // Update metadata
+     iab_last_update[U][i] = T
+     iab_event_count[U][i] += 1
+
+Threshold of 0.01:
+  - Without threshold: update all 700 categories for every event
+    → 700 writes per event × 580K QPS = 406M writes/sec (too expensive)
+  - With threshold: update ~15-30 categories per event (where P[D][i] > 0.01)
+    → ~20 writes per event × 580K QPS = ~12M writes/sec (manageable)
+</pre>
+    </div>
+
+    <h3>Worked Example: User Score Accumulation Over Multiple Visits</h3>
+
+    <div class="example-box">
+        <h4>&#x1F4DD; Worked Example: User "device_abc123" Over 3 Days</h4>
+<pre>
+User: device_abc123
+Starting state: All iab_scores = 0 (new user)
+Decay rate for Travel (IAB cat 196): λ = 0.035 per hour (~24h half-life)
+Decay rate for Finance (IAB cat 391): λ = 0.015 per hour (~46h half-life)
+Decay rate for News (IAB cat 451): λ = 0.050 per hour (~14h half-life)
+
+═══════════════════════════════════════════════════════════════════
+EVENT 1: Monday 10:00am — visits cnn.com/travel/best-beaches
+═══════════════════════════════════════════════════════════════════
+  Domain lookup → cnn.com/travel classified as:
+    Travel (196):  0.72
+    News (451):    0.18
+    Lifestyle (8): 0.06
+
+  Confidence = min(1.0, 0.72) = 0.72
+
+  Score updates (all from zero, no decay needed):
+    iab_scores[196] = 0 + (0.72 × 0.72) = 0.518   [Travel]
+    iab_scores[451] = 0 + (0.72 × 0.18) = 0.130   [News]
+    iab_scores[8]   = 0 + (0.72 × 0.06) = 0.043   [Lifestyle]
+
+═══════════════════════════════════════════════════════════════════
+EVENT 2: Monday 2:00pm (4 hours later) — visits expedia.com
+═══════════════════════════════════════════════════════════════════
+  Domain lookup → expedia.com classified as:
+    Travel (196):     0.89
+    Automotive (32):  0.04
+    Shopping (123):   0.03
+
+  Confidence = min(1.0, 0.89) = 0.89
+
+  Decay existing Travel score first:
+    elapsed = 4 hours
+    decayed = 0.518 × exp(-0.035 × 4) = 0.518 × 0.869 = 0.450
+
+  Score updates:
+    iab_scores[196] = 0.450 + (0.89 × 0.89) = 0.450 + 0.792 = 1.242 [Travel ↑↑]
+    iab_scores[451] = 0.130 × exp(-0.050 × 4) + 0 = 0.130 × 0.819 = 0.106 [News, decayed, no new signal]
+    iab_scores[32]  = 0 + (0.89 × 0.04) = 0.036   [Automotive, new]
+
+═══════════════════════════════════════════════════════════════════
+EVENT 3: Tuesday 6:00pm (28 hours after Event 2) — visits bankrate.com
+═══════════════════════════════════════════════════════════════════
+  Domain lookup → bankrate.com classified as:
+    Finance (391):    0.91
+    Real Estate (69): 0.05
+
+  Confidence = min(1.0, 0.91) = 0.91
+
+  Decay existing scores:
+    Travel:  1.242 × exp(-0.035 × 28) = 1.242 × 0.375 = 0.466
+    News:    0.106 × exp(-0.050 × 28) = 0.106 × 0.247 = 0.026
+    Finance: 0 (first signal)
+
+  Score updates:
+    iab_scores[391] = 0 + (0.91 × 0.91) = 0.828   [Finance, new strong signal]
+    iab_scores[196] = 0.466 (Travel, decayed only, no new signal)
+    iab_scores[69]  = 0 + (0.91 × 0.05) = 0.046   [Real Estate, new]
+    iab_scores[451] = 0.026 (News, decayed further)
+
+═══════════════════════════════════════════════════════════════════
+FINAL USER PROFILE (as of Tuesday 6:00pm):
+═══════════════════════════════════════════════════════════════════
+
+  Category        | Score  | Event Count | Status
+  ────────────────|────────|─────────────|────────────────────
+  Finance (391)   | 0.828  | 1           | Strong, fresh signal
+  Travel (196)    | 0.466  | 2           | Moderate, decaying
+  Real Estate (69)| 0.046  | 1           | Weak signal
+  Automotive (32) | 0.031  | 1           | Very weak, decaying
+  News (451)      | 0.026  | 1           | Nearly expired
+  Lifestyle (8)   | 0.033  | 1           | Nearly expired
+
+  → Audience segments: [Finance, Travel] (scores above threshold 0.10)
+  → Primary segment: Finance (highest current score)
+  → Secondary segment: Travel (historical accumulation from 2 visits)
+</pre>
+    </div>
+
+    <div class="key-insight">
+        <strong>Key Insight &mdash; Decay Creates Recency Bias:</strong> Notice how Travel had the highest score after Event 2 (1.242) but decayed to 0.466 by Event 3 — 28 hours later. Finance, with a single visit, jumped to 0.828 and became the primary segment. This is exactly the behavior we want: <strong>recent interest signals dominate</strong>. An advertiser targeting Finance prospects gets this user while their intent is fresh, even though they have more historical Travel browsing.
+    </div>
+
+    <h3>Category-Specific Decay Rates</h3>
+
+    <p>Different IAB categories have different "intent shelf lives." A user who searched for flights yesterday is likely still in-market for travel. A user who read a breaking news article yesterday has probably moved on. We use category-specific decay rates to model this:</p>
+
+    <table>
+        <tr>
+            <th>IAB Category Group</th>
+            <th>Decay Rate (λ, per hour)</th>
+            <th>Half-Life</th>
+            <th>Rationale</th>
+        </tr>
+        <tr>
+            <td>Breaking News, Current Events</td>
+            <td>0.050</td>
+            <td>~14 hours</td>
+            <td>News interest is ephemeral; today's news is tomorrow's history</td>
+        </tr>
+        <tr>
+            <td>Entertainment, Social Media</td>
+            <td>0.040</td>
+            <td>~17 hours</td>
+            <td>Entertainment browsing is casual, not purchase-intent driven</td>
+        </tr>
+        <tr>
+            <td>Travel, Vacations</td>
+            <td>0.035</td>
+            <td>~20 hours</td>
+            <td>Travel research spans days but intent fades after booking</td>
+        </tr>
+        <tr>
+            <td>Shopping, Retail</td>
+            <td>0.030</td>
+            <td>~23 hours</td>
+            <td>Purchase consideration windows are 1-3 days for most products</td>
+        </tr>
+        <tr>
+            <td>Automotive</td>
+            <td>0.015</td>
+            <td>~46 hours</td>
+            <td>Car-buying research spans weeks; slow, deliberate process</td>
+        </tr>
+        <tr>
+            <td>Finance, Insurance</td>
+            <td>0.015</td>
+            <td>~46 hours</td>
+            <td>Financial product comparison takes days to weeks</td>
+        </tr>
+        <tr>
+            <td>Real Estate</td>
+            <td>0.010</td>
+            <td>~69 hours</td>
+            <td>Home search spans weeks to months</td>
+        </tr>
+        <tr>
+            <td>Education</td>
+            <td>0.008</td>
+            <td>~87 hours</td>
+            <td>Education interest is long-term (semester/year planning cycles)</td>
+        </tr>
+        <tr>
+            <td>Health &amp; Fitness</td>
+            <td>0.012</td>
+            <td>~58 hours</td>
+            <td>Health concerns persist; users research over multiple sessions</td>
+        </tr>
+        <tr>
+            <td>Technology</td>
+            <td>0.020</td>
+            <td>~35 hours</td>
+            <td>Tech product research is moderate-duration</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <strong>How Decay Rates Are Calibrated:</strong> Initial decay rates are set based on industry benchmarks for purchase consideration windows. They are then refined using <strong>conversion feedback loops</strong>: if an advertiser reports that users in a Travel segment converted (booked a flight) 3 days after segmentation, we know the Travel decay rate was appropriate. If conversions cluster at 12 hours, the decay might be too fast. We retune decay rates quarterly using this advertiser conversion data (see Step 6: Monitoring).
+    </div>
+
+    <h3>Cross-Device Identity Resolution Features</h3>
+
+    <p>A single person often uses multiple devices (phone, tablet, laptop, work computer). Without identity resolution, we would maintain 4 separate, sparse user profiles instead of 1 comprehensive one. The feature engineering implications are significant:</p>
+
+    <div class="step-box">
+        <span class="step-number">1</span>
+        <h4>Identity Graph Lookup</h4>
+        <p>For each bid request, resolve the device ID to a <strong>household/person cluster</strong> using a probabilistic identity graph (from partners like LiveRamp or built in-house from IP + user-agent co-occurrence patterns).</p>
+<pre>
+Input:  device_id = "GAID_abc123" (Android phone)
+Graph lookup → cluster_id = "HH_98765"
+Other devices in cluster:
+  - "IDFA_def456" (iPhone — spouse?)
+  - "cookie_ghi789" (Chrome on laptop)
+
+Decision: Merge or keep separate?
+→ We MERGE scores at the cluster level for audience segmentation
+→ We KEEP individual device profiles for frequency capping
+</pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-number">2</span>
+        <h4>Score Merging Strategy</h4>
+        <p>When merging scores across devices in a cluster:</p>
+<pre>
+For each IAB category i:
+  cluster_score[i] = max(device_1_score[i], device_2_score[i], ...)
+
+Why MAX (not SUM or AVERAGE):
+  - SUM: Inflates scores for multi-device users, creating targeting bias
+  - AVERAGE: Dilutes strong single-device signals
+  - MAX: Preserves the strongest signal regardless of device
+         If user researched Travel heavily on phone, that signal
+         should be the cluster-level Travel score — not averaged
+         with zero-Travel signals from other devices
+</pre>
+    </div>
+
+    <div class="warning-box">
+        <strong>&#x26A0; Challenge: Cookie Deprecation and ID Loss</strong>
+        <p>As third-party cookies are deprecated (Chrome, Safari already blocks), a growing fraction of users are <strong>unidentifiable across sessions</strong>. Feature engineering implications:</p>
+        <ul>
+            <li><strong>~40% of web bid requests</strong> now arrive without a persistent user ID</li>
+            <li>For these users, we cannot accumulate score arrays over time</li>
+            <li><strong>Fallback:</strong> Use contextual features only (domain IAB category + bid request features) for single-session audience assignment</li>
+            <li><strong>Cohort-based approach:</strong> Group cookieless users by (domain, geo, device_type, hour) and assign the average IAB score array for that cohort</li>
+            <li>This degrades audience precision from per-user to per-cohort, but still provides value vs. no targeting</li>
+        </ul>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 2.7 FEATURE STORAGE STRATEGY -->
+    <!-- ================================================================== -->
+    <h2>&#x1F4BE; 2.7 Feature Storage Strategy &mdash; Multi-Tier Architecture</h2>
+
+    <p>Feature engineering is only as good as the infrastructure that serves features to the ML pipeline. With 580K bid requests per second, feature lookups must be <strong>predictable, low-latency, and cost-efficient</strong>. We use a multi-tier storage architecture that matches data access patterns to the right technology.</p>
+
+    <h3>Tier Architecture Overview</h3>
+
+    <div class="architecture-diagram">
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     FEATURE STORAGE ARCHITECTURE                             │
+│                                                                              │
+│  ┌─────────────────────┐     ┌─────────────────────┐                        │
+│  │    HOT TIER          │     │    HOT TIER          │                        │
+│  │    Redis Cluster     │     │    Redis Cluster     │                        │
+│  │                      │     │                      │                        │
+│  │  Domain → IAB Probs  │     │  Active User Scores  │                        │
+│  │  200K entries, ~1 GB │     │  50M users, ~485 GB  │                        │
+│  │  Lookup: &lt;1ms        │     │  Lookup: &lt;2ms        │                        │
+│  │  TTL: 14 days        │     │  TTL: 7 days LRU     │                        │
+│  └──────────┬──────────┘     └──────────┬──────────┘                        │
+│             │ cache miss                 │ cache miss                         │
+│             ▼                            ▼                                    │
+│  ┌─────────────────────┐     ┌─────────────────────┐                        │
+│  │    WARM TIER         │     │    WARM TIER         │                        │
+│  │    ScyllaDB          │     │    ScyllaDB          │                        │
+│  │                      │     │                      │                        │
+│  │  Domain Features     │     │  All User Profiles   │                        │
+│  │  (full metadata)     │     │  500M users, ~4.85TB │                        │
+│  │  Lookup: 2-5ms       │     │  Lookup: 3-8ms       │                        │
+│  │  Retention: 90 days  │     │  Retention: 180 days │                        │
+│  └──────────┬──────────┘     └──────────┬──────────┘                        │
+│             │                            │                                    │
+│             ▼                            ▼                                    │
+│  ┌──────────────────────────────────────────────────┐                        │
+│  │    COLD TIER — S3 / GCS (Parquet)                │                        │
+│  │                                                   │                        │
+│  │  Historical TF-IDF vectors, old user profiles,   │                        │
+│  │  training data snapshots, feature drift logs      │                        │
+│  │  Retention: 2 years | Access: batch analytics     │                        │
+│  └──────────────────────────────────────────────────┘                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Storage Tier Details</h3>
+
+    <table>
+        <tr>
+            <th>Tier</th>
+            <th>Technology</th>
+            <th>Data</th>
+            <th>Access Pattern</th>
+            <th>Latency SLA</th>
+            <th>Size</th>
+            <th>Monthly Cost (est.)</th>
+        </tr>
+        <tr style="background: #fff3cd;">
+            <td><strong>Hot — Domain</strong></td>
+            <td>Redis Cluster (6 nodes, r6g.xlarge)</td>
+            <td>Domain → IAB probability arrays</td>
+            <td>~580K reads/sec, rare writes (weekly batch)</td>
+            <td>&lt;1ms p99</td>
+            <td>~1 GB</td>
+            <td>~$2,400</td>
+        </tr>
+        <tr style="background: #fff3cd;">
+            <td><strong>Hot — User</strong></td>
+            <td>Redis Cluster (48 nodes, r6g.2xlarge)</td>
+            <td>Active user score arrays (top 50M by recency)</td>
+            <td>~580K reads+writes/sec</td>
+            <td>&lt;2ms p99</td>
+            <td>~485 GB</td>
+            <td>~$28,000</td>
+        </tr>
+        <tr>
+            <td><strong>Warm — Domain</strong></td>
+            <td>ScyllaDB (6-node cluster)</td>
+            <td>Full domain features (TF-IDF + metadata)</td>
+            <td>Cache misses + batch reads for retraining</td>
+            <td>&lt;5ms p99</td>
+            <td>~5 GB</td>
+            <td>~$3,600</td>
+        </tr>
+        <tr>
+            <td><strong>Warm — User</strong></td>
+            <td>ScyllaDB (24-node cluster)</td>
+            <td>All 500M user profiles</td>
+            <td>Cache misses + batch reads for reporting</td>
+            <td>&lt;8ms p99</td>
+            <td>~4.85 TB</td>
+            <td>~$18,000</td>
+        </tr>
+        <tr>
+            <td><strong>Cold</strong></td>
+            <td>S3 / GCS (Parquet)</td>
+            <td>Historical snapshots, training data, logs</td>
+            <td>Batch analytics, model retraining</td>
+            <td>Seconds-minutes</td>
+            <td>~20 TB</td>
+            <td>~$500</td>
+        </tr>
+    </table>
+
+    <div class="math-box">
+        <h4>Cost Analysis: Total Feature Storage Infrastructure</h4>
+<pre>
+Monthly cost breakdown:
+  Redis (domain):      6 × r6g.xlarge  × $0.50/hr  =  $2,160/mo
+  Redis (user):       48 × r6g.2xlarge × $0.80/hr  = $27,648/mo
+  ScyllaDB (domain):   6 × i3.xlarge   × $0.70/hr  =  $3,024/mo
+  ScyllaDB (user):    24 × i3.2xlarge  × $1.10/hr  = $19,008/mo
+  S3 cold storage:    20 TB × $0.023/GB             =    $460/mo
+  ────────────────────────────────────────────────────
+  Total:                                             ~$52,300/mo
+
+Revenue context:
+  Well-targeted audience segments command 2-5x CPM premiums.
+  At 50B bid requests/day with even 1% segment utilization rate:
+    500M segmented impressions/day × $0.50 incremental CPM = $250K/day
+  Monthly feature infra cost ($52K) is &lt;1% of incremental revenue.
+</pre>
+    </div>
+
+    <h3>Technology Decision: Redis vs. Alternatives for Hot Tier</h3>
+
+    <div class="decision-matrix">
+        <h4>&#x1F4CB; Technology Decision: Hot-Tier Feature Serving</h4>
+        <p><strong>Problem:</strong> Serve domain IAB probabilities and user score arrays at &lt;2ms latency for 580K+ QPS.</p>
+        <p><strong>Chosen:</strong> Redis Cluster (separate clusters for domain and user data)</p>
+
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#x2705; Why Redis</h4>
+                <ul>
+                    <li>Sub-millisecond reads for key-value lookups</li>
+                    <li>Native support for binary data (HSET for score arrays)</li>
+                    <li>Built-in TTL and LRU eviction for cache management</li>
+                    <li>Cluster mode scales horizontally with automatic sharding</li>
+                    <li>Atomic read-modify-write via Lua scripts (for score updates)</li>
+                    <li>Battle-tested at AdTech scale by industry peers</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Rejected: Memcached</h4>
+                <ul>
+                    <li>No built-in persistence — full cache rebuild on restart</li>
+                    <li>No atomic read-modify-write for score updates</li>
+                    <li>No cluster mode — requires client-side sharding</li>
+                    <li>1 MB value limit restricts future feature vector growth</li>
+                </ul>
+            </div>
+        </div>
+        <div class="pros-cons" style="margin-top:15px;">
+            <div class="cons">
+                <h4>&#x274C; Rejected: DynamoDB</h4>
+                <ul>
+                    <li>Median latency ~5ms (single-digit ms), too close to our SLA</li>
+                    <li>Cost at 580K WCU + 580K RCU: ~$120K/month (vs $30K for Redis)</li>
+                    <li>No in-memory guarantee — may hit cold reads</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Rejected: Aerospike</h4>
+                <ul>
+                    <li>Excellent performance (sub-ms on SSD), but operational complexity higher than Redis</li>
+                    <li>Smaller talent pool — harder to hire/onboard engineers</li>
+                    <li>License costs add up at scale</li>
+                    <li>Would consider for future if Redis memory costs become prohibitive</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Technology Decision: ScyllaDB vs. Alternatives for Warm Tier</h3>
+
+    <div class="decision-matrix">
+        <h4>&#x1F4CB; Technology Decision: Warm-Tier User Profile Storage</h4>
+        <p><strong>Problem:</strong> Store 500M user profiles (~4.85 TB) with single-digit millisecond reads for cache misses and efficient batch scans for retraining.</p>
+        <p><strong>Chosen:</strong> ScyllaDB (Cassandra-compatible, C++ implementation)</p>
+
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>&#x2705; Why ScyllaDB</h4>
+                <ul>
+                    <li>10x lower tail latencies vs Apache Cassandra (C++ vs JVM, no GC pauses)</li>
+                    <li>Wide-column store perfect for our sparse score arrays (only store non-zero categories)</li>
+                    <li>Linear horizontal scaling — add nodes as user base grows</li>
+                    <li>TTL per column for automatic expired score cleanup</li>
+                    <li>Excellent write throughput (580K+ writes/sec across 24 nodes)</li>
+                    <li>CQL compatibility — familiar query language for engineers</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Rejected: Apache Cassandra</h4>
+                <ul>
+                    <li>JVM garbage collection causes p99 latency spikes (50-200ms) under heavy write load</li>
+                    <li>Requires 3-4x more nodes for same throughput as ScyllaDB</li>
+                    <li>Compaction storms degrade read latency unpredictably</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Redis Data Model: Domain Features</h3>
+
+    <div class="math-box">
+        <h4>Redis Key Design for Domain Lookup</h4>
+<pre>
+Key:    domain_iab:{domain_name}
+Type:   HASH
+Fields:
+  "probs"      → Binary-encoded float32[700] (2,800 bytes)
+  "top5"       → "196:0.89,32:0.04,123:0.03,8:0.02,451:0.01" (quick decode)
+  "confidence" → "0.89" (max probability)
+  "version"    → "v2026-03-29" (classification date)
+  "vocab"      → "a3f2c8" (vocabulary hash for consistency check)
+
+Example:
+  HGETALL domain_iab:expedia.com
+  → {
+      "probs": <binary 2800 bytes>,
+      "top5": "196:0.89,32:0.04,123:0.03,8:0.02,451:0.01",
+      "confidence": "0.89",
+      "version": "v2026-03-29",
+      "vocab": "a3f2c8"
+    }
+
+Optimization: For the real-time scoring path, we only read "probs"
+  HGET domain_iab:expedia.com probs → 2,800 bytes, &lt;0.5ms
+
+TTL: 14 days (domains not refreshed by weekly batch are evicted)
+</pre>
+    </div>
+
+    <h3>ScyllaDB Schema: User Profiles</h3>
+
+    <div class="math-box">
+        <h4>ScyllaDB Table Design</h4>
+<pre>
+CREATE TABLE user_profiles (
+    user_id         TEXT,
+    id_type         TEXT,           -- 'idfa', 'gaid', 'cookie', 'probabilistic'
+    -- IAB scores stored as a map (only non-zero categories)
+    iab_scores      MAP&lt;INT, FLOAT&gt;,   -- category_id → score
+    iab_timestamps  MAP&lt;INT, BIGINT&gt;,  -- category_id → last_update_unix_ms
+    iab_counts      MAP&lt;INT, INT&gt;,     -- category_id → event_count
+    -- Behavioral features
+    total_events    INT,
+    distinct_domains SMALLINT,
+    first_seen      BIGINT,
+    last_seen       BIGINT,
+    active_days_30d TINYINT,
+    primary_device  TEXT,
+    primary_geo     TEXT,
+    app_web_ratio   FLOAT,
+    -- Metadata
+    profile_version INT,
+    decay_applied   BIGINT,
+    PRIMARY KEY (user_id)
+) WITH compaction = {'class': 'LeveledCompactionStrategy'}
+  AND default_time_to_live = 15552000  -- 180 days
+  AND gc_grace_seconds = 864000;       -- 10 days
+
+Partition strategy:
+  - user_id is the partition key (natural distribution)
+  - 500M users across 24 nodes ≈ 21M users/node
+  - Hot users (~50M) are also cached in Redis
+
+Why MAP instead of frozen list:
+  - MAP allows updating individual category scores without reading
+    and rewriting the entire 700-element array
+  - Most users have scores in 20-80 categories (not all 700)
+  - MAP stores only non-zero entries → ~60% storage savings vs dense array
+</pre>
+    </div>
+
+
+    <!-- ================================================================== -->
+    <!-- 2.8 FEATURE COMPUTATION PIPELINE -->
+    <!-- ================================================================== -->
+    <h2>&#x2699;&#xFE0F; 2.8 Feature Computation Pipeline &mdash; Batch and Real-Time Architecture</h2>
+
+    <p>Features in our system are computed through two distinct pipelines: a <strong>batch pipeline</strong> for domain-level features (TF-IDF vectorization, classification) that runs weekly, and a <strong>real-time pipeline</strong> for user-level features (score accumulation, decay) that runs on every bid request. Understanding the boundary between batch and real-time is critical.</p>
+
+    <h3>Batch Feature Pipeline (Domain Classification)</h3>
+
+    <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                    BATCH FEATURE PIPELINE (Weekly, Sunday 02:00 UTC)                 │
+│                                                                                      │
+│  ┌───────────┐   ┌──────────────┐   ┌──────────────┐   ┌───────────────┐            │
+│  │ Crawl Data │──>│ Text Extract  │──>│ Feature Eng  │──>│ Classifier    │            │
+│  │ (S3)       │   │ + Clean       │   │ (TF-IDF)     │   │ Inference     │            │
+│  └───────────┘   └──────────────┘   └──────────────┘   └──────┬────────┘            │
+│   200K HTML       ~5K words/page     50K-dim sparse      700-dim prob               │
+│   ~50 GB          ~20 min            ~45 min             ~30 min                     │
+│                                                                │                     │
+│                                                                ▼                     │
+│                    ┌──────────────────────────────────────────────┐                   │
+│                    │           Validation Gate                    │                   │
+│                    │  - Compare vs previous classification        │                   │
+│                    │  - Flag domains with >30% category shift     │                   │
+│                    │  - Verify coverage: >95% of domains classified│                  │
+│                    │  - Check distribution: no category >40% share │                  │
+│                    └──────────────────────┬───────────────────────┘                   │
+│                                           │ pass                                     │
+│                            ┌──────────────┴──────────────┐                           │
+│                            ▼                              ▼                           │
+│                    ┌──────────────┐              ┌──────────────┐                     │
+│                    │ Redis Cluster │              │ ScyllaDB     │                     │
+│                    │ (hot lookup)  │              │ (warm store) │                     │
+│                    │ ~1 GB         │              │ (full feats) │                     │
+│                    └──────────────┘              └──────────────┘                     │
+│                                                                                      │
+│  Total batch time: ~2 hours | Compute cost: ~$8 per run (8-core c6i.2xlarge)         │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Real-Time Feature Pipeline (User Score Updates)</h3>
+
+    <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│                 REAL-TIME FEATURE PIPELINE (Per Bid Request, &lt;10ms SLA)              │
+│                                                                                      │
+│  Bid Request                                                                         │
+│  (from SSP via Kafka)                                                                │
+│       │                                                                              │
+│       ▼                                                                              │
+│  ┌────────────────────────────────────────────────────────────────┐                   │
+│  │ Feature Extraction Microservice (Go/Rust, 120 pods)           │                   │
+│  │                                                                │                   │
+│  │  Step 1: Parse bid request (domain, user_id, device, geo, ts) │  ~0.5ms          │
+│  │           │                                                    │                   │
+│  │  Step 2:  ├── Domain lookup: Redis GET domain_iab:{domain}    │  ~1.0ms          │
+│  │           │   └── Cache miss? → ScyllaDB fallback (rare)      │  (+3ms if miss)  │
+│  │           │   └── Unknown domain? → Use SSP cat fields        │  (0ms, inline)   │
+│  │           │                                                    │                   │
+│  │  Step 3:  ├── User profile: Redis GET user_profile:{user_id}  │  ~1.5ms          │
+│  │           │   └── Cache miss? → ScyllaDB fetch + cache        │  (+5ms if miss)  │
+│  │           │   └── New user? → Initialize empty profile        │  (0ms, inline)   │
+│  │           │                                                    │                   │
+│  │  Step 4:  ├── Compute decayed scores + add new signal         │  ~0.5ms (CPU)    │
+│  │           │   (apply formula from Section 2.6)                 │                   │
+│  │           │                                                    │                   │
+│  │  Step 5:  ├── Write updated scores:                           │                   │
+│  │           │   ├── Redis SET (async, fire-and-forget)           │  ~0.5ms          │
+│  │           │   └── ScyllaDB WRITE (async, batched every 100ms) │  (background)    │
+│  │           │                                                    │                   │
+│  │  Step 6:  └── Emit updated user segment list to Kafka         │  ~0.5ms          │
+│  │                (consumed by bidding engine)                    │                   │
+│  │                                                                │                   │
+│  │  Total latency (happy path): ~4.5ms                           │                   │
+│  │  Total latency (cache miss):  ~9ms                            │                   │
+│  └────────────────────────────────────────────────────────────────┘                   │
+│                                                                                      │
+│  Throughput: 580K events/sec across 120 pods ≈ 4,800 events/sec/pod                  │
+│  Each pod: 4 vCPU, 8 GB RAM, Go binary                                              │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Timing Breakdown: Happy Path vs. Degraded Path</h3>
+
+    <table>
+        <tr>
+            <th>Path</th>
+            <th>Parse</th>
+            <th>Domain Lookup</th>
+            <th>User Lookup</th>
+            <th>Score Compute</th>
+            <th>Write</th>
+            <th>Emit</th>
+            <th>Total</th>
+        </tr>
+        <tr style="background: #e8f5e9;">
+            <td><strong>Happy path</strong> (both cache hits)</td>
+            <td>0.5ms</td>
+            <td>1.0ms</td>
+            <td>1.5ms</td>
+            <td>0.5ms</td>
+            <td>0.5ms</td>
+            <td>0.5ms</td>
+            <td><strong>4.5ms</strong></td>
+        </tr>
+        <tr>
+            <td>Domain cache miss</td>
+            <td>0.5ms</td>
+            <td>4.0ms</td>
+            <td>1.5ms</td>
+            <td>0.5ms</td>
+            <td>0.5ms</td>
+            <td>0.5ms</td>
+            <td>7.5ms</td>
+        </tr>
+        <tr>
+            <td>User cache miss</td>
+            <td>0.5ms</td>
+            <td>1.0ms</td>
+            <td>6.5ms</td>
+            <td>0.5ms</td>
+            <td>0.5ms</td>
+            <td>0.5ms</td>
+            <td>9.5ms</td>
+        </tr>
+        <tr style="background: #fff5f5;">
+            <td>Both cache miss</td>
+            <td>0.5ms</td>
+            <td>4.0ms</td>
+            <td>6.5ms</td>
+            <td>0.5ms</td>
+            <td>0.5ms</td>
+            <td>0.5ms</td>
+            <td>12.5ms &#x26A0;</td>
+        </tr>
+        <tr style="background: #fff5f5;">
+            <td>Unknown domain</td>
+            <td>0.5ms</td>
+            <td>1.0ms (miss)</td>
+            <td>1.5ms</td>
+            <td>0.2ms</td>
+            <td>0.5ms</td>
+            <td>0.5ms</td>
+            <td>4.2ms (SSP-only)</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <strong>Cache Hit Rates (observed):</strong> Domain cache hit rate is ~99.5% (200K domains, stable set, weekly refresh). User cache hit rate is ~85% (50M of 500M users cached in Redis; the 50M most recently active users cover ~85% of real-time bid requests since active users generate disproportionate traffic). The double-cache-miss scenario (&lt;0.1% of requests) occasionally exceeds the 10ms SLA, but the p99 is still within bounds.
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 2.9 FEATURE QUALITY AND DRIFT -->
+    <!-- ================================================================== -->
+    <h2>&#x1F50D; 2.9 Feature Quality &mdash; Drift Detection, Staleness, and Degradation</h2>
+
+    <p>Features degrade over time. Websites change content, user behavior shifts seasonally, and the web vocabulary evolves. Feature quality monitoring is not optional &mdash; it is the difference between an audience platform that maintains accuracy and one that silently degrades.</p>
+
+    <h3>Feature Staleness Detection</h3>
+
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>Expected Refresh Cycle</th>
+            <th>Staleness Threshold</th>
+            <th>Action if Stale</th>
+        </tr>
+        <tr>
+            <td>Domain TF-IDF vectors</td>
+            <td>Weekly</td>
+            <td>&gt;14 days since last crawl</td>
+            <td>Priority re-crawl queue; use existing classification with "low confidence" flag</td>
+        </tr>
+        <tr>
+            <td>Domain IAB probabilities</td>
+            <td>Weekly</td>
+            <td>&gt;14 days since last classification</td>
+            <td>Serve stale classification but reduce confidence weight by 50%</td>
+        </tr>
+        <tr>
+            <td>User IAB scores</td>
+            <td>Real-time per event</td>
+            <td>&gt;30 days since last event</td>
+            <td>Profile eligible for archival; exclude from active audience segments</td>
+        </tr>
+        <tr>
+            <td>IDF values (vocabulary)</td>
+            <td>Monthly</td>
+            <td>&gt;60 days since last IDF recomputation</td>
+            <td>Trigger vocabulary refresh pipeline; may indicate web content drift</td>
+        </tr>
+    </table>
+
+    <h3>Feature Drift Detection</h3>
+
+    <p><strong>Feature drift</strong> occurs when the statistical distribution of feature values changes over time, causing model accuracy to degrade even though the model itself has not changed. In our system, drift manifests in several ways:</p>
+
+    <div class="step-box">
+        <span class="step-number">1</span>
+        <h4>Vocabulary Drift</h4>
+        <p>New terms enter the web lexicon (e.g., "metaverse" in 2021, "GPT" in 2023) that are not in our TF-IDF vocabulary. These terms get zero weight, causing the classifier to miss emerging content categories.</p>
+<pre>
+Detection:
+  - Track out-of-vocabulary (OOV) rate per batch run
+  - Baseline OOV: ~8% of tokens in crawled text
+  - Alert threshold: OOV > 12% → indicates vocabulary needs refresh
+  - Metric: oov_rate = count(tokens not in vocab) / count(all tokens)
+
+Mitigation:
+  - Monthly vocabulary refresh: Recompute vocabulary from latest crawl data
+  - Rebuild IDF values from updated corpus
+  - Re-vectorize all domains with new vocabulary
+  - Retrain classifier on new feature space (see Step 4)
+</pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-number">2</span>
+        <h4>Domain Content Drift</h4>
+        <p>Websites change their content focus over time. A domain that was primarily Sports may pivot to cover Sports + Gambling (a common pattern with sports betting legalization).</p>
+<pre>
+Detection:
+  - Compare this week's classification vs last week's for each domain
+  - Flag domains where top-1 category changed
+  - Flag domains where top-1 probability dropped by > 0.15
+
+  Typical week:
+    Domains with no category change:      ~96%
+    Domains with minor shift (same top-1): ~3%
+    Domains with major shift (new top-1):  ~1% (~2,000 domains)
+
+  Action for major shifts:
+    - Manual review queue for top 100 highest-traffic shifted domains
+    - Automatic update for remaining 1,900 (trust new classification)
+    - Alert if >3% of domains shift in a single week (unusual, investigate)
+</pre>
+    </div>
+
+    <div class="step-box">
+        <span class="step-number">3</span>
+        <h4>User Behavior Drift</h4>
+        <p>Aggregate user browsing patterns change seasonally (more Travel in summer, more Shopping in Q4) and with world events (pandemic shifted away from Travel toward Home &amp; Garden).</p>
+<pre>
+Detection:
+  - Track weekly aggregate IAB category distribution across all user profiles
+  - Compute Jensen-Shannon divergence (JSD) between this week and 4-week rolling average
+  - Alert threshold: JSD > 0.05 → investigate
+
+  Example seasonal pattern:
+    Q4 (Oct-Dec): Shopping category share increases from 8% to 15%
+    Summer (Jun-Aug): Travel category share increases from 5% to 12%
+    These are expected — only alert on UNEXPECTED shifts
+
+Mitigation:
+  - Decay rates handle short-term shifts naturally (old signals fade)
+  - For structural shifts, adjust category-specific decay rates
+  - For category distribution rebalancing, see Step 6 (Monitoring)
+</pre>
+    </div>
+
+    <h3>Graceful Degradation Strategy</h3>
+
+    <div class="warning-box">
+        <strong>&#x26A0; What Happens When Features Fail?</strong>
+        <p>Feature serving infrastructure can fail in multiple ways. Each failure mode has a defined graceful degradation path:</p>
+    </div>
+
+    <table>
+        <tr>
+            <th>Failure Mode</th>
+            <th>Impact</th>
+            <th>Detection</th>
+            <th>Degradation Strategy</th>
+            <th>Recovery Time</th>
+        </tr>
+        <tr>
+            <td><strong>Redis domain cluster down</strong></td>
+            <td>No domain IAB lookups</td>
+            <td>Health check fails, latency spikes</td>
+            <td>Fall back to ScyllaDB (higher latency, 2-5ms). If ScyllaDB also down, use SSP categories only.</td>
+            <td>Auto-failover: 30s. Full recovery: 5-15min</td>
+        </tr>
+        <tr>
+            <td><strong>Redis user cluster down</strong></td>
+            <td>No user score reads/writes</td>
+            <td>Health check fails</td>
+            <td>Fall back to ScyllaDB for reads. Buffer score writes in Kafka, replay on recovery.</td>
+            <td>Auto-failover: 30s. Write replay: 5-30min</td>
+        </tr>
+        <tr>
+            <td><strong>Batch pipeline failure</strong></td>
+            <td>Stale domain classifications</td>
+            <td>Pipeline monitoring, no fresh data in Redis</td>
+            <td>Serve previous week's classifications (still valid, ~99% domains don't change weekly). Alert ops team.</td>
+            <td>Manual re-run: 2-3 hours</td>
+        </tr>
+        <tr>
+            <td><strong>Crawl infrastructure down</strong></td>
+            <td>No fresh crawl data for new domains</td>
+            <td>Crawl job fails, S3 data missing</td>
+            <td>Existing domain features remain valid. New/changed domains use SSP categories until crawl resumes.</td>
+            <td>Crawl restart: 6-12 hours</td>
+        </tr>
+        <tr>
+            <td><strong>ScyllaDB degraded performance</strong></td>
+            <td>Slow cache-miss path</td>
+            <td>p99 latency > 20ms</td>
+            <td>Increase Redis cache TTL to reduce cache misses. For new users, initialize with empty profile (no ScyllaDB read).</td>
+            <td>Depends on root cause: minutes to hours</td>
+        </tr>
+    </table>
+
+    <div class="key-insight">
+        <strong>Key Insight &mdash; Defense in Depth:</strong> Every feature has multiple fallback data sources. Domain classification: our classifier → SSP categories → "Unknown." User scores: Redis → ScyllaDB → empty profile. This layered approach means the system <strong>never fully stops</strong> &mdash; it degrades in quality rather than availability. A user with an empty profile still gets contextual targeting from the domain's IAB category; it's just less personalized.
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 2.10 FEATURE SERVING ARCHITECTURE DIAGRAM -->
+    <!-- ================================================================== -->
+    <h2>&#x1F3D7;&#xFE0F; 2.10 End-to-End Feature Serving Architecture</h2>
+
+    <p>This diagram shows how all feature engineering components connect from data sources through computation to serving:</p>
+
+    <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                          COMPLETE FEATURE ENGINEERING ARCHITECTURE                            │
+│                                                                                              │
+│  DATA SOURCES                    BATCH PIPELINE                    SERVING LAYER              │
+│  ═══════════                     ══════════════                    ═════════════              │
+│                                                                                              │
+│  ┌───────────────┐               ┌──────────────┐                                           │
+│  │ Domain Crawl   │──────────────>│ Text Extract  │                                           │
+│  │ (S3, 200K HTML)│               │ + Clean       │                                           │
+│  └───────────────┘               └──────┬───────┘                                           │
+│                                         │                                                    │
+│  ┌───────────────┐               ┌──────▼───────┐                ┌──────────────────┐       │
+│  │ Vocabulary     │──────────────>│ TF-IDF       │───────────────>│  Redis Cluster   │       │
+│  │ (50K terms)    │               │ Vectorize    │  domain →      │  (Domain IAB     │       │
+│  └───────────────┘               └──────┬───────┘  IAB probs     │   Probabilities) │       │
+│                                         │                         │  200K entries    │       │
+│  ┌───────────────┐               ┌──────▼───────┐                │  &lt;1ms reads      │       │
+│  │ Training       │──────────────>│ Classifier   │───────────────>│                  │       │
+│  │ Labels         │               │ (SVM/LR)     │                └────────┬─────────┘       │
+│  └───────────────┘               └──────────────┘                         │                  │
+│                                                                            │ domain lookup    │
+│                                                                            ▼                  │
+│  ┌───────────────┐                                               ┌──────────────────┐       │
+│  │ Bidstream      │──────────────────────────────────────────────>│ Feature Service  │       │
+│  │ (Kafka, 580K   │        bid request                           │ (Go, 120 pods)   │       │
+│  │  events/sec)   │        with domain, user_id,                 │                  │       │
+│  └───────────────┘        device, geo, time                      │ 1. Parse request │       │
+│                                                                   │ 2. Domain lookup │       │
+│                                                                   │ 3. User lookup   │       │
+│                                                                   │ 4. Score update  │       │
+│                                                                   │ 5. Emit segments │       │
+│                                                                   └───────┬──────────┘       │
+│                                                                           │                  │
+│                                                                    ┌──────▼───────────┐      │
+│                                                                    │ Redis Cluster     │      │
+│                                                                    │ (User Profiles)   │      │
+│                                                                    │ 50M active users  │      │
+│                                                                    │ &lt;2ms reads        │      │
+│                                                                    └──────┬───────────┘      │
+│                                                                           │ async write      │
+│                                                                    ┌──────▼───────────┐      │
+│                                                                    │ ScyllaDB          │      │
+│                                                                    │ (All 500M Users)  │      │
+│                                                                    │ Durable store     │      │
+│                                                                    └──────┬───────────┘      │
+│                                                                           │ archive          │
+│                                                                    ┌──────▼───────────┐      │
+│                                                                    │ S3/GCS (Cold)     │      │
+│                                                                    │ Historical data   │      │
+│                                                                    └──────────────────┘      │
+│                                                                                              │
+│  Output: User segment list emitted to Kafka → consumed by bidding engine for targeting       │
+└─────────────────────────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 2.11 SECTION SUMMARY -->
+    <!-- ================================================================== -->
+    <h2>&#x2705; 2.11 Section Summary &mdash; Feature Engineering Outcomes</h2>
+
+    <p>This section defined the complete feature engineering pipeline that transforms raw data (crawled HTML, bid requests, user activity) into production ML features for IAB audience generation. Here is what we established:</p>
+
+    <div class="success-box">
+        <h4>&#x2705; Feature Engineering Outcomes</h4>
+        <ul>
+            <li><strong>TF-IDF vectorization pipeline</strong> designed: 50K-dim sparse vectors from crawled text, with unigram+bigram vocabulary, custom stopwords, sublinear TF, smoothed IDF, and L2 normalization</li>
+            <li><strong>Technology selection justified:</strong> TF-IDF over Word2Vec (-2% accuracy, no interpretability), BERT (50x cost for 3% gain), and LLM APIs (non-deterministic, vendor lock-in)</li>
+            <li><strong>Domain features defined:</strong> 12 metadata features beyond body text TF-IDF, with +3.1% accuracy improvement from meta description, OpenGraph, and schema.org signals</li>
+            <li><strong>Bid request features engineered:</strong> 11 real-time features including cyclical time encoding (sin/cos), SSP category integration with 80/15/5 confidence weighting, and device/geo signals</li>
+            <li><strong>User IAB score arrays designed:</strong> 700-dim score array per user with per-event exponential decay, category-specific decay rates (14h half-life for News to 87h for Education), and confidence-weighted accumulation</li>
+            <li><strong>Cross-device identity resolution:</strong> MAX-merge strategy across device clusters, with cohort-based fallback for cookieless users</li>
+            <li><strong>Multi-tier storage architecture:</strong> Redis hot tier (&lt;2ms, $30K/mo) → ScyllaDB warm tier (&lt;8ms, $22K/mo) → S3 cold tier (batch, $500/mo), totaling ~$52K/month for all feature infrastructure</li>
+            <li><strong>Feature quality monitoring:</strong> Staleness detection, vocabulary drift (OOV rate), domain content drift (week-over-week classification changes), and user behavior drift (JSD)</li>
+            <li><strong>Graceful degradation:</strong> Multi-layer fallback for every feature source, ensuring the system degrades in quality but never in availability</li>
+        </ul>
+    </div>
+
+    <div class="metric-grid">
+        <div class="metric-card">
+            <div class="value">50K</div>
+            <div class="label">TF-IDF Vocabulary Dimensions</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">~2 KB</div>
+            <div class="label">Sparse Vector per Domain</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">~9.7 KB</div>
+            <div class="label">User Profile Size</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">4.5ms</div>
+            <div class="label">Feature Serving Latency (p50)</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">$52K/mo</div>
+            <div class="label">Total Feature Infra Cost</div>
+        </div>
+        <div class="metric-card">
+            <div class="value">99.5%</div>
+            <div class="label">Domain Cache Hit Rate</div>
+        </div>
+    </div>
+
+    <h3>Relationship to Model Architecture</h3>
+
+    <div class="highlight-box">
+        <strong>Downstream dependency:</strong> The domain classifier takes the TF-IDF vectors and metadata features defined here and maps them to IAB category probability distributions. The user scoring engine takes the real-time feature pipeline and applies score accumulation and decay formulas to maintain user profiles. Key architecture decisions &mdash; why linear SVM for domain classification, how to handle multi-label IAB assignments, and how the audience segmentation threshold is tuned &mdash; are covered in the Model Architecture documentation.
+    </div>
+
+</div>
+</body>
+</html>

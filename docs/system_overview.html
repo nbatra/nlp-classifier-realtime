@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IAB Audience Generation — System Overview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #2c3e50;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            padding: 50px 60px;
+        }
+        h1 {
+            font-size: 2.6em;
+            color: #2c3e50;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 1.7em;
+            color: #2c3e50;
+            border-left: 6px solid #667eea;
+            padding-left: 20px;
+            margin-top: 45px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 1.4em;
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 12px;
+        }
+        h4 {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p { margin-bottom: 15px; }
+        ul, ol { margin-bottom: 15px; padding-left: 30px; }
+        li { margin-bottom: 6px; }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #ffffff;
+            padding: 35px 40px;
+            border-radius: 12px;
+            margin-bottom: 35px;
+        }
+        .hero-section h2 {
+            color: #ffffff;
+            border-left: 6px solid rgba(255,255,255,0.6);
+            font-size: 1.9em;
+            margin-top: 0;
+        }
+        .hero-section p { color: #f0f0ff; font-size: 1.08em; }
+        .hero-section strong { color: #ffffff; }
+
+        /* Step Boxes */
+        .step-box {
+            background: #e8f5e8;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 22px 28px;
+            margin-bottom: 18px;
+            position: relative;
+            padding-left: 75px;
+        }
+        .step-badge {
+            position: absolute;
+            left: 18px;
+            top: 18px;
+            width: 42px;
+            height: 42px;
+            background: #28a745;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Math/Code Boxes */
+        .math-box {
+            background: #e8f4fd;
+            border: 3px solid #3498db;
+            border-radius: 10px;
+            padding: 22px 28px;
+            margin: 20px 0;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.95em;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Key Insight */
+        .key-insight {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 18px 22px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        .key-insight strong:first-child { color: #28a745; }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fff5f5;
+            border-left: 4px solid #dc3545;
+            padding: 18px 22px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        .warning-box strong:first-child { color: #dc3545; }
+
+        /* Info Box */
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 18px 22px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 18px 22px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        /* Decision Matrix */
+        .decision-matrix {
+            background: #f0f8ff;
+            border: 2px solid #4169e1;
+            border-radius: 10px;
+            padding: 24px 28px;
+            margin: 20px 0;
+        }
+        .decision-matrix h3 { color: #4169e1; margin-top: 0; }
+        .pros-cons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .pros { background: #e8f5e9; padding: 15px; border-radius: 8px; }
+        .cons { background: #fff5f5; padding: 15px; border-radius: 8px; }
+        .pros h4 { color: #28a745; margin-top: 0; }
+        .cons h4 { color: #dc3545; margin-top: 0; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th {
+            background: #f2f2f2;
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+        }
+        tr:nth-child(even) { background: #fafafa; }
+        tr:hover { background: #f5f5f5; }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            padding: 28px 32px;
+            border-radius: 10px;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.88em;
+            overflow-x: auto;
+            line-height: 1.5;
+            margin: 20px 0;
+            white-space: pre;
+        }
+        .architecture-diagram .highlight { color: #667eea; font-weight: bold; }
+        .architecture-diagram .green { color: #28a745; }
+        .architecture-diagram .orange { color: #f0ad4e; }
+        .architecture-diagram .red { color: #dc3545; }
+        .architecture-diagram .cyan { color: #17a2b8; }
+
+        /* Roadmap Cards */
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin: 20px 0;
+        }
+        .roadmap-card {
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            background: #f8f9ff;
+            transition: transform 0.15s;
+        }
+        .roadmap-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.15); }
+        .roadmap-card h4 { color: #667eea; margin-top: 0; font-size: 1.15em; }
+        .roadmap-card .step-num {
+            display: inline-block;
+            background: #667eea;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 8px;
+        }
+
+        /* Success Box */
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 22px 28px;
+            margin: 25px 0;
+        }
+        .success-box h3 { color: #28a745; margin-top: 0; }
+
+        /* Section Divider */
+        .section-divider {
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            border: none;
+            margin: 45px 0;
+            border-radius: 2px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>IAB Audience Generation System &mdash; Comprehensive Overview</h1>
+    <p style="font-size: 1.1em; color: #7f8c8d; margin-top: -20px; margin-bottom: 35px;">
+        A production ML system for classifying website domains into IAB content categories and generating high-value audience segments from real-time bidstream data in programmatic advertising.
+    </p>
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: EXECUTIVE SUMMARY / HERO          -->
+    <!-- ============================================ -->
+
+    <div class="hero-section">
+        <h2>&#x1F3AF; Executive Summary</h2>
+        <p>
+            We are building an <strong>end-to-end ML system</strong> that transforms raw programmatic advertising bidstream data into monetizable audience segments. The system classifies website domains into the <strong>IAB Content Taxonomy v2.2</strong> (~700 categories across 2 tiers), tracks user browsing patterns in real time, and assigns each user to high-confidence <strong>IAB audience segments</strong> that advertisers use for campaign targeting.
+        </p>
+        <p>
+            <strong>Why this matters commercially:</strong> Well-classified audience segments command <strong>2&ndash;5x CPM premiums</strong> compared to untargeted inventory. An advertiser selling luxury travel packages will pay significantly more to reach users reliably classified into "IAB-20: Travel" than to show ads to a random audience. Our system turns raw bid request logs &mdash; which every ad exchange already has &mdash; into a revenue-generating data asset.
+        </p>
+        <p>
+            <strong>Core approach:</strong> Rather than classifying domains in real time (which would blow our latency budget), we pre-compute a domain-to-IAB lookup table using TF-IDF text classification on crawled website content. At bid time, we simply look up the domain, update the user's IAB score array, apply exponential time-decay, and export the user's top audience segments. The result is a system that processes <strong>50 billion+ bid requests per day</strong> with sub-10ms user score lookups.
+        </p>
+    </div>
+
+    <h3>Scope</h3>
+    <p>
+        This is the <strong>"Step 0" landing page</strong> for the 7-step deep-dive design series. It covers:
+    </p>
+    <ul>
+        <li>The business problem and why it matters in programmatic advertising</li>
+        <li>Platform scale numbers and latency constraints that drive every design decision</li>
+        <li>A complete end-to-end architecture overview showing how all 4 core components connect</li>
+        <li>Key technology decisions with rejected alternatives and justification</li>
+        <li>A worked example tracing a single user through the entire pipeline with real numbers</li>
+        <li>Technology stack overview, privacy considerations, and success metrics</li>
+        <li>A roadmap of the 7 detailed deep-dive documents</li>
+    </ul>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: PROBLEM STATEMENT                 -->
+    <!-- ============================================ -->
+
+    <h2>&#x1F4A1; Problem Statement: Why IAB Audience Generation Matters</h2>
+
+    <h3>The Layman Explanation</h3>
+    <p>
+        A billboard company can place ads randomly on highways and hope the right people drive by, or it can learn which drivers frequent specific routes and place relevant ads on exactly those highways. A luxury car brand wants their ad on the route used by high-income commuters, not on a rural road with no traffic.
+    </p>
+    <p>
+        <strong>Programmatic advertising</strong> works the same way, but digitally and at massive scale. Every time someone loads a webpage, an auction happens in milliseconds to decide which ad to show them. Advertisers want to bid higher on users who are likely interested in their products. If we can tell an advertiser "this user has been reading travel sites, finance sites, and luxury lifestyle content for the past two weeks," that user becomes far more valuable to a travel or financial services advertiser.
+    </p>
+    <p>
+        Our system's job is to build this understanding of each user's interests by watching which websites they visit, classifying those websites into standardized categories (the <strong>IAB Content Taxonomy</strong>), and maintaining a running profile of each user's affinities. The result: advertisers can target "users interested in Travel" or "users interested in Business &amp; Finance" and pay a premium for the privilege.
+    </p>
+
+    <h3>The Technical Framing</h3>
+    <p>
+        The problem decomposes into four interconnected ML and engineering challenges:
+    </p>
+
+    <div class="step-box">
+        <div class="step-badge">1</div>
+        <strong>Domain-Level Text Classification:</strong> Given the text content of a website domain (e.g., nytimes.com, expedia.com), classify it into one or more of ~700 IAB categories with calibrated probability scores. This is a <strong>multi-label text classification</strong> problem. We use TF-IDF vectorization + a classifier rather than keyword matching because context matters &mdash; the word "bank" on chase.com means finance, while "bank" on a geography site means riverbank.
+    </div>
+
+    <div class="step-box">
+        <div class="step-badge">2</div>
+        <strong>Real-Time Score Accumulation:</strong> For each of ~500 million unique users, maintain a persistent <strong>IAB score array</strong> (a vector of ~700 floating-point values). Every time we see a user in the bidstream visiting a classified domain, we look up the domain's IAB scores and add them to the user's array. This must happen at <strong>50B+ events/day</strong> with <strong>sub-10ms latency</strong> per lookup.
+    </div>
+
+    <div class="step-box">
+        <div class="step-badge">3</div>
+        <strong>Temporal Decay Modeling:</strong> A user who visited expedia.com yesterday is more likely to be actively planning travel than a user who visited it 3 months ago. We apply <strong>exponential time-decay</strong> (score &times; e<sup>-&lambda;t</sup>) with category-specific decay rates &mdash; "Travel" intent fades faster (half-life ~5 days) than "Education" interest (half-life ~30 days). This ensures our audience segments reflect <em>current</em> user intent, not historical noise.
+    </div>
+
+    <div class="step-box">
+        <div class="step-badge">4</div>
+        <strong>Audience Segment Assignment:</strong> From each user's decayed score array, extract the top-K categories that exceed a confidence threshold. Map these to named audience segments (e.g., "IAB Travel Enthusiast," "IAB Finance Intender") that downstream DSPs and advertisers can target in their campaigns. The segments must be <strong>large enough to be useful</strong> (>1M users for programmatic scale) but <strong>precise enough to command premiums</strong> (>60% true positive rate).
+    </div>
+
+    <h3>Why This Is Hard</h3>
+
+    <div class="warning-box">
+        <strong>&#x26A0; Scale vs. Latency Trade-off:</strong> We process 50 billion bid requests per day (~580K QPS sustained, 2M+ QPS at peak). Every bid request triggers a user score lookup that must complete in under 10ms. We cannot run ML inference at bid time &mdash; hence the pre-computed domain lookup table architecture.
+    </div>
+
+    <div class="warning-box">
+        <strong>&#x26A0; Category Ambiguity:</strong> Many domains span multiple IAB categories. CNN covers news, politics, entertainment, health, travel, and technology. A single domain classification must produce a probability distribution across categories, not a single label. This makes evaluation harder (traditional accuracy metrics are insufficient) and requires careful threshold tuning.
+    </div>
+
+    <div class="warning-box">
+        <strong>&#x26A0; Identity Fragmentation:</strong> With cookie deprecation, IDFA restrictions, and GAID changes, the same physical user may appear under multiple identifiers (or no identifier at all). Our system must gracefully handle sparse user histories and supplement with contextual signals when user-level tracking is unavailable.
+    </div>
+
+    <div class="warning-box">
+        <strong>&#x26A0; Domain Coverage vs. Quality:</strong> The web has millions of domains, but the top 200K domains cover ~85% of bid volume. We must choose between classifying everything (expensive, noisy) or curating a high-quality subset (practical, but with a coverage gap for long-tail domains).
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: SCALE REALITY CHECK               -->
+    <!-- ============================================ -->
+
+    <h2>&#x1F4CA; Scale Reality Check</h2>
+
+    <p>
+        Every design decision in this system is driven by the <strong>scale of the programmatic advertising ecosystem</strong>. Before diving into architecture, we need to internalize the numbers we are working with. These are not theoretical &mdash; they represent actual production volumes for a mid-to-large DSP or data platform operating in the OpenRTB ecosystem.
+    </p>
+
+    <h3>Platform Scale Numbers</h3>
+
+    <table>
+        <tr>
+            <th>Dimension</th>
+            <th>Volume</th>
+            <th>Peak</th>
+            <th>Why This Volume</th>
+        </tr>
+        <tr>
+            <td><strong>Bid Requests / Day</strong></td>
+            <td>50 Billion</td>
+            <td>80B (Black Friday, Super Bowl)</td>
+            <td>Multiple SSP integrations (Google AdX, Xandr, PubMatic, Index Exchange) each sending billions of requests. Each page load generates 5-15 bid requests across ad slots.</td>
+        </tr>
+        <tr>
+            <td><strong>Bid Requests / Second (QPS)</strong></td>
+            <td>~580,000 sustained</td>
+            <td>2M+ QPS</td>
+            <td>US/EU daytime peaks drive 3-4x sustained average. Holiday shopping events can cause 10x spikes for commerce-related inventory.</td>
+        </tr>
+        <tr>
+            <td><strong>Unique Users / Day</strong></td>
+            <td>500 Million</td>
+            <td>700M (holiday peaks)</td>
+            <td>Cross-device, cross-browser identifiers (cookies, IDFA, GAID, UID2, RampID). Each physical person may have 1.5-3 digital identifiers.</td>
+        </tr>
+        <tr>
+            <td><strong>Unique Users (Total Pool)</strong></td>
+            <td>2 Billion</td>
+            <td>&mdash;</td>
+            <td>Historical user pool across all ID types. Many are stale (>90 days inactive). Active monthly pool ~800M.</td>
+        </tr>
+        <tr>
+            <td><strong>Unique Domains in Rotation</strong></td>
+            <td>200,000+</td>
+            <td>350K (including long-tail)</td>
+            <td>Regular bid volume comes from ~200K domains. Long tail adds another 150K seen occasionally. Top 10K domains account for ~60% of traffic.</td>
+        </tr>
+        <tr>
+            <td><strong>IAB Categories (Taxonomy v2.2)</strong></td>
+            <td>~700</td>
+            <td>&mdash;</td>
+            <td>Tier-1: 29 top-level categories (Arts, Business, Tech, etc.). Tier-2: ~670 subcategories. We classify to Tier-2 level and roll up to Tier-1 for broad segments.</td>
+        </tr>
+        <tr>
+            <td><strong>Domain Lookup Latency (p99)</strong></td>
+            <td>&lt;5ms</td>
+            <td>&lt;8ms at peak</td>
+            <td>Pre-computed lookup in Redis/Aerospike. Must not add meaningful latency to the bid processing pipeline.</td>
+        </tr>
+        <tr>
+            <td><strong>User Score Lookup Latency (p99)</strong></td>
+            <td>&lt;10ms</td>
+            <td>&lt;15ms at peak</td>
+            <td>Read user's IAB score array, apply decay, return top segments. This is the end-to-end budget for the audience lookup in a bid enrichment flow.</td>
+        </tr>
+        <tr>
+            <td><strong>Bid Response Deadline</strong></td>
+            <td>&lt;100ms total</td>
+            <td>&mdash;</td>
+            <td>OpenRTB protocol timeout. Includes network round-trip (~30ms), bid logic (~40ms), and all enrichment lookups. Our system gets ~10-15ms of that budget.</td>
+        </tr>
+        <tr>
+            <td><strong>User Score Array Size</strong></td>
+            <td>~700 floats + timestamps</td>
+            <td>~5.6 KB per user (uncompressed)</td>
+            <td>700 categories &times; (4-byte float score + 4-byte timestamp) = 5.6KB. With compression, ~1.5-2KB per user profile.</td>
+        </tr>
+        <tr>
+            <td><strong>Total User Profile Storage</strong></td>
+            <td>~3 TB (compressed)</td>
+            <td>~4 TB at peak user pool</td>
+            <td>2B users &times; 1.5KB avg compressed profile. Hot tier (active users) is ~1.2TB in Redis/Aerospike.</td>
+        </tr>
+        <tr>
+            <td><strong>Domain Classification Table Size</strong></td>
+            <td>~200K entries</td>
+            <td>~120 MB</td>
+            <td>200K domains &times; ~600 bytes per entry (domain string + top-20 IAB category scores). Fits entirely in memory.</td>
+        </tr>
+    </table>
+
+    <div class="key-insight">
+        <strong>Key Insight:</strong> The domain lookup table is small (~120MB) and fits comfortably in memory on every bid-processing node. This is the fundamental insight that makes the pre-computed approach viable &mdash; we invest batch compute upfront (domain crawling + classification) to achieve O(1) lookups at bid time. The user score arrays are larger (~1.2TB for hot users) and require a distributed key-value store, but the per-lookup cost is still sub-10ms.
+    </div>
+
+    <h3>Traffic Patterns and Peak Handling</h3>
+
+    <p>
+        Programmatic ad traffic follows strong <strong>diurnal and seasonal patterns</strong> that directly impact our system's capacity planning:
+    </p>
+
+    <table>
+        <tr>
+            <th>Pattern</th>
+            <th>Multiplier vs. Average</th>
+            <th>Impact on Our System</th>
+        </tr>
+        <tr>
+            <td><strong>US daytime peak (10am-10pm EST)</strong></td>
+            <td>2.5-3x average QPS</td>
+            <td>User score writes spike; Redis write throughput must handle 3x sustained rate</td>
+        </tr>
+        <tr>
+            <td><strong>Monday morning spike</strong></td>
+            <td>1.5x daily average</td>
+            <td>Score decay calculations accumulate over weekend; first Monday lookups trigger more decay computation</td>
+        </tr>
+        <tr>
+            <td><strong>Black Friday / Cyber Monday</strong></td>
+            <td>8-10x for shopping domains</td>
+            <td>Commerce-related IAB categories see massive score updates; segment sizes shift dramatically for Shopping, Deals categories</td>
+        </tr>
+        <tr>
+            <td><strong>Super Bowl Sunday</strong></td>
+            <td>5-6x for entertainment/sports</td>
+            <td>Live event traffic causes burst writes; domain classification for streaming sites must be pre-cached</td>
+        </tr>
+        <tr>
+            <td><strong>Q4 holiday season</strong></td>
+            <td>2-3x sustained for 6 weeks</td>
+            <td>Sustained elevated traffic; capacity must be provisioned for entire season, not just peaks</td>
+        </tr>
+        <tr>
+            <td><strong>New Year's Day dip</strong></td>
+            <td>0.4x average</td>
+            <td>Good window for batch reprocessing, model retraining, domain re-crawls</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <strong>Capacity Planning Rule:</strong> We provision for <strong>3x sustained average QPS</strong> for normal operations and maintain burst capacity to <strong>2M QPS</strong> for holiday events. Auto-scaling handles the gap between provisioned and burst capacity with a 2-minute spin-up time for additional bid processing nodes. The domain lookup table is replicated to every node on startup (120MB, loads in <2 seconds), so scaling is limited only by user score store throughput.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: END-TO-END SYSTEM ARCHITECTURE    -->
+    <!-- ============================================ -->
+
+    <h2>&#x1F3D7; End-to-End System Architecture</h2>
+
+    <p>
+        The system is composed of <strong>four core components</strong> that operate at different timescales: a batch domain classification pipeline (runs daily/weekly), a real-time user scoring pipeline (runs on every bid request), a score decay mechanism (applied at read-time or via periodic batch), and an audience segment generator (runs periodically or on-demand). Here is how they fit together.
+    </p>
+
+    <h3>High-Level Architecture Diagram</h3>
+
+    <div class="architecture-diagram"><span class="highlight">╔══════════════════════════════════════════════════════════════════════════════════════════════╗</span>
+<span class="highlight">║                        IAB AUDIENCE GENERATION SYSTEM                                        ║</span>
+<span class="highlight">╚══════════════════════════════════════════════════════════════════════════════════════════════╝</span>
+
+<span class="green">┌─────────────────────────────────────────────────────────────────────────────────────────────┐</span>
+<span class="green">│  COMPONENT 1: DOMAIN CLASSIFICATION (Batch — Daily/Weekly)                                  │</span>
+<span class="green">│                                                                                             │</span>
+<span class="green">│  Curated Domain List ──► Web Crawler ──► HTML Parser ──► Text Extractor                     │</span>
+<span class="green">│  (200K domains)          (Scrapy)        (BeautifulSoup)  (title + meta + body text)         │</span>
+<span class="green">│                                                              │                              │</span>
+<span class="green">│                                                              ▼                              │</span>
+<span class="green">│                                           TF-IDF Vectorizer (50K features)                  │</span>
+<span class="green">│                                                              │                              │</span>
+<span class="green">│                                                              ▼                              │</span>
+<span class="green">│                                           Multi-Label Classifier (LinearSVC / LR)           │</span>
+<span class="green">│                                                              │                              │</span>
+<span class="green">│                                                              ▼                              │</span>
+<span class="green">│                                      ┌──────────────────────────────────┐                   │</span>
+<span class="green">│                                      │  Domain → IAB Lookup Table       │                   │</span>
+<span class="green">│                                      │  expedia.com → {IAB-20: 0.91,   │                   │</span>
+<span class="green">│                                      │    IAB-20-1: 0.72, IAB-3: 0.15} │                   │</span>
+<span class="green">│                                      │  ~120MB, fits in memory          │                   │</span>
+<span class="green">│                                      └──────────────┬───────────────────┘                   │</span>
+<span class="green">│                                                     │ Published to all bid nodes            │</span>
+<span class="green">└─────────────────────────────────────────────────────┼───────────────────────────────────────┘</span>
+                                                      │
+                    ┌─────────────────────────────────┘
+                    │
+<span class="cyan">┌───────────────────┼─────────────────────────────────────────────────────────────────────────┐</span>
+<span class="cyan">│  COMPONENT 2: REAL-TIME USER SCORING (Streaming — Per Bid Request)                          │</span>
+<span class="cyan">│                    │                                                                        │</span>
+<span class="cyan">│  Bidstream ──► Kafka ──► Bid Processor ──► Domain Lookup ──► Score Update ──► Redis/Aero    │</span>
+<span class="cyan">│  (SSPs via        (partitioned         (in-memory      (user_scores[IAB_cat]              │</span>
+<span class="cyan">│   OpenRTB)         by user_id)          hash map)       += domain_scores[IAB_cat])         │</span>
+<span class="cyan">│                                                                                             │</span>
+<span class="cyan">│  Timing: Kafka consume: 1ms │ Domain lookup: 1-2ms │ Score update: 3-5ms │ Total: ~8ms     │</span>
+<span class="cyan">│                                                                                             │</span>
+<span class="cyan">│  Also extracts OpenRTB metadata:                                                            │</span>
+<span class="cyan">│    - bid.site.cat / bid.site.sectioncat (SSP-declared categories)                           │</span>
+<span class="cyan">│    - bid.bcat (blocked categories — useful negative signal)                                 │</span>
+<span class="cyan">│    - bid.content.url (page-level URL when available)                                        │</span>
+<span class="cyan">└─────────────────────────────────────────────────────────────────────────────────────────────┘</span>
+                                                      │
+                                                      │ User score arrays stored in Redis/Aerospike
+                                                      │
+<span class="orange">┌─────────────────────────────────────────────────────┼───────────────────────────────────────┐</span>
+<span class="orange">│  COMPONENT 3: SCORE DECAY (Read-Time + Periodic Batch)                                      │</span>
+<span class="orange">│                                                     │                                       │</span>
+<span class="orange">│  On each score READ:                                │                                       │</span>
+<span class="orange">│    decayed_score = raw_score × e^(-λ × Δt)          │                                       │</span>
+<span class="orange">│                                                     │                                       │</span>
+<span class="orange">│  Where:  λ = category-specific decay rate            │                                       │</span>
+<span class="orange">│          Δt = time since last event (in days)        │                                       │</span>
+<span class="orange">│                                                     │                                       │</span>
+<span class="orange">│  Example λ values:                                  │                                       │</span>
+<span class="orange">│    Travel (IAB-20):     λ=0.139 (half-life ~5 days)  │                                       │</span>
+<span class="orange">│    Shopping (IAB-22):   λ=0.099 (half-life ~7 days)  │                                       │</span>
+<span class="orange">│    Finance (IAB-13):    λ=0.046 (half-life ~15 days) │                                       │</span>
+<span class="orange">│    Education (IAB-5):   λ=0.023 (half-life ~30 days) │                                       │</span>
+<span class="orange">│                                                     │                                       │</span>
+<span class="orange">│  Periodic batch job: Clean up users with all scores below threshold (weekly)                │</span>
+<span class="orange">└─────────────────────────────────────────────────────┼───────────────────────────────────────┘</span>
+                                                      │
+                                                      │ Decayed scores
+                                                      │
+<span class="red">┌─────────────────────────────────────────────────────┼───────────────────────────────────────┐</span>
+<span class="red">│  COMPONENT 4: AUDIENCE SEGMENT GENERATION (Periodic — Hourly/On-Demand)                     │</span>
+<span class="red">│                                                     │                                       │</span>
+<span class="red">│  For each user:                                     │                                       │</span>
+<span class="red">│    1. Read decayed IAB score array                  │                                       │</span>
+<span class="red">│    2. Apply minimum score threshold (e.g., 0.5)     │                                       │</span>
+<span class="red">│    3. Select top-K categories (K=5 default)         │                                       │</span>
+<span class="red">│    4. Map to named segments:                        │                                       │</span>
+<span class="red">│       - "IAB Travel Enthusiast" (IAB-20 score > 2.0)│                                       │</span>
+<span class="red">│       - "IAB Finance Intender" (IAB-13 score > 1.5) │                                       │</span>
+<span class="red">│    5. Export to segment store (DynamoDB / S3)        │                                       │</span>
+<span class="red">│                                                                                             │</span>
+<span class="red">│  Output: User → [segment_1, segment_2, ...] mapping for DSP targeting                      │</span>
+<span class="red">│  Segment refresh: Every 1-4 hours for active users                                          │</span>
+<span class="red">└─────────────────────────────────────────────────────────────────────────────────────────────┘</span>
+
+<span class="highlight">DATA FLOW TIMING SUMMARY:</span>
+  Domain Classification:  Batch (daily)     │ ~4-8 hours for full 200K domain crawl + classification
+  User Score Update:      Real-time         │ ~8ms per bid request (end-to-end)
+  Score Decay:            Read-time          │ ~0.5ms additional compute per score read
+  Segment Generation:     Periodic (hourly)  │ ~45 min for full 500M active user sweep</div>
+
+    <h3>Component Interaction Details</h3>
+
+    <h4>How Data Flows Between Components</h4>
+    <p>
+        The four components interact through <strong>three data handoff points</strong>, each with different consistency and latency requirements:
+    </p>
+
+    <table>
+        <tr>
+            <th>Data Handoff</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Mechanism</th>
+            <th>Freshness</th>
+            <th>Consistency Model</th>
+        </tr>
+        <tr>
+            <td><strong>Domain Lookup Table</strong></td>
+            <td>Domain Classification</td>
+            <td>User Scoring</td>
+            <td>Published to S3; loaded into memory on each bid node at startup. Refreshed via blue-green deploy.</td>
+            <td>Daily (24h stale max)</td>
+            <td>Eventually consistent. New table propagates to all nodes within 5 minutes of publish.</td>
+        </tr>
+        <tr>
+            <td><strong>User Score Arrays</strong></td>
+            <td>User Scoring</td>
+            <td>Score Decay / Segment Gen</td>
+            <td>Redis Cluster (hot) or Aerospike (warm). Keyed by user_id. Each entry: {category_id: (score, last_event_timestamp)}.</td>
+            <td>Real-time (sub-second)</td>
+            <td>Last-writer-wins for score updates. Acceptable because scores are additive &mdash; a lost update means one missed page visit, not data corruption.</td>
+        </tr>
+        <tr>
+            <td><strong>Audience Segments</strong></td>
+            <td>Segment Generation</td>
+            <td>DSP Bid Logic / External APIs</td>
+            <td>Written to DynamoDB (for real-time lookup) and S3 (for batch export to partners).</td>
+            <td>1-4 hours</td>
+            <td>Strongly consistent within DynamoDB. S3 exports are snapshot-based.</td>
+        </tr>
+    </table>
+
+    <div class="key-insight">
+        <strong>Key Insight &mdash; Separation of Concerns:</strong> The domain classification pipeline and the user scoring pipeline operate independently. The domain table is a <strong>static artifact</strong> from the user scoring pipeline's perspective &mdash; it changes at most once per day. This decoupling is critical: it means we can retrain and redeploy the domain classifier without touching the real-time scoring infrastructure, and vice versa. The only contract between them is the lookup table schema: <code>{domain: string, categories: [{iab_id: string, score: float}]}</code>.
+    </div>
+
+    <h4>Failure Modes and Graceful Degradation</h4>
+
+    <table>
+        <tr>
+            <th>Failure Scenario</th>
+            <th>Impact</th>
+            <th>Mitigation</th>
+        </tr>
+        <tr>
+            <td><strong>Domain lookup table fails to load</strong></td>
+            <td>Bid nodes cannot classify domains; user scores stop updating</td>
+            <td>Keep previous version in memory. Alert on table age >48 hours. Fallback to OpenRTB cat fields from SSP.</td>
+        </tr>
+        <tr>
+            <td><strong>Redis cluster unavailable</strong></td>
+            <td>Cannot read/write user scores; scoring pipeline stalls</td>
+            <td>Circuit breaker pattern: after 3 failures in 10s, skip score updates for 30s. Bid requests still processed (just without audience enrichment). Replay missed events from Kafka after recovery.</td>
+        </tr>
+        <tr>
+            <td><strong>Domain crawler blocked by site</strong></td>
+            <td>Individual domain classification becomes stale</td>
+            <td>Rotate user agents, use cached classification. Flag domains with stale classifications (>30 days) for manual review. Fall back to URL-pattern heuristics for known domains.</td>
+        </tr>
+        <tr>
+            <td><strong>Kafka consumer lag &gt; 5 minutes</strong></td>
+            <td>User scores are delayed; segments based on stale data</td>
+            <td>Auto-scale consumer group. Drop duplicate events. Accept that 5-min lag is tolerable for audience segments (they are refreshed hourly anyway).</td>
+        </tr>
+        <tr>
+            <td><strong>Score decay computation too slow</strong></td>
+            <td>Read latency increases beyond 10ms SLA</td>
+            <td>Pre-compute decay for top 10% of users (by activity). For others, apply approximate decay (round Δt to nearest day to enable caching). Lazy write-back of decayed values.</td>
+        </tr>
+    </table>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: KEY DESIGN DECISIONS              -->
+    <!-- ============================================ -->
+
+    <h2>&#x2696; Key Design Decisions</h2>
+
+    <p>
+        Every system of this scale involves hard trade-offs. Below we document the five most consequential design decisions, the alternatives we considered, and why we chose the approach we did. These are not academic exercises &mdash; each decision directly impacts latency, accuracy, cost, or operational complexity.
+    </p>
+
+    <!-- Decision 1 -->
+    <div class="decision-matrix">
+        <h3>Decision 1: TF-IDF + Classifier vs. Keyword Vector Store vs. Deep Learning Embeddings</h3>
+        <p><strong>Problem:</strong> How do we classify a website domain into IAB categories given its text content?</p>
+        <p><strong>Chosen approach: TF-IDF + Linear Classifier (LinearSVC or Logistic Regression)</strong></p>
+        <div class="pros-cons-grid">
+            <div class="pros">
+                <h4>&#x2705; Why TF-IDF + Classifier Wins</h4>
+                <ul>
+                    <li><strong>Handles polysemy:</strong> "bank" classified correctly in context (financial vs. geographic) because the model sees surrounding terms</li>
+                    <li><strong>Fast training &amp; inference:</strong> TF-IDF vectorization + LinearSVC trains on 200K documents in ~15 minutes on a single machine</li>
+                    <li><strong>Interpretable:</strong> Feature importance shows which terms drive each category &mdash; critical for debugging misclassifications and explaining to business stakeholders</li>
+                    <li><strong>Well-studied for multi-label text classification:</strong> Strong baseline that is hard to beat with more complex approaches on structured web content</li>
+                    <li><strong>Low operational cost:</strong> No GPU required. Model is a sparse matrix (~50MB). Batch inference on 200K domains takes ~10 minutes.</li>
+                    <li><strong>Calibrated probabilities:</strong> Logistic Regression naturally produces calibrated probability distributions across categories (Platt scaling for SVM)</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Rejected Alternative: Keyword Vector Store (Embedding Similarity)</h4>
+                <ul>
+                    <li>Build a vector store of IAB category keyword lists, embed website text, find nearest category by cosine similarity</li>
+                    <li><strong>Rejected because:</strong> Pure keyword matching fails on ambiguous terms. "Python" matches both Tech and Pets. "Apple" matches Tech, Food, and Finance. Requires extensive manual keyword curation per category that does not scale to 700 categories.</li>
+                    <li>No learned decision boundaries &mdash; relies on hand-crafted keyword lists that drift over time</li>
+                    <li>Cosine similarity does not produce well-calibrated probability scores across categories</li>
+                </ul>
+                <h4 style="margin-top: 15px;">&#x274C; Rejected Alternative: Deep Learning Embeddings (BERT/DistilBERT)</h4>
+                <ul>
+                    <li>Fine-tune a transformer model on domain text for IAB classification</li>
+                    <li><strong>Rejected because:</strong> Marginal accuracy gains (+2-3%) do not justify 50x training cost and GPU inference requirements</li>
+                    <li>Batch inference on 200K domains: ~10 min with TF-IDF+SVM vs. ~8 hours with BERT (even on GPU)</li>
+                    <li>Model size: 50MB (TF-IDF) vs. 400MB+ (DistilBERT). Harder to version, deploy, and debug.</li>
+                    <li><strong>Kept as future upgrade path</strong> if accuracy plateaus below acceptable thresholds on long-tail domains</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decision 2 -->
+    <div class="decision-matrix">
+        <h3>Decision 2: Pre-Computed Lookup Table vs. Real-Time Classification</h3>
+        <p><strong>Problem:</strong> When a bid request arrives with domain "expedia.com," how do we get its IAB categories fast enough?</p>
+        <p><strong>Chosen approach: Pre-computed domain &rarr; IAB lookup table, loaded in-memory on every bid processing node</strong></p>
+        <div class="pros-cons-grid">
+            <div class="pros">
+                <h4>&#x2705; Why Pre-Computed Wins</h4>
+                <ul>
+                    <li><strong>O(1) lookup:</strong> Hash map lookup in 0.5-2ms. No model inference on the critical path.</li>
+                    <li><strong>Deterministic latency:</strong> Lookup time does not vary with domain complexity, text length, or model load. p50 ≈ p99.</li>
+                    <li><strong>No GPU required at bid time:</strong> Bid processing nodes are CPU-only, commodity hardware. Keeps cost at ~$0.02/1M bid requests.</li>
+                    <li><strong>Table fits in memory:</strong> 200K domains × ~600 bytes = ~120MB. Trivially fits on any server.</li>
+                    <li><strong>Testable independently:</strong> The lookup table is a static artifact that can be validated, diffed, and rolled back without touching the real-time pipeline.</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Rejected Alternative: Real-Time Classification</h4>
+                <ul>
+                    <li>Run TF-IDF + classifier inference on each bid request's domain</li>
+                    <li><strong>Rejected because:</strong> Even fast inference (5-10ms per domain) blows the latency budget when multiplied by 580K QPS. Would require caching anyway (which converges to our chosen approach).</li>
+                    <li>Cold-start on unseen domains causes latency spikes</li>
+                    <li>Requires ML model serving infrastructure (TensorFlow Serving, Triton) on the bid path &mdash; operational complexity for minimal benefit</li>
+                </ul>
+                <h4 style="margin-top: 15px;">&#x274C; Rejected Alternative: External Classification API</h4>
+                <ul>
+                    <li>Call a third-party API (e.g., IAB classification service) at bid time</li>
+                    <li><strong>Rejected because:</strong> Network latency (20-50ms) exceeds our entire budget. Rate limits would throttle at our QPS. Cost at 50B requests/day would be astronomical. Creates external dependency in the critical path.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top: 15px;">
+            <strong>What about unknown domains?</strong> When a bid request contains a domain not in our lookup table (~15% of traffic), we fall back to: (1) OpenRTB <code>cat</code>/<code>sectioncat</code> fields from the SSP, (2) URL-pattern heuristics (e.g., <code>*.edu</code> &rarr; Education), (3) parent domain lookup (e.g., <code>sub.example.com</code> &rarr; look up <code>example.com</code>). Unknown domains are queued for next-cycle crawling and classification.
+        </div>
+    </div>
+
+    <!-- Decision 3 -->
+    <div class="decision-matrix">
+        <h3>Decision 3: Curated Domain Crawling vs. Crawl All Domains</h3>
+        <p><strong>Problem:</strong> The web has millions of domains. Which ones do we crawl and classify?</p>
+        <p><strong>Chosen approach: Crawl a curated list of ~200K high-traffic domains that account for ~85% of bid volume</strong></p>
+        <div class="pros-cons-grid">
+            <div class="pros">
+                <h4>&#x2705; Why Curated Crawling Wins</h4>
+                <ul>
+                    <li><strong>85% coverage from 200K domains:</strong> The web follows a power law. The top 200K domains by bid volume cover 85% of all bid requests we see.</li>
+                    <li><strong>Quality control:</strong> We can manually validate classification accuracy for high-volume domains. Misclassifying cnn.com (millions of daily bid requests) is catastrophic; misclassifying a random blog (10 bid requests/day) barely matters.</li>
+                    <li><strong>Manageable crawl cost:</strong> 200K domains at ~5 pages each = 1M pages. Crawl completes in 4-8 hours. Full web crawl would take weeks and cost 100x more.</li>
+                    <li><strong>Freshness:</strong> We can re-crawl the full curated list weekly and high-traffic domains daily. Full web recrawl would always be stale.</li>
+                    <li><strong>Reduced spam/fraud exposure:</strong> Long-tail domains are disproportionately low-quality or spoofed. Limiting to known domains reduces garbage-in-garbage-out risk.</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Rejected Alternative: Crawl All Domains</h4>
+                <ul>
+                    <li>Crawl every unique domain seen in the bidstream (~350K+ including long-tail)</li>
+                    <li><strong>Rejected because:</strong> Long-tail domains have sparse, low-quality content. Many are parked, redirect, or contain minimal classifiable text. The crawl cost scales linearly but the coverage gain is logarithmic (~350K domains covers only 92% vs 85% for 200K &mdash; a 7% gain for 75% more work).</li>
+                    <li>Many long-tail domains block crawlers or serve different content to crawlers vs. users</li>
+                    <li>Noise from misclassified long-tail domains degrades overall audience segment quality</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decision 4 -->
+    <div class="decision-matrix">
+        <h3>Decision 4: Exponential Per-Event Decay vs. Fixed Periodic Batch Reduction</h3>
+        <p><strong>Problem:</strong> User interests change over time. How do we ensure our score arrays reflect <em>current</em> intent, not stale history?</p>
+        <p><strong>Chosen approach: Exponential decay applied per-event at read time: score &times; e<sup>-&lambda;&Delta;t</sup></strong></p>
+        <div class="pros-cons-grid">
+            <div class="pros">
+                <h4>&#x2705; Why Per-Event Exponential Decay Wins</h4>
+                <ul>
+                    <li><strong>Smooth, continuous decay:</strong> Scores decrease naturally with time elapsed since each contributing event, not in arbitrary batch-sized jumps</li>
+                    <li><strong>Category-specific half-lives:</strong> Travel intent fades in ~5 days (people book or abandon), Education interest persists for ~30 days (semester-length cycles). A single global reduction factor cannot capture this.</li>
+                    <li><strong>No separate batch job:</strong> Decay is computed lazily at read time. No need for a nightly job that sweeps all 500M active users.</li>
+                    <li><strong>Mathematically principled:</strong> Exponential decay models the empirical observation that recent events are exponentially more predictive than older events for intent signals.</li>
+                    <li><strong>Cheap to compute:</strong> One <code>exp()</code> call per category per user read &mdash; adds &lt;0.5ms to the score lookup.</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x274C; Rejected Alternative: Fixed Periodic Batch Reduction</h4>
+                <ul>
+                    <li>Run a nightly batch job that multiplies all user scores by a decay factor (e.g., 0.95)</li>
+                    <li><strong>Rejected because:</strong> Creates artificial "sawtooth" patterns &mdash; scores jump at event time and drop at batch time. A user checked right before the batch job looks very different from one checked right after.</li>
+                    <li>Cannot differentiate decay rates by category without running separate batch jobs per category</li>
+                    <li>Requires processing all 500M+ active users nightly, even those with no new activity (~60% of users on a given day)</li>
+                    <li>Batch failures leave scores un-decayed, causing stale audience segments until the next successful run</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decision 5 -->
+    <div class="decision-matrix">
+        <h3>Decision 5: Supplementing with OpenRTB Metadata</h3>
+        <p><strong>Problem:</strong> Our domain classifier covers ~85% of bid traffic. How do we handle the remaining 15% and improve confidence for classified domains?</p>
+        <p><strong>Chosen approach: Use OpenRTB bid request fields (cat, sectioncat, bcat, content.url) as supplementary signals</strong></p>
+        <div class="pros-cons-grid">
+            <div class="pros">
+                <h4>&#x2705; Why Supplementary Signals Help</h4>
+                <ul>
+                    <li><strong>Free data:</strong> OpenRTB bid requests already contain <code>site.cat</code> and <code>site.sectioncat</code> fields declared by the SSP/publisher. No additional cost to read them.</li>
+                    <li><strong>Covers unknown domains:</strong> For the ~15% of traffic from domains not in our lookup table, SSP-declared categories provide a usable (if noisy) fallback.</li>
+                    <li><strong>Page-level granularity:</strong> Our domain classifier produces domain-level scores. But <code>content.url</code> can distinguish cnn.com/travel from cnn.com/politics. OpenRTB metadata helps with this page-level signal.</li>
+                    <li><strong>Cross-validation:</strong> When our classifier and the SSP-declared category agree, confidence increases. When they disagree, it flags potential misclassification or domain spoofing.</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>&#x26A0; Caveats and Limitations</h4>
+                <ul>
+                    <li><strong>Noisy and inconsistent:</strong> SSP-declared categories are self-reported by publishers. Accuracy varies wildly (some studies show 30-40% mismatch with actual content).</li>
+                    <li><strong>Often missing:</strong> Only ~40-60% of bid requests include the <code>cat</code> field. Cannot be the primary signal.</li>
+                    <li><strong>Gaming risk:</strong> Publishers may declare high-value categories (e.g., Finance) to attract higher bids, regardless of actual content.</li>
+                    <li><strong>Our approach:</strong> Weight SSP-declared signals at 0.3x relative to our own classifier output. Use disagreement as a monitoring signal for potential domain fraud.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Decision Summary Matrix</h3>
+    <table>
+        <tr>
+            <th>Decision</th>
+            <th>Chosen Approach</th>
+            <th>Key Alternative</th>
+            <th>Deciding Factor</th>
+        </tr>
+        <tr>
+            <td>Domain Classification Model</td>
+            <td>TF-IDF + LinearSVC</td>
+            <td>BERT fine-tuning</td>
+            <td>50x cheaper training/inference, only 2-3% accuracy gap</td>
+        </tr>
+        <tr>
+            <td>Bid-Time Classification</td>
+            <td>Pre-computed lookup table</td>
+            <td>Real-time model inference</td>
+            <td>0.5-2ms lookup vs. 5-10ms inference; deterministic latency</td>
+        </tr>
+        <tr>
+            <td>Crawl Strategy</td>
+            <td>Curated 200K domains</td>
+            <td>Crawl all observed domains</td>
+            <td>85% coverage at 1/4 the cost; better quality control</td>
+        </tr>
+        <tr>
+            <td>Score Decay</td>
+            <td>Exponential per-event decay</td>
+            <td>Nightly batch reduction</td>
+            <td>Smooth decay, category-specific rates, no batch dependency</td>
+        </tr>
+        <tr>
+            <td>Missing Domain Handling</td>
+            <td>OpenRTB metadata supplement</td>
+            <td>Ignore unclassified domains</td>
+            <td>Recovers ~10% of otherwise lost signal from SSP-declared fields</td>
+        </tr>
+    </table>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 6: WORKED EXAMPLE                    -->
+    <!-- ============================================ -->
+
+    <h2>&#x1F50D; Worked Example: End-to-End User Journey</h2>
+
+    <p>
+        The following traces <strong>User-12345</strong> through the entire system over three days &mdash; from domain classification through score accumulation, decay, and final audience segment assignment. All numbers are realistic production values.
+    </p>
+
+    <h3>Setup: User-12345's Browsing Activity</h3>
+
+    <table>
+        <tr>
+            <th>Day</th>
+            <th>Time</th>
+            <th>Domain Visited</th>
+            <th>Context</th>
+        </tr>
+        <tr>
+            <td>Day 0 (Monday)</td>
+            <td>9:15 AM</td>
+            <td>expedia.com</td>
+            <td>Searching for flights to Cancun</td>
+        </tr>
+        <tr>
+            <td>Day 0 (Monday)</td>
+            <td>12:30 PM</td>
+            <td>cnn.com/markets</td>
+            <td>Checking stock market at lunch</td>
+        </tr>
+        <tr>
+            <td>Day 1 (Tuesday)</td>
+            <td>8:00 PM</td>
+            <td>coursera.org</td>
+            <td>Browsing data science courses</td>
+        </tr>
+        <tr>
+            <td>Day 2 (Wednesday)</td>
+            <td>10:00 AM</td>
+            <td>tripadvisor.com</td>
+            <td>Reading hotel reviews for Cancun</td>
+        </tr>
+        <tr>
+            <td>Day 3 (Thursday)</td>
+            <td>3:00 PM</td>
+            <td><em>(no visit &mdash; segment query happens here)</em></td>
+            <td>An advertiser queries User-12345's segments during a bid request</td>
+        </tr>
+    </table>
+
+    <h3>Step 1: Domain Classification Lookup</h3>
+    <p>
+        When each bid request arrives, we look up the domain in our pre-computed lookup table. Here is what the table returns for each domain:
+    </p>
+
+    <div class="math-box">
+<strong>Domain Lookup Results (from pre-computed table):</strong>
+
+expedia.com:
+  IAB-20  (Travel)               → 0.91
+  IAB-20-1 (Adventure Travel)    → 0.72
+  IAB-20-3 (Hotels)              → 0.68
+  IAB-3   (Business)             → 0.15
+  (other categories below 0.10 threshold, omitted)
+
+cnn.com:
+  IAB-12  (News)                 → 0.85
+  IAB-13  (Personal Finance)     → 0.42    ← boosted because /markets section
+  IAB-11  (Law, Gov't & Politics)→ 0.38
+  IAB-1   (Arts & Entertainment) → 0.22
+  (CNN is multi-category; these are domain-level scores)
+
+  Note: OpenRTB sectioncat field says "IAB-13" for this specific
+  page (cnn.com/markets). We weight this at 0.3x = +0.13 to IAB-13.
+  Adjusted IAB-13 score: 0.42 + 0.13 = 0.55
+
+coursera.org:
+  IAB-5   (Education)            → 0.93
+  IAB-5-1 (Adult Education)      → 0.78
+  IAB-19  (Technology & Computing)→ 0.45
+  IAB-4   (Careers)              → 0.32
+
+tripadvisor.com:
+  IAB-20  (Travel)               → 0.94
+  IAB-20-3 (Hotels)              → 0.88
+  IAB-20-25(Tourism)             → 0.75
+  IAB-20-1 (Adventure Travel)    → 0.52
+
+Lookup time: 0.5-1.5ms per domain (in-memory hash map)</div>
+
+    <h3>Step 2: Score Accumulation in the User's IAB Array</h3>
+    <p>
+        After each visit, the domain's IAB scores are <strong>added</strong> to User-12345's persistent IAB score array. Each score entry also records the timestamp of the contributing event (needed for decay later).
+    </p>
+
+    <div class="math-box">
+<strong>User-12345 IAB Score Array — After Each Visit:</strong>
+
+After Visit 1 (expedia.com, Day 0 9:15 AM):
+  IAB-20  (Travel)           = 0.91   [last_event: Day 0, 9:15]
+  IAB-20-1 (Adventure Travel)= 0.72   [last_event: Day 0, 9:15]
+  IAB-20-3 (Hotels)          = 0.68   [last_event: Day 0, 9:15]
+  IAB-3   (Business)         = 0.15   [last_event: Day 0, 9:15]
+
+After Visit 2 (cnn.com/markets, Day 0 12:30 PM):
+  IAB-20  (Travel)           = 0.91   [last_event: Day 0, 9:15]
+  IAB-12  (News)             = 0.85   [last_event: Day 0, 12:30]
+  IAB-20-1 (Adventure Travel)= 0.72   [last_event: Day 0, 9:15]
+  IAB-20-3 (Hotels)          = 0.68   [last_event: Day 0, 9:15]
+  IAB-13  (Personal Finance) = 0.55   [last_event: Day 0, 12:30]  ← includes OpenRTB boost
+  IAB-11  (Law/Gov/Politics) = 0.38   [last_event: Day 0, 12:30]
+  IAB-1   (Arts & Ent.)      = 0.22   [last_event: Day 0, 12:30]
+  IAB-3   (Business)         = 0.15   [last_event: Day 0, 9:15]
+
+After Visit 3 (coursera.org, Day 1 8:00 PM):
+  IAB-5   (Education)        = 0.93   [last_event: Day 1, 20:00]
+  IAB-20  (Travel)           = 0.91   [last_event: Day 0, 9:15]
+  IAB-12  (News)             = 0.85   [last_event: Day 0, 12:30]
+  IAB-5-1 (Adult Education)  = 0.78   [last_event: Day 1, 20:00]
+  IAB-20-1 (Adventure Travel)= 0.72   [last_event: Day 0, 9:15]
+  IAB-20-3 (Hotels)          = 0.68   [last_event: Day 0, 9:15]
+  IAB-13  (Personal Finance) = 0.55   [last_event: Day 0, 12:30]
+  IAB-19  (Tech & Computing) = 0.45   [last_event: Day 1, 20:00]
+  IAB-11  (Law/Gov/Politics) = 0.38   [last_event: Day 0, 12:30]
+  IAB-4   (Careers)          = 0.32   [last_event: Day 1, 20:00]
+  IAB-1   (Arts & Ent.)      = 0.22   [last_event: Day 0, 12:30]
+  IAB-3   (Business)         = 0.15   [last_event: Day 0, 9:15]
+
+After Visit 4 (tripadvisor.com, Day 2 10:00 AM):
+  IAB-20  (Travel)           = 0.91 + 0.94 = <strong>1.85</strong>  [last_event: Day 2, 10:00]  ← REINFORCED!
+  IAB-20-3 (Hotels)          = 0.68 + 0.88 = <strong>1.56</strong>  [last_event: Day 2, 10:00]  ← REINFORCED!
+  IAB-20-1 (Adventure Travel)= 0.72 + 0.52 = <strong>1.24</strong>  [last_event: Day 2, 10:00]  ← REINFORCED!
+  IAB-5   (Education)        = 0.93   [last_event: Day 1, 20:00]
+  IAB-12  (News)             = 0.85   [last_event: Day 0, 12:30]
+  IAB-5-1 (Adult Education)  = 0.78   [last_event: Day 1, 20:00]
+  IAB-20-25(Tourism)         = 0.75   [last_event: Day 2, 10:00]
+  IAB-13  (Personal Finance) = 0.55   [last_event: Day 0, 12:30]
+  IAB-19  (Tech & Computing) = 0.45   [last_event: Day 1, 20:00]
+  ... (other categories remain unchanged)</div>
+
+    <div class="key-insight">
+        <strong>Key Insight &mdash; Score Reinforcement:</strong> Notice how User-12345's Travel scores jumped dramatically after the second travel site visit. The IAB-20 (Travel) score went from 0.91 to 1.85 &mdash; a clear signal of sustained intent. This additive accumulation is what makes repeated visits so powerful for audience identification. A single visit could be accidental; two visits to related domains within 48 hours is a strong signal.
+    </div>
+
+    <h3>Step 3: Applying Exponential Decay</h3>
+    <p>
+        On Day 3 at 3:00 PM, an advertiser's bid request triggers a segment lookup for User-12345. Before returning segments, we apply exponential decay to every score based on how long ago the contributing event occurred.
+    </p>
+
+    <div class="math-box">
+<strong>Decay Formula:</strong>  decayed_score = raw_score × e^(-λ × Δt)
+
+<strong>Category-Specific Decay Rates (λ):</strong>
+  Travel (IAB-20):      λ = 0.139  (half-life ≈ 5 days)
+  News (IAB-12):        λ = 0.231  (half-life ≈ 3 days)   ← news is very time-sensitive
+  Finance (IAB-13):     λ = 0.046  (half-life ≈ 15 days)
+  Education (IAB-5):    λ = 0.023  (half-life ≈ 30 days)  ← slow decay, persistent interest
+  Tech (IAB-19):        λ = 0.035  (half-life ≈ 20 days)
+
+<strong>Applying Decay at Day 3, 3:00 PM:</strong>
+
+IAB-20  (Travel):  raw=1.85, Δt=1.22 days (since Day 2 10:00 AM)
+  decayed = 1.85 × e^(-0.139 × 1.22) = 1.85 × e^(-0.170) = 1.85 × 0.844 = <strong>1.561</strong>
+
+IAB-20-3 (Hotels): raw=1.56, Δt=1.22 days
+  decayed = 1.56 × 0.844 = <strong>1.317</strong>
+
+IAB-20-1 (Adv. Travel): raw=1.24, Δt=1.22 days
+  decayed = 1.24 × 0.844 = <strong>1.047</strong>
+
+IAB-5   (Education): raw=0.93, Δt=1.79 days (since Day 1 8:00 PM)
+  decayed = 0.93 × e^(-0.023 × 1.79) = 0.93 × e^(-0.041) = 0.93 × 0.960 = <strong>0.893</strong>
+  ← barely decayed! Education has a long half-life
+
+IAB-12  (News): raw=0.85, Δt=3.10 days (since Day 0 12:30 PM)
+  decayed = 0.85 × e^(-0.231 × 3.10) = 0.85 × e^(-0.716) = 0.85 × 0.489 = <strong>0.416</strong>
+  ← significant decay! News signal fades fast
+
+IAB-13  (Finance): raw=0.55, Δt=3.10 days
+  decayed = 0.55 × e^(-0.046 × 3.10) = 0.55 × e^(-0.143) = 0.55 × 0.867 = <strong>0.477</strong>
+
+IAB-20-25 (Tourism): raw=0.75, Δt=1.22 days
+  decayed = 0.75 × 0.844 = <strong>0.633</strong>
+
+IAB-5-1 (Adult Ed.): raw=0.78, Δt=1.79 days
+  decayed = 0.78 × 0.960 = <strong>0.749</strong>
+
+IAB-19  (Tech): raw=0.45, Δt=1.79 days
+  decayed = 0.45 × e^(-0.035 × 1.79) = 0.45 × e^(-0.063) = 0.45 × 0.939 = <strong>0.423</strong></div>
+
+    <h3>Step 4: Audience Segment Assignment</h3>
+    <p>
+        With the decayed scores in hand, we apply the <strong>segment assignment rules</strong>: select the top-K categories where the decayed score exceeds the minimum threshold (0.5 for Tier-1 categories), and map them to named audience segments.
+    </p>
+
+    <div class="math-box">
+<strong>User-12345 Decayed Scores (sorted, Day 3 3:00 PM):</strong>
+
+  1. IAB-20  (Travel)           = 1.561  ✅ Above threshold (0.5)
+  2. IAB-20-3 (Hotels)          = 1.317  ✅ Above threshold (0.5)
+  3. IAB-20-1 (Adventure Travel)= 1.047  ✅ Above threshold (0.5)
+  4. IAB-5   (Education)        = 0.893  ✅ Above threshold (0.5)
+  5. IAB-5-1 (Adult Education)  = 0.749  ✅ Above threshold (0.5)
+  6. IAB-20-25(Tourism)         = 0.633  ✅ Above threshold (0.5)
+  7. IAB-13  (Personal Finance) = 0.477  ❌ Below threshold
+  8. IAB-19  (Tech & Computing) = 0.423  ❌ Below threshold
+  9. IAB-12  (News)             = 0.416  ❌ Below threshold
+  ... (remaining categories below threshold)
+
+<strong>Assigned Audience Segments (Top-K=5):</strong>
+
+  ● "IAB Travel Enthusiast"     ← IAB-20 score 1.561 > 1.0 (high-confidence)
+  ● "IAB Hotel Intender"        ← IAB-20-3 score 1.317 > 1.0 (high-confidence)
+  ● "IAB Adventure Traveler"    ← IAB-20-1 score 1.047 > 1.0 (high-confidence)
+  ● "IAB Education Interest"    ← IAB-5 score 0.893 > 0.5 (moderate confidence)
+  ● "IAB Adult Learner"         ← IAB-5-1 score 0.749 > 0.5 (moderate confidence)
+
+<strong>Output sent to DSP bid logic:</strong>
+  User-12345 → segments: [IAB_TRAVEL_ENTHUSIAST, IAB_HOTEL_INTENDER,
+                           IAB_ADVENTURE_TRAVELER, IAB_EDUCATION_INTEREST,
+                           IAB_ADULT_LEARNER]</div>
+
+    <h3>What This Means for Advertisers</h3>
+
+    <div class="info-box">
+        <strong>Commercial Impact:</strong> When a travel advertiser (e.g., Hilton Hotels) bids on inventory showing to User-12345, they see segments indicating this user is actively researching travel and hotels. Hilton's DSP applies a <strong>3.2x bid multiplier</strong> for users in the "IAB Hotel Intender" segment, increasing their bid from $2.50 CPM to $8.00 CPM. The publisher monetizes better, the advertiser reaches a high-intent user, and our platform earns a data fee for providing the audience signal. This is the core value loop of the entire system.
+    </div>
+
+    <div class="highlight-box">
+        <strong>Notice what happened to News:</strong> Even though User-12345 visited CNN on Day 0, the News category score (0.416) fell below the segment threshold by Day 3. This is by design &mdash; news reading is transient behavior, not persistent intent. The exponential decay with a 3-day half-life for News ensures we do not pollute audience segments with stale signals. Meanwhile, the Education score (0.893) barely decayed because education interest is persistent. Different categories, different decay rates, better segments.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 7: TECHNOLOGY STACK OVERVIEW          -->
+    <!-- ============================================ -->
+
+    <h2>&#x1F6E0; Technology Stack Overview</h2>
+
+    <p>
+        Our technology choices are driven by three constraints: <strong>latency</strong> (sub-10ms for bid-time operations), <strong>scale</strong> (50B+ events/day), and <strong>operational simplicity</strong> (small ML/engineering team). We avoid over-engineering: if a proven, boring technology meets the requirement, we prefer it over a shiny alternative.
+    </p>
+
+    <table>
+        <tr>
+            <th>Component</th>
+            <th>Technology</th>
+            <th>Why This Choice</th>
+            <th>Alternative Considered</th>
+        </tr>
+        <tr>
+            <td><strong>Bidstream Ingestion</strong></td>
+            <td>Apache Kafka</td>
+            <td>Battle-tested for high-throughput event streaming. Handles 580K+ msgs/sec with partitioning by user_id. Built-in replay from offset for recovery. Ecosystem support (Kafka Connect, Schema Registry).</td>
+            <td>Amazon Kinesis (rejected: partition limit of 500 shards requires complex resharding at our scale)</td>
+        </tr>
+        <tr>
+            <td><strong>Stream Processing</strong></td>
+            <td>Apache Flink</td>
+            <td>True event-time processing with watermarks. Exactly-once semantics with checkpointing. Handles late-arriving events gracefully. Mature state management for windowed aggregations.</td>
+            <td>Kafka Streams (rejected: lacks event-time processing sophistication), Spark Streaming (rejected: micro-batch latency too high for our use case)</td>
+        </tr>
+        <tr>
+            <td><strong>User Score Store (Hot)</strong></td>
+            <td>Redis Cluster</td>
+            <td>Sub-millisecond read/write. Supports hash data structures for score arrays. 1.2TB hot tier fits in a ~20-node cluster with replication. Atomic operations for concurrent score updates.</td>
+            <td>Aerospike (viable alternative, used for warm tier), DynamoDB (rejected: p99 latency too variable at our QPS)</td>
+        </tr>
+        <tr>
+            <td><strong>User Score Store (Warm)</strong></td>
+            <td>Aerospike</td>
+            <td>SSD-optimized key-value store for users active in last 7-30 days. 10x cheaper per GB than Redis. Sub-5ms reads from SSD. Automatic data migration between namespaces.</td>
+            <td>Cassandra (rejected: write-heavy workload causes compaction storms), ScyllaDB (viable but less ecosystem support)</td>
+        </tr>
+        <tr>
+            <td><strong>Domain Lookup Table</strong></td>
+            <td>In-memory HashMap (per node)</td>
+            <td>120MB table loaded at startup from S3. O(1) lookup. No network hop required. Blue-green refresh via node rolling restart.</td>
+            <td>Redis (rejected: unnecessary network hop for a table this small), RocksDB (rejected: disk I/O unnecessary when table fits in RAM)</td>
+        </tr>
+        <tr>
+            <td><strong>Web Crawling</strong></td>
+            <td>Scrapy (Python)</td>
+            <td>Mature crawling framework with built-in rate limiting, politeness policies (robots.txt), retry logic. Distributed via Scrapy-Redis for parallel crawling. 200K domains in 4-8 hours on 10 workers.</td>
+            <td>Colly (Go) (rejected: smaller ecosystem), Puppeteer/Playwright (rejected: overkill; most domains do not require JS rendering for text extraction)</td>
+        </tr>
+        <tr>
+            <td><strong>Text Classification</strong></td>
+            <td>scikit-learn (TF-IDF + LinearSVC)</td>
+            <td>TF-IDF vectorizer + linear classifier trains in ~15 min. Model is a sparse matrix (~50MB). Batch inference on 200K domains in ~10 min. No GPU required. Well-understood, debuggable.</td>
+            <td>Hugging Face Transformers (kept as future upgrade path for long-tail domains), fastText (rejected: weaker multi-label support)</td>
+        </tr>
+        <tr>
+            <td><strong>Batch Processing</strong></td>
+            <td>Apache Spark</td>
+            <td>Used for periodic score cleanup, segment generation across all users, training data preparation. Handles 500M user sweep in ~45 minutes on a 50-node EMR cluster.</td>
+            <td>Dask (rejected: weaker shuffle performance at our data size), Ray (rejected: better for ML training than ETL)</td>
+        </tr>
+        <tr>
+            <td><strong>Segment Export / API</strong></td>
+            <td>DynamoDB + S3</td>
+            <td>DynamoDB for real-time segment lookups by DSP bid logic (single-digit ms reads). S3 for daily batch exports to partner platforms (Parquet format). Cost-effective at our read pattern (heavy reads, periodic writes).</td>
+            <td>PostgreSQL (rejected: cannot handle our QPS for segment reads), Elasticsearch (rejected: overkill for simple key-value segment lookups)</td>
+        </tr>
+        <tr>
+            <td><strong>Orchestration</strong></td>
+            <td>Apache Airflow</td>
+            <td>DAG-based scheduling for batch pipelines: crawl &rarr; classify &rarr; publish table &rarr; validate. Built-in retry, alerting, dependency management. Large plugin ecosystem.</td>
+            <td>Prefect (viable but smaller community), Step Functions (rejected: AWS lock-in concerns)</td>
+        </tr>
+        <tr>
+            <td><strong>Monitoring &amp; Observability</strong></td>
+            <td>Prometheus + Grafana + PagerDuty</td>
+            <td>Prometheus for metrics collection (score update latency, classification accuracy, segment sizes). Grafana dashboards for visualization. PagerDuty for alerting on SLA breaches.</td>
+            <td>Datadog (viable but expensive at our metric volume), CloudWatch (rejected: limited custom metric support)</td>
+        </tr>
+        <tr>
+            <td><strong>Model Registry &amp; Versioning</strong></td>
+            <td>MLflow</td>
+            <td>Tracks model versions, training parameters, evaluation metrics. Supports A/B rollout of new classifiers. Integrates with Spark and scikit-learn natively.</td>
+            <td>Weights & Biases (rejected: cost at our experiment volume), SageMaker Model Registry (rejected: AWS lock-in)</td>
+        </tr>
+    </table>
+
+    <div class="key-insight">
+        <strong>Key Insight &mdash; Cost Efficiency:</strong> The entire real-time scoring pipeline (Kafka + Flink + Redis) costs approximately <strong>$45K/month</strong> at our scale. The batch classification pipeline (Scrapy + scikit-learn + Spark on EMR) costs approximately <strong>$3K/month</strong> (runs for ~8 hours daily). Total infrastructure cost is well under $60K/month to process 50B daily bid requests and maintain 500M active user profiles &mdash; roughly <strong>$0.001 per 1,000 bid requests processed</strong>.
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 8: COMPETITIVE ADVANTAGES             -->
+    <!-- ============================================ -->
+
+    <h2>&#x1F4B0; Competitive Advantages: Cost Efficiency &amp; Early Bid Wins</h2>
+
+    <p>
+        Beyond classification accuracy and system performance, our architecture delivers two powerful commercial advantages over traditional audience platforms in adtech: <strong>dramatically lower storage costs</strong> and <strong>an information latency edge</strong> that lets our DSP win bids earlier at lower prices.
+    </p>
+
+    <h3>Advantage 1: Compact Probability Vectors vs. Traditional Segment Storage</h3>
+
+    <p>
+        Traditional adtech audience platforms store <strong>explicit segment memberships</strong> per user &mdash; a list of segment IDs, often with metadata, timestamps, source tags, and redundant entries across overlapping segments. A single user might belong to dozens of segments, each stored as a separate record with associated metadata. This approach scales poorly: as the number of audience segments grows, storage per user grows linearly.
+    </p>
+
+    <p>
+        Our approach is fundamentally different. We store a <strong>single compact probability vector</strong> per user &mdash; approximately 700 floating-point values (one per IAB category). This vector is the <strong>generating function</strong> from which <em>any</em> audience segment can be derived on-the-fly, rather than storing the materialized output of every possible segment assignment.
+    </p>
+
+    <table>
+        <tr>
+            <th>Dimension</th>
+            <th>Traditional Segment Storage</th>
+            <th>Our Probability Vector Approach</th>
+        </tr>
+        <tr>
+            <td><strong>Per-User Storage</strong></td>
+            <td>~5-20 KB (segment IDs + metadata, grows with segment count)</td>
+            <td>~1.5-2 KB compressed (~5.6 KB uncompressed for 700 floats + timestamps)</td>
+        </tr>
+        <tr>
+            <td><strong>Storage for 500M Active Users</strong></td>
+            <td>2.5 &ndash; 10 TB</td>
+            <td>~0.75 &ndash; 1.2 TB (compressed)</td>
+        </tr>
+        <tr>
+            <td><strong>Scaling with New Segments</strong></td>
+            <td>Linear &mdash; each new segment adds storage per qualifying user</td>
+            <td>Constant &mdash; new segments are derived from the same probability vector, no additional storage</td>
+        </tr>
+        <tr>
+            <td><strong>Write Amplification</strong></td>
+            <td>High &mdash; a single user event may update dozens of segment memberships</td>
+            <td>Low &mdash; a single user event updates one probability vector (one write to the KV-store)</td>
+        </tr>
+        <tr>
+            <td><strong>Estimated KV-Store Cost (Redis/Aerospike)</strong></td>
+            <td>$80K &ndash; $200K/month at scale</td>
+            <td>$25K &ndash; $45K/month at scale</td>
+        </tr>
+    </table>
+
+    <div class="key-insight">
+        <strong>Key Insight &mdash; Store the Generating Function, Not the Output:</strong> By storing only the IAB probability vector (a compact numerical representation of user interests), we can derive any audience segment on demand without materializing and storing every segment membership. Adding 100 new audience segments for a new advertiser vertical costs us <strong>zero additional storage</strong> &mdash; we simply apply new threshold rules to the existing probability vectors. Traditional platforms would need to backfill segment memberships for hundreds of millions of users.
+    </div>
+
+    <h3>Advantage 2: Real-Time Scoring Enables Earlier, Cheaper Bid Wins</h3>
+
+    <p>
+        This is the more subtle and commercially powerful advantage. Because our probability vectors update <strong>in real time</strong> as users browse (within milliseconds of each bid request), our DSP detects intent signals <em>before</em> competitors whose audience platforms rely on batch-updated segment lists (typically refreshed every 1&ndash;24 hours).
+    </p>
+
+    <h4>The Information Latency Gap</h4>
+
+    <p>
+        Consider a user who starts researching flights on Monday morning. Here is the timeline comparison:
+    </p>
+
+    <table>
+        <tr>
+            <th>Time</th>
+            <th>User Activity</th>
+            <th>Our System (Real-Time)</th>
+            <th>Competitor (Batch &mdash; Hourly/Daily Refresh)</th>
+        </tr>
+        <tr>
+            <td><strong>Mon 9:00 AM</strong></td>
+            <td>Visits expedia.com</td>
+            <td>Travel probability jumps to 0.91 <strong>within milliseconds</strong>. DSP begins bidding with travel intent signal.</td>
+            <td>No signal. User is not yet in any travel segment. Batch job runs tonight.</td>
+        </tr>
+        <tr>
+            <td><strong>Mon 9:05 AM</strong></td>
+            <td>Visits kayak.com</td>
+            <td>Travel probability reinforced to 1.75. High-confidence travel intender. DSP bids aggressively at <strong>low competition</strong>.</td>
+            <td>Still no signal. User invisible to competitor's travel campaigns.</td>
+        </tr>
+        <tr>
+            <td><strong>Mon 6:00 PM</strong></td>
+            <td>Browses other sites</td>
+            <td>Already won 15&ndash;20 travel ad impressions at <strong>$3&ndash;4 CPM</strong> (low competition).</td>
+            <td>Batch job starts processing. User will appear in travel segment by tomorrow morning.</td>
+        </tr>
+        <tr>
+            <td><strong>Tue 8:00 AM</strong></td>
+            <td>Continues browsing</td>
+            <td>Continues winning impressions. Total cost: <strong>$3&ndash;5 CPM avg</strong>.</td>
+            <td>User now in travel segment. All competitors bidding. Clearing price rises to <strong>$8&ndash;12 CPM</strong>.</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <strong>The Early Mover Advantage:</strong> By detecting intent in real time, our DSP consistently wins impressions <strong>before the auction becomes competitive</strong>. The same user that costs us $3&ndash;4 CPM on Monday morning (when only we recognize them as a travel intender) would cost $8&ndash;12 CPM by Tuesday (when every competitor's batch pipeline has caught up). This information latency gap translates directly into <strong>lower cost-per-acquisition</strong> and <strong>higher return on ad spend (ROAS)</strong> for advertisers using our platform.
+    </div>
+
+    <h4>Quantified Impact</h4>
+
+    <div class="math-box">
+<strong>Early Bid Win Economics (illustrative, per 1M travel-intending users):</strong>
+
+Traditional batch platform (detects intent next day):
+  Avg winning CPM:          $8.50 (high competition, all bidders have the signal)
+  Impressions won per user: ~5 (competing with everyone)
+  Cost per 1M users:        $8.50 × 5 = $42,500
+
+Our real-time platform (detects intent within seconds):
+  Avg winning CPM:          $4.20 (low competition during early window)
+  Impressions won per user: ~12 (less competition = higher win rate)
+  Cost per 1M users:        $4.20 × 12 = $50,400 for 2.4x more impressions
+
+  Effective cost per impression: $4.20 vs $8.50 — a <strong>51% cost reduction per impression</strong>
+  More impressions at lower prices = better frequency capping and campaign reach
+
+<strong>Annualized advantage:</strong>
+  At 50B bid requests/day with ~15% containing actionable real-time signals,
+  the early-detection window generates an estimated <strong>$2-5M/year in cost savings</strong>
+  for advertisers on our platform vs. batch-only competitors.</div>
+
+    <div class="success-box">
+        <h3>&#x2705; Combined Competitive Moat</h3>
+        <p>Together, these two advantages create a compounding competitive moat:</p>
+        <ul>
+            <li><strong>Lower infrastructure costs</strong> (3&ndash;5x less KV-store spend) enable us to offer competitive data fees while maintaining healthy margins</li>
+            <li><strong>Real-time intent detection</strong> delivers measurably better campaign performance (lower CPMs, higher win rates, better ROAS), making our audience data more valuable to advertisers</li>
+            <li><strong>Scalability without storage pain</strong> &mdash; adding new audience segments or advertiser verticals requires no storage migration, no backfill jobs, and no KV-store capacity upgrades</li>
+            <li>The combination makes it economically rational for DSPs and advertisers to prefer our audience data over traditional batch-computed segments, even at equivalent data fees</li>
+        </ul>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: 7-STEP DEEP DIVE ROADMAP          -->
+    <!-- ============================================ -->
+
+    <h2>&#x1F5FA; 7-Step Deep Dive Roadmap</h2>
+
+    <p>
+        This system overview provides the high-level architecture. The following seven detailed documents cover each component in production depth &mdash; including code-level design decisions, failure scenarios, monitoring strategies, and operational runbooks. Each document is <strong>30-130KB</strong> of content and designed to be read independently, though they connect sequentially.
+    </p>
+
+    <div class="roadmap-grid">
+        <div class="roadmap-card">
+            <h4><span class="step-num">1</span> Data Engineering &amp; Feature Pipeline</h4>
+            <p>
+                How we ingest 50B+ daily bid requests from multiple SSPs via Kafka, crawl 200K domains with Scrapy, store the IAB taxonomy, and maintain data quality. Covers schema design, partitioning strategy, data validation, late-arriving events, and the complete ingestion-to-storage pipeline with timing breakdowns.
+            </p>
+            <p><strong>Key topics:</strong> Kafka topic design, OpenRTB parsing, crawl scheduling, data lake architecture, quality gates</p>
+        </div>
+
+        <div class="roadmap-card">
+            <h4><span class="step-num">2</span> Feature Engineering</h4>
+            <p>
+                Transforming raw website text into TF-IDF vectors for classification, extracting domain-level features (text length, meta tags, URL patterns), constructing user visit features, and designing the IAB score array schema. Covers feature selection, dimensionality reduction, and feature store architecture.
+            </p>
+            <p><strong>Key topics:</strong> TF-IDF parameter tuning, n-gram selection, feature hashing, user feature aggregation, feature freshness</p>
+        </div>
+
+        <div class="roadmap-card">
+            <h4><span class="step-num">3</span> Model Architecture</h4>
+            <p>
+                The TF-IDF + LinearSVC classifier design for domain-to-IAB mapping, the user score accumulation algorithm, the exponential decay model with category-specific parameters, and the audience segment assignment logic. Covers the mathematical foundations of each component and how they connect.
+            </p>
+            <p><strong>Key topics:</strong> Multi-label classification strategy, score aggregation semantics, decay parameter estimation, segment threshold calibration</p>
+        </div>
+
+        <div class="roadmap-card">
+            <h4><span class="step-num">4</span> Model Training</h4>
+            <p>
+                Training the domain classifier end-to-end: dataset construction, label collection (IAB ground truth), TF-IDF + classifier training pipeline, hyperparameter tuning, evaluation framework (precision/recall per category), and continuous learning strategy. The largest document (~126KB) covering the full ML lifecycle.
+            </p>
+            <p><strong>Key topics:</strong> Training data sourcing, label quality, class imbalance handling, cross-validation strategy, comparison with BERT/fastText baselines</p>
+        </div>
+
+        <div class="roadmap-card">
+            <h4><span class="step-num">5</span> Production Deployment</h4>
+            <p>
+                Deploying the system to production: real-time bidstream processing with Flink, score lookup service design, batch classification pipeline deployment, domain lookup table distribution, blue-green deployments, cost analysis, and the complete system architecture with infrastructure specs.
+            </p>
+            <p><strong>Key topics:</strong> Flink job configuration, Redis cluster sizing, rollout strategy, canary deployments, infrastructure-as-code, cost breakdown</p>
+        </div>
+
+        <div class="roadmap-card">
+            <h4><span class="step-num">6</span> Production Monitoring</h4>
+            <p>
+                Monitoring the system in production: classification accuracy tracking, audience quality metrics, drift detection (domain content changes, bidstream distribution shifts), score decay job monitoring, retraining triggers, and alerting strategy. Covers dashboards, runbooks, and on-call procedures.
+            </p>
+            <p><strong>Key topics:</strong> Accuracy monitoring per category, segment size drift, stale domain detection, latency percentile tracking, A/B comparison metrics</p>
+        </div>
+
+        <div class="roadmap-card" style="grid-column: span 2;">
+            <h4><span class="step-num">7</span> Experimentation Framework</h4>
+            <p>
+                A/B testing audience segments with advertisers: experiment design for measuring lift (CTR, conversion rate, ROAS), statistical methodology (Bayesian vs. frequentist), pre/post-launch validation, holdout groups, and long-running experiments for measuring CPM premium sustainability. Also covers how we validate new model versions before full rollout.
+            </p>
+            <p><strong>Key topics:</strong> Experiment design, power analysis for ad lift studies, segment quality A/B tests, advertiser feedback loops, model version comparison experiments</p>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 9: PRIVACY & COMPLIANCE              -->
+    <!-- ============================================ -->
+
+    <h2>&#x1F512; Privacy &amp; Compliance</h2>
+
+    <p>
+        Audience generation systems operate in one of the most privacy-sensitive areas of technology. We process user browsing behavior to build interest profiles &mdash; this is exactly the type of processing that GDPR, CCPA, and emerging regulations target. Our system is designed with <strong>privacy-by-design</strong> principles, not as an afterthought.
+    </p>
+
+    <h3>Regulatory Framework</h3>
+
+    <table>
+        <tr>
+            <th>Regulation</th>
+            <th>Scope</th>
+            <th>Key Requirement</th>
+            <th>Our Compliance Approach</th>
+        </tr>
+        <tr>
+            <td><strong>GDPR</strong> (EU)</td>
+            <td>All EU user data</td>
+            <td>Lawful basis for processing (typically consent via TCF 2.0); right to erasure; data minimization; purpose limitation</td>
+            <td>Process EU user scores only when TCF consent string indicates Purpose 1 (store/access info) + Purpose 3 (create personalized ads profile). Honor erasure requests within 72 hours (delete user score array from all tiers).</td>
+        </tr>
+        <tr>
+            <td><strong>CCPA/CPRA</strong> (California)</td>
+            <td>California residents</td>
+            <td>Right to opt out of "sale" of personal information; right to delete; right to know what data is collected</td>
+            <td>Respect opt-out signals (GPC header, USP string). Opted-out users: process contextual signals only (domain classification without user-level scoring). Deletion requests honored within 45 days.</td>
+        </tr>
+        <tr>
+            <td><strong>TCF 2.2</strong> (IAB Europe)</td>
+            <td>Transparency & Consent Framework</td>
+            <td>Standardized consent signal in bid requests; vendors must check consent before processing</td>
+            <td>Parse TC string from every bid request. Check consent for our registered vendor ID before updating user scores. Log consent status per event for audit trail.</td>
+        </tr>
+        <tr>
+            <td><strong>ePrivacy</strong> (EU, pending)</td>
+            <td>Cookie/device tracking</td>
+            <td>Prior consent for cookies and similar tracking technologies</td>
+            <td>System designed to function without cookies (see cookieless section below). Already compatible with consent-first model.</td>
+        </tr>
+    </table>
+
+    <h3>Cookieless Future &mdash; How Our System Adapts</h3>
+
+    <p>
+        With third-party cookie deprecation in Chrome (ongoing), IDFA restrictions on iOS, and increasing user opt-out rates, our system must work in a world where <strong>30-50% of users have no persistent identifier</strong>. Here is how we handle this:
+    </p>
+
+    <div class="step-box">
+        <div class="step-badge">1</div>
+        <strong>Contextual Fallback:</strong> When no user ID is available, we cannot update a user-level score array. Instead, we provide <strong>contextual audience signals</strong> based solely on the current domain classification. "This page is about Travel" is less powerful than "This user is a Travel Enthusiast" but still valuable &mdash; contextual targeting commands 1.2-1.5x CPM premiums (vs. 2-5x for user-level segments).
+    </div>
+
+    <div class="step-box">
+        <div class="step-badge">2</div>
+        <strong>Alternative ID Support:</strong> We integrate with privacy-compliant alternative IDs: <strong>UID2</strong> (The Trade Desk), <strong>RampID</strong> (LiveRamp), <strong>ID5</strong>, and <strong>SharedID</strong>. These are consent-based, encrypted identifiers that allow cross-site user recognition without third-party cookies. Our system treats these as first-class user identifiers alongside cookies and device IDs.
+    </div>
+
+    <div class="step-box">
+        <div class="step-badge">3</div>
+        <strong>Cohort-Based Scoring:</strong> For users with no identifier at all, we can assign them to <strong>cohorts</strong> based on observable signals (device type + geo + time-of-day + current domain). A cohort-level IAB score array (e.g., "iPhone users in NYC visiting news sites at 8am") provides a probabilistic audience signal without individual tracking.
+    </div>
+
+    <div class="step-box">
+        <div class="step-badge">4</div>
+        <strong>Data Minimization:</strong> We store only IAB category scores and timestamps &mdash; not the raw URLs visited, page content, or any PII. The score array is a <strong>lossy aggregation</strong>: you cannot reconstruct the user's browsing history from their IAB scores. This is privacy-friendly by construction.
+    </div>
+
+    <h3>Technical Privacy Controls</h3>
+
+    <div class="warning-box">
+        <strong>&#x26A0; Data Retention Policy:</strong> User score arrays are automatically deleted after <strong>90 days of inactivity</strong> (no new bid events for that user). The weekly batch cleanup job removes expired profiles from all storage tiers. Score arrays for users who opt out via CCPA/GPC are deleted within 72 hours (fast path) via a dedicated Kafka consumer that processes deletion events with priority.
+    </div>
+
+    <ul>
+        <li><strong>Encryption at rest:</strong> All user score arrays encrypted with AES-256 in Redis and Aerospike. S3 exports use server-side encryption (SSE-S3).</li>
+        <li><strong>Encryption in transit:</strong> TLS 1.3 for all inter-service communication. Kafka configured with SASL_SSL.</li>
+        <li><strong>Access control:</strong> Score arrays accessible only by the scoring service and segment generation service. No human access to individual user profiles without a logged, justified request.</li>
+        <li><strong>Audit logging:</strong> Every score read/write is logged with timestamp, service identity, and consent status. Logs retained for 12 months for regulatory audit compliance.</li>
+        <li><strong>Pseudonymization:</strong> Internal user IDs are hashed (SHA-256 with salt) versions of the original device/cookie IDs. We cannot reverse the hash to get the original identifier.</li>
+    </ul>
+
+    <hr class="section-divider">
+
+    <!-- ============================================ -->
+    <!-- SECTION 10: SUCCESS METRICS                  -->
+    <!-- ============================================ -->
+
+    <h2>&#x1F4C8; Success Metrics</h2>
+
+    <p>
+        How do we know the system is working? We measure success across four dimensions: <strong>classification quality</strong> (are we labeling domains correctly?), <strong>audience quality</strong> (are the segments meaningful?), <strong>system performance</strong> (are we meeting latency/throughput SLAs?), and <strong>business impact</strong> (are advertisers paying more for our segments?).
+    </p>
+
+    <h3>Classification Quality Metrics</h3>
+
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Target</th>
+            <th>Measurement Method</th>
+            <th>Alert Threshold</th>
+        </tr>
+        <tr>
+            <td><strong>Domain Classification Precision (macro-avg)</strong></td>
+            <td>&ge;85%</td>
+            <td>Human-labeled holdout set of 5,000 domains, evaluated monthly</td>
+            <td>Alert if drops below 80%</td>
+        </tr>
+        <tr>
+            <td><strong>Domain Classification Recall (macro-avg)</strong></td>
+            <td>&ge;75%</td>
+            <td>Same holdout set. Recall is naturally lower due to rare categories.</td>
+            <td>Alert if drops below 70%</td>
+        </tr>
+        <tr>
+            <td><strong>Top-1K Domain Accuracy</strong></td>
+            <td>&ge;92%</td>
+            <td>Manual audit of top 1,000 domains by traffic volume (covers ~40% of bid volume)</td>
+            <td>Any top-100 domain misclassified triggers immediate review</td>
+        </tr>
+        <tr>
+            <td><strong>Domain Coverage Rate</strong></td>
+            <td>&ge;85% of bid volume</td>
+            <td>Fraction of bid requests where domain is in our lookup table</td>
+            <td>Alert if drops below 80% (may indicate new high-volume domain not yet crawled)</td>
+        </tr>
+        <tr>
+            <td><strong>Category Coverage</strong></td>
+            <td>&ge;90% of Tier-1 IAB categories have &ge;500 classified domains</td>
+            <td>Count of domains per category from lookup table</td>
+            <td>Rare categories with <100 domains flagged for targeted crawling</td>
+        </tr>
+    </table>
+
+    <h3>Audience Quality Metrics</h3>
+
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Target</th>
+            <th>Measurement Method</th>
+            <th>Why It Matters</th>
+        </tr>
+        <tr>
+            <td><strong>Segment Reach (users per segment)</strong></td>
+            <td>&ge;1M users for Tier-1 categories</td>
+            <td>Count of unique users per audience segment after decay and thresholding</td>
+            <td>Below 1M, segments are too small for programmatic scale. Advertisers need reach.</td>
+        </tr>
+        <tr>
+            <td><strong>Segment Precision (true positive rate)</strong></td>
+            <td>&ge;60% for high-confidence segments</td>
+            <td>Survey/panel validation: sample users from segment, verify actual interest via survey or cross-reference with purchase data</td>
+            <td>Advertiser trust requires that a majority of users in "Travel Enthusiast" actually care about travel.</td>
+        </tr>
+        <tr>
+            <td><strong>Segment Stability (week-over-week churn)</strong></td>
+            <td>&le;30% weekly churn for persistent categories; &le;60% for volatile categories</td>
+            <td>Compare segment membership Monday vs. following Monday</td>
+            <td>Excessive churn means advertisers' campaigns see inconsistent audience composition.</td>
+        </tr>
+        <tr>
+            <td><strong>Segment Overlap Rate</strong></td>
+            <td>&le;40% overlap between Tier-1 segments</td>
+            <td>Jaccard similarity between segment user sets</td>
+            <td>High overlap means segments are not differentiated &mdash; advertisers are paying for the same users under different labels.</td>
+        </tr>
+        <tr>
+            <td><strong>Score Distribution Health</strong></td>
+            <td>No category with >50% of active users</td>
+            <td>Distribution of scores per category across user population</td>
+            <td>If everyone scores high on "News," the segment is useless for targeting (no differentiation).</td>
+        </tr>
+    </table>
+
+    <h3>System Performance Metrics</h3>
+
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>SLA</th>
+            <th>Current Performance</th>
+            <th>Monitoring</th>
+        </tr>
+        <tr>
+            <td><strong>Domain Lookup Latency (p99)</strong></td>
+            <td>&lt;5ms</td>
+            <td>~1.2ms (in-memory HashMap)</td>
+            <td>Prometheus histogram, Grafana dashboard, PagerDuty alert at >3ms p99</td>
+        </tr>
+        <tr>
+            <td><strong>User Score Lookup Latency (p99)</strong></td>
+            <td>&lt;10ms</td>
+            <td>~6.5ms (Redis read + decay computation)</td>
+            <td>Alert at >8ms p99. Circuit breaker at >12ms.</td>
+        </tr>
+        <tr>
+            <td><strong>Score Write Throughput</strong></td>
+            <td>&ge;600K writes/sec sustained</td>
+            <td>~580K writes/sec (Kafka + Redis)</td>
+            <td>Alert if consumer lag >5 min. Auto-scale at >80% throughput capacity.</td>
+        </tr>
+        <tr>
+            <td><strong>Segment Generation Time</strong></td>
+            <td>&lt;60 min for full user sweep</td>
+            <td>~45 min on 50-node Spark cluster</td>
+            <td>Alert if >75 min. Indicates cluster sizing issue or data skew.</td>
+        </tr>
+        <tr>
+            <td><strong>Domain Table Freshness</strong></td>
+            <td>&lt;24 hours old</td>
+            <td>Refreshed daily at 4:00 AM UTC</td>
+            <td>Alert if table age >36 hours. Critical alert at >48 hours.</td>
+        </tr>
+        <tr>
+            <td><strong>System Availability</strong></td>
+            <td>99.9% (scoring pipeline)</td>
+            <td>99.95% trailing 30 days</td>
+            <td>Downtime = period where segment enrichment is unavailable for bid requests</td>
+        </tr>
+    </table>
+
+    <h3>Business Impact Metrics</h3>
+
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Target</th>
+            <th>Measurement</th>
+        </tr>
+        <tr>
+            <td><strong>CPM Lift for Segmented Inventory</strong></td>
+            <td>2-5x vs. unsegmented</td>
+            <td>A/B test: same inventory with and without audience segment enrichment. Measure winning bid CPM difference.</td>
+        </tr>
+        <tr>
+            <td><strong>Advertiser CTR Lift</strong></td>
+            <td>+30-50% vs. run-of-network</td>
+            <td>Compare click-through rates for campaigns using our IAB segments vs. campaigns with no targeting.</td>
+        </tr>
+        <tr>
+            <td><strong>Advertiser Conversion Lift</strong></td>
+            <td>+20-40% vs. contextual-only targeting</td>
+            <td>Post-click conversion tracking for campaigns using user-level vs. contextual-only segments.</td>
+        </tr>
+        <tr>
+            <td><strong>Segment Adoption Rate</strong></td>
+            <td>&ge;60% of active campaigns use at least one IAB segment</td>
+            <td>Track campaign targeting configurations across DSP partners.</td>
+        </tr>
+        <tr>
+            <td><strong>Data Revenue</strong></td>
+            <td>Growing quarter-over-quarter</td>
+            <td>Total revenue from data fees charged when our audience segments influence bid decisions.</td>
+        </tr>
+    </table>
+
+    <div class="success-box">
+        <h3>&#x2705; System Overview Summary</h3>
+        <p>The complete IAB Audience Generation system at the architectural level:</p>
+        <ul>
+            <li><strong>Problem:</strong> Convert bidstream browsing signals into monetizable IAB audience segments at programmatic scale</li>
+            <li><strong>Scale:</strong> 50B+ bid requests/day, 500M active users, 200K classified domains, sub-10ms latency</li>
+            <li><strong>Architecture:</strong> 4 components &mdash; batch domain classification, real-time user scoring, exponential decay, segment generation</li>
+            <li><strong>Key decisions:</strong> TF-IDF + classifier (not keywords/embeddings), pre-computed lookup table (not real-time inference), curated domain crawling (not crawl-everything), per-event exponential decay (not batch reduction)</li>
+            <li><strong>Worked example:</strong> Traced User-12345 through 4 domain visits, score accumulation, decay, and segment assignment with real numbers</li>
+            <li><strong>Technology stack:</strong> Kafka + Flink + Redis + scikit-learn + Spark, running at ~$60K/month total infrastructure cost</li>
+            <li><strong>Privacy:</strong> GDPR/CCPA compliant, cookieless fallback via contextual signals and alternative IDs, data minimization by design</li>
+            <li><strong>Success metrics:</strong> Classification precision &ge;85%, segment reach &ge;1M users, CPM lift 2-5x, system availability 99.9%</li>
+        </ul>
+        <p style="margin-top: 15px;">
+            <strong>Next step:</strong> Dive into <strong>Step 1: Data Engineering &amp; Feature Pipeline</strong> for the detailed design of bidstream ingestion, domain crawling, and the data infrastructure that powers this system.
+        </p>
+    </div>
+
+</div>
+</body>
+</html>

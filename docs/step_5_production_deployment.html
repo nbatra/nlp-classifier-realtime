@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 5: Production Deployment — IAB Audience Generation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #2c3e50;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+            padding: 50px 60px;
+        }
+        h1 {
+            font-size: 2.6em;
+            color: #2c3e50;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            border-left: 6px solid #667eea;
+            padding-left: 20px;
+            margin: 40px 0 20px 0;
+        }
+        h3 {
+            font-size: 1.4em;
+            color: #34495e;
+            margin: 25px 0 12px 0;
+        }
+        h4 {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin: 18px 0 10px 0;
+        }
+        p { margin-bottom: 14px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 24px 0;
+            font-size: 0.95em;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #f2f2f2;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        tr:nth-child(even) { background: #fafafa; }
+        tr:hover { background: #f0f5ff; }
+        .hero-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 35px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+        .hero-section h2 {
+            color: white;
+            border-left-color: rgba(255,255,255,0.5);
+            margin-top: 0;
+        }
+        .hero-section p { color: rgba(255,255,255,0.95); }
+        .hero-section ul { color: rgba(255,255,255,0.95); margin-left: 20px; }
+        .hero-section li { margin-bottom: 6px; }
+        .step-box {
+            background: #e8f5e8;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 16px 0;
+            position: relative;
+        }
+        .step-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 700;
+            font-size: 0.95em;
+            margin-right: 10px;
+        }
+        .math-box {
+            background: #e8f4fd;
+            border: 3px solid #3498db;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 16px 0;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.95em;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .key-insight {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 16px 22px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .key-insight strong { color: #1b5e20; }
+        .warning-box {
+            background: #fff5f5;
+            border-left: 4px solid #dc3545;
+            padding: 16px 22px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning-box strong { color: #c0392b; }
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 16px 22px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 16px 22px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .decision-matrix {
+            background: #f0f8ff;
+            border: 2px solid #4169e1;
+            border-radius: 10px;
+            padding: 22px 28px;
+            margin: 16px 0;
+        }
+        .decision-matrix h4 { color: #4169e1; }
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 14px 0;
+        }
+        .pros { background: #e8f5e9; border-radius: 8px; padding: 14px 18px; }
+        .cons { background: #fff5f5; border-radius: 8px; padding: 14px 18px; }
+        .pros h4 { color: #28a745; }
+        .cons h4 { color: #dc3545; }
+        .example-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 16px 0;
+        }
+        .example-box pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 16px 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .architecture-diagram {
+            background: #1e1e2e;
+            color: #a6e3a1;
+            padding: 22px 28px;
+            border-radius: 10px;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.85em;
+            white-space: pre;
+            overflow-x: auto;
+            margin: 16px 0;
+            line-height: 1.45;
+        }
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 22px 28px;
+            margin: 20px 0;
+        }
+        .success-box h3 { color: #155724; }
+        ul, ol { margin-left: 24px; margin-bottom: 14px; }
+        li { margin-bottom: 5px; }
+        strong { color: #2c3e50; }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 16px 0;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 18px 22px;
+        }
+        .card h4 { color: #495057; margin-top: 0; }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea22, #764ba222);
+            border: 1px solid #667eea44;
+            border-radius: 10px;
+            padding: 18px 22px;
+            text-align: center;
+        }
+        .metric-card .number {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: #667eea;
+        }
+        .metric-card .label { color: #7f8c8d; font-size: 0.9em; }
+        .phase-box {
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 16px 0;
+        }
+        .phase-shadow { background: #f3e8ff; border: 2px solid #9b59b6; }
+        .phase-canary { background: #fff8e1; border: 2px solid #f39c12; }
+        .phase-rollout { background: #e3f2fd; border: 2px solid #2196f3; }
+        .phase-prod { background: #e8f5e9; border: 2px solid #4caf50; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Step 5: Production Deployment</h1>
+    <p style="font-size:1.1em; color:#555;">From trained models and designed pipelines to a battle-hardened production system processing 50 billion bid requests per day at sub-10ms latency.</p>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.1: SCALE REALITY CHECK                             -->
+    <!-- ============================================================ -->
+
+    <div class="hero-section">
+        <h2>🎯 Core Objective</h2>
+        <p>Deploy a production IAB Audience Generation system that can classify 200K+ domains into ~700 IAB categories, maintain real-time affinity score arrays for 500M+ users, and serve audience segments to downstream DSPs and advertisers — all within the strict latency and reliability demands of programmatic advertising.</p>
+        <ul>
+            <li><strong>Domain Lookup:</strong> &lt;5ms P99 for domain → IAB probability vector retrieval</li>
+            <li><strong>User Score Update:</strong> &lt;10ms P99 for reading, decaying, and updating a user's IAB score array</li>
+            <li><strong>Segment Serving:</strong> &lt;15ms P99 for returning a user's top-K IAB audience segments</li>
+            <li><strong>Throughput:</strong> Sustain 580K+ QPS with 3x headroom for traffic spikes</li>
+            <li><strong>Availability:</strong> 99.95% uptime SLA — every minute of downtime loses bid opportunities worth $2,000+</li>
+        </ul>
+    </div>
+
+    <h2>📊 5.1 Scale Reality Check</h2>
+
+    <p>Before writing a single deployment manifest, we must confront the scale of the system we are deploying. Programmatic advertising operates at a scale that is qualitatively different from most ML applications. A single miscalculation in capacity planning can cascade into missed bids, stale audience segments, or runaway infrastructure costs.</p>
+
+    <h3>Production Scale Requirements</h3>
+
+    <table>
+        <tr>
+            <th>Dimension</th>
+            <th>Steady State</th>
+            <th>Peak (Black Friday / Super Bowl)</th>
+            <th>Why This Scale</th>
+        </tr>
+        <tr>
+            <td><strong>Bid requests / day</strong></td>
+            <td>50 billion</td>
+            <td>150 billion (3x)</td>
+            <td>Aggregate bidstream from 15+ SSP partners via OpenRTB</td>
+        </tr>
+        <tr>
+            <td><strong>Bid requests / second (QPS)</strong></td>
+            <td>~580,000</td>
+            <td>~1,740,000</td>
+            <td>50B / 86,400s; peak events drive 3x multiplier</td>
+        </tr>
+        <tr>
+            <td><strong>Unique users (monthly)</strong></td>
+            <td>500 million</td>
+            <td>650 million</td>
+            <td>Cross-device IDs (IDFA, GAID, cookies, probabilistic IDs)</td>
+        </tr>
+        <tr>
+            <td><strong>Active user profiles (daily)</strong></td>
+            <td>120 million</td>
+            <td>200 million</td>
+            <td>Users with ≥1 bid event in trailing 24h</td>
+        </tr>
+        <tr>
+            <td><strong>Unique domains in rotation</strong></td>
+            <td>200,000</td>
+            <td>250,000</td>
+            <td>Curated high-traffic publisher domains</td>
+        </tr>
+        <tr>
+            <td><strong>IAB categories</strong></td>
+            <td>~700 (Tier-2)</td>
+            <td>~700</td>
+            <td>IAB Content Taxonomy v2.2</td>
+        </tr>
+        <tr>
+            <td><strong>User score array size</strong></td>
+            <td>~700 floats (sparse)</td>
+            <td>~700 floats (sparse)</td>
+            <td>One probability per IAB Tier-2 category</td>
+        </tr>
+        <tr>
+            <td><strong>Domain lookup table size</strong></td>
+            <td>200K entries × avg 12 categories</td>
+            <td>250K entries</td>
+            <td>Sparse vector: only categories with P &gt; 0.05</td>
+        </tr>
+        <tr>
+            <td><strong>Segment queries / second</strong></td>
+            <td>~50,000</td>
+            <td>~150,000</td>
+            <td>DSP segment lookups for bid enrichment</td>
+        </tr>
+        <tr>
+            <td><strong>Model retraining cadence</strong></td>
+            <td>Weekly (full retrain)</td>
+            <td>Daily (incremental updates)</td>
+            <td>New domains, content drift, taxonomy updates</td>
+        </tr>
+    </table>
+
+    <h3>Infrastructure Sizing Calculations</h3>
+
+    <div class="math-box">
+<strong>Memory: Domain Lookup Table (Redis)</strong>
+
+Domains:           200,000
+Avg categories/domain: 12 (sparse, only P > 0.05)
+Per entry:         domain_key (avg 25 bytes) + 12 × (category_id: 2 bytes + prob: 4 bytes) = 25 + 72 = 97 bytes
+Redis overhead:    ~2x for hash structure ≈ 194 bytes/entry
+Total:             200,000 × 194 = 38.8 MB
+
+→ Trivially fits in a single Redis node. We replicate 3x for availability = ~120 MB.
+
+<strong>Memory: User Score Arrays (Redis Hot Tier)</strong>
+
+Active daily users:    120,000,000
+Score array (sparse):  avg 15 non-zero categories × (cat_id: 2B + score: 4B + timestamp: 4B) = 150 bytes
+User key overhead:     ~40 bytes (device ID + Redis hash overhead)
+Per-user total:        ~190 bytes × 2x Redis overhead = 380 bytes
+Hot tier (daily active): 120M × 380 bytes = 45.6 GB
+
+→ Redis cluster: 6 primary shards × 16 GB = 96 GB capacity (50% utilization target)
+→ With 6 replicas: 12 nodes total, 192 GB aggregate
+
+<strong>Memory: User Score Arrays (ScyllaDB Warm Tier)</strong>
+
+All monthly users:     500,000,000
+Per-user row:          ~250 bytes (user_id + score blob + metadata)
+Total:                 500M × 250 = 125 GB raw
+Compaction overhead:   ~2x = 250 GB
+Replication factor 3:  750 GB across cluster
+
+→ ScyllaDB cluster: 6 nodes × 500 GB SSD = 3 TB capacity (25% utilization)
+
+<strong>Compute: Kafka Consumers (Bidstream Ingestion)</strong>
+
+Target QPS:         580,000 (steady) / 1,740,000 (peak)
+Per consumer:       ~8,000 events/sec (with domain lookup + score update)
+Steady consumers:   580,000 / 8,000 = 73 consumers
+Peak consumers:     1,740,000 / 8,000 = 218 consumers
+
+→ Flink TaskManagers: 25 (steady, 3 slots each) to 75 (peak)
+→ Kafka partitions:   256 (allows scaling up to 256 consumers)
+
+<strong>Compute: Batch Classification Pipeline</strong>
+
+Domains to classify:   200,000
+TF-IDF vectorization:  ~50ms per domain (text extraction + vectorization)
+700 LogReg predictions: ~2ms per domain
+Total per domain:      ~52ms
+Sequential time:       200,000 × 52ms = 10,400 seconds ≈ 2.9 hours
+With 20 workers:       ~8.7 minutes
+
+→ Batch job runs on 20 × c5.2xlarge (8 vCPU, 16 GB) spot instances
+    </div>
+
+    <div class="grid-3">
+        <div class="metric-card">
+            <div class="number">580K</div>
+            <div class="label">QPS Steady State</div>
+        </div>
+        <div class="metric-card">
+            <div class="number">&lt;10ms</div>
+            <div class="label">P99 Score Lookup</div>
+        </div>
+        <div class="metric-card">
+            <div class="number">500M</div>
+            <div class="label">User Profiles</div>
+        </div>
+    </div>
+
+    <div class="key-insight">
+        <strong>Key Insight:</strong> The domain lookup table is tiny (~39 MB) compared to user score arrays (~46 GB in the hot tier). This validates our architecture decision to pre-compute domain classifications in batch and serve them from an in-memory lookup — the bottleneck is user state, not domain classification. Every optimization dollar should target user score read/write latency.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.2: PRODUCTION SYSTEM ARCHITECTURE                  -->
+    <!-- ============================================================ -->
+
+    <h2>🏗️ 5.2 Production System Architecture</h2>
+
+    <p>Think of the production system as a city's water supply. The <strong>batch classification pipeline</strong> is the water treatment plant — it processes raw materials (website content) into clean product (IAB probability vectors) on a schedule. The <strong>real-time scoring pipeline</strong> is the distribution network — it delivers the product (score updates) to every household (user profile) the instant they turn on the tap (trigger a bid request). The <strong>segment serving layer</strong> is the faucet — DSPs and advertisers simply ask "what audiences does this user belong to?" and get an instant answer.</p>
+
+    <h3>End-to-End Architecture Overview</h3>
+
+    <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                           IAB AUDIENCE GENERATION - PRODUCTION ARCHITECTURE                  │
+├─────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                             │
+│  ┌──────────────────────── BATCH CLASSIFICATION PIPELINE (Airflow) ────────────────────┐    │
+│  │                                                                                      │    │
+│  │  ┌──────────┐    ┌──────────────┐    ┌──────────────┐    ┌────────────────────┐     │    │
+│  │  │ Domain   │───▶│ Web Crawler  │───▶│ TF-IDF +     │───▶│ Domain→IAB Lookup  │     │    │
+│  │  │ Registry │    │ (Scrapy)     │    │ OvR LogReg   │    │ Table Generator    │     │    │
+│  │  │ (S3)     │    │ 20 workers   │    │ (scikit-learn)│    │                    │     │    │
+│  │  └──────────┘    └──────────────┘    └──────────────┘    └────────┬───────────┘     │    │
+│  │                                                                    │                  │    │
+│  │  ┌──────────────┐                                                  │                  │    │
+│  │  │ MLflow Model │◀──── Model artifacts (TF-IDF vocab + weights)    │                  │    │
+│  │  │ Registry     │                                                  │                  │    │
+│  │  └──────────────┘                                                  ▼                  │    │
+│  │                                                          ┌─────────────────┐          │    │
+│  │                                                          │ Redis Cluster   │          │    │
+│  │                                                          │ (Domain Lookup) │          │    │
+│  │                                                          │ 3 replicas      │          │    │
+│  └──────────────────────────────────────────────────────────┴─────────────────┴──────────┘    │
+│                                                                       │                      │
+│  ┌──────────────────── REAL-TIME SCORING PIPELINE ────────────────────┼──────────────────┐   │
+│  │                                                                    │                   │   │
+│  │  ┌──────────┐    ┌──────────────┐    ┌──────────────┐             ▼                   │   │
+│  │  │ SSP Bid  │───▶│ Kafka Cluster│───▶│ Flink Scoring│──── Domain Lookup (2ms) ──┐    │   │
+│  │  │ Requests │    │ 256 partns   │    │ Job (75 TMs) │                            │    │   │
+│  │  │ 580K QPS │    │ 3 brokers    │    │              │◀── IAB probs for domain ──┘    │   │
+│  │  └──────────┘    └──────────────┘    └──────┬───────┘                                 │   │
+│  │                                              │                                         │   │
+│  │                                     Score Update (3ms)                                 │   │
+│  │                                              │                                         │   │
+│  │                                              ▼                                         │   │
+│  │                                    ┌─────────────────┐    ┌────────────────────┐       │   │
+│  │                                    │ Redis Cluster   │───▶│ ScyllaDB Cluster   │       │   │
+│  │                                    │ (User Scores)   │    │ (Warm Tier)        │       │   │
+│  │                                    │ 12 nodes, 192GB │    │ 6 nodes, 3TB       │       │   │
+│  │                                    └────────┬────────┘    └────────────────────┘       │   │
+│  └─────────────────────────────────────────────┼─────────────────────────────────────────┘   │
+│                                                 │                                            │
+│  ┌──────────────────── SEGMENT SERVING LAYER ──┼────────────────────────────────────────┐   │
+│  │                                              ▼                                        │   │
+│  │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────────┐    │   │
+│  │  │ API Gateway  │───▶│ Segment      │───▶│ Read User    │───▶│ Return Top-K     │    │   │
+│  │  │ (Kong/Envoy) │    │ Service      │    │ Score Array  │    │ IAB Segments     │    │   │
+│  │  │ Auth + Rate  │    │ (gRPC, K8s)  │    │ Apply Decay  │    │ + Confidence     │    │   │
+│  │  │ Limiting     │    │ 20 pods      │    │ Normalize    │    │                  │    │   │
+│  │  └──────────────┘    └──────────────┘    └──────────────┘    └──────────────────┘    │   │
+│  └──────────────────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                             │
+│  ┌──────────────────── STORAGE TIERS ───────────────────────────────────────────────────┐   │
+│  │  HOT:   Redis Cluster     │ Domain lookup + active user scores │ &lt;5ms    │ 24h    │   │
+│  │  WARM:  ScyllaDB Cluster  │ All user profiles, historical     │ &lt;20ms   │ 90d    │   │
+│  │  COLD:  S3 + Parquet      │ Model artifacts, training data    │ seconds  │ 1yr    │   │
+│  │  ARCHIVE: S3 Glacier      │ Compliance logs, audit trails     │ hours    │ 7yr    │   │
+│  └──────────────────────────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Component Interaction: Real-Time Bid Processing Flow</h3>
+
+    <p>When a bid request arrives from an SSP, the following sequence executes in under 10ms end-to-end:</p>
+
+    <div class="step-box">
+        <p><span class="step-badge">1</span> <strong>Bid Request Ingestion (0.5ms):</strong> SSP sends OpenRTB bid request to our Kafka ingestion endpoint. The request contains <code>device.ifa</code> (device ID), <code>site.domain</code> (publisher domain), and optionally <code>site.cat</code> / <code>bcat</code> (IAB category hints). Kafka producer acknowledges within 0.5ms.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">2</span> <strong>Kafka → Flink (1ms):</strong> Flink consumer picks up the event from the Kafka partition. The event is routed by user_id hash to ensure all events for the same user land on the same Flink task slot (key-by partitioning), enabling local state access.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">3</span> <strong>Domain Lookup (2ms):</strong> Flink task queries Redis with the domain key (e.g., <code>dom:cnn.com</code>). Redis returns a sparse vector of (IAB_category_id, probability) pairs. For <code>cnn.com</code>, this might return: <code>{IAB12: 0.85, IAB12-1: 0.72, IAB3: 0.15, IAB1: 0.12}</code>.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">4</span> <strong>OpenRTB Metadata Supplement (0.2ms):</strong> If the bid request includes <code>site.cat</code> (e.g., "IAB12" for News), we boost the corresponding category probability by a configurable factor (default: +0.1). If <code>bcat</code> excludes categories, we zero them out.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">5</span> <strong>User Score Read + Decay (3ms):</strong> Read the user's current score array from Redis (keyed by <code>usr:{device_id}</code>). Apply exponential decay: <code>score_i = score_i × e^(-λ_i × Δt)</code> where <code>Δt</code> is time since last update and <code>λ_i</code> is category-specific decay rate. Travel (λ=0.15/day) decays faster than Education (λ=0.03/day).</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">6</span> <strong>Score Update + Write (2ms):</strong> Add the domain's IAB probability vector to the decayed score array: <code>new_score_i = decayed_score_i + domain_prob_i</code>. Write the updated array back to Redis with current timestamp. Asynchronously replicate to ScyllaDB.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">7</span> <strong>Total End-to-End: ~8.7ms</strong> — well within our 10ms P99 budget.</p>
+    </div>
+
+    <h3>Technology Decisions</h3>
+
+    <h4>Service Mesh: Envoy Proxy (via Istio) vs. Linkerd vs. No Service Mesh</h4>
+
+    <div class="decision-matrix">
+        <h4>Decision: Envoy Proxy (Istio) for service-to-service communication</h4>
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>✅ Why Envoy / Istio</h4>
+                <ul>
+                    <li>Automatic mTLS between all services — critical for PII-adjacent user data</li>
+                    <li>Traffic splitting for canary deployments (1% → 5% → 25% → 100%)</li>
+                    <li>Circuit breaking prevents cascade failures from Redis or ScyllaDB outages</li>
+                    <li>Distributed tracing (Jaeger integration) for end-to-end latency profiling</li>
+                    <li>Retries with exponential backoff at the proxy layer — application code stays simple</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>❌ Rejected Alternatives</h4>
+                <ul>
+                    <li><strong>Linkerd:</strong> Lighter weight, but weaker traffic splitting capabilities — we need precise percentage-based routing for champion-challenger deployment</li>
+                    <li><strong>No service mesh:</strong> Would require implementing mTLS, circuit breaking, and traffic splitting in each service — too much operational burden at 7+ microservices</li>
+                    <li><strong>AWS App Mesh:</strong> AWS-only lock-in; we maintain multi-cloud optionality for cost leverage</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h4>API Gateway: Kong vs. AWS API Gateway vs. Envoy as Gateway</h4>
+
+    <div class="decision-matrix">
+        <h4>Decision: Kong API Gateway for external-facing segment serving API</h4>
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>✅ Why Kong</h4>
+                <ul>
+                    <li>Plugin ecosystem for rate limiting, API key auth, and request transformation</li>
+                    <li>Per-client rate limiting — different DSP partners have different QPS quotas</li>
+                    <li>Built-in analytics for API usage tracking (which DSPs query which segments)</li>
+                    <li>Can run in Kubernetes (Kong Ingress Controller) alongside our services</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>❌ Rejected Alternatives</h4>
+                <ul>
+                    <li><strong>AWS API Gateway:</strong> 29ms P99 added latency at high QPS — unacceptable when our total budget is 15ms</li>
+                    <li><strong>Envoy as API gateway:</strong> Requires custom Lua/WASM filters for API key auth and rate limiting — operational complexity not justified</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h4>Stream Processing: Apache Flink vs. Kafka Streams vs. Apache Spark Structured Streaming</h4>
+
+    <div class="decision-matrix">
+        <h4>Decision: Apache Flink for real-time bid event processing</h4>
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>✅ Why Flink</h4>
+                <ul>
+                    <li>True event-time processing with watermarks — handles late-arriving bid events correctly</li>
+                    <li>Exactly-once state semantics with RocksDB state backend + Kafka transactions</li>
+                    <li>Async I/O operator for non-blocking Redis lookups — maximizes throughput per task slot</li>
+                    <li>Savepoints enable zero-downtime deployments (stop with savepoint → deploy new version → resume)</li>
+                    <li>Proven at similar scale: Alibaba processes 1B+ events/sec on Flink</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>❌ Rejected Alternatives</h4>
+                <ul>
+                    <li><strong>Kafka Streams:</strong> Simpler deployment (no separate cluster), but lacks async I/O — Redis lookups would block the processing thread, reducing per-instance throughput by 3-4x</li>
+                    <li><strong>Spark Structured Streaming:</strong> Micro-batch architecture adds 100-500ms latency — unacceptable for our &lt;10ms requirement</li>
+                    <li><strong>Custom consumers:</strong> Maximum control but we'd have to build checkpointing, exactly-once, and backpressure from scratch</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <strong>Why This Matters:</strong> The choice of Flink over Kafka Streams is not about capability — both can process 580K QPS. It is about <em>latency under load</em>. Flink's async I/O operator lets us issue Redis lookups without blocking the processing thread. At 580K QPS with 2ms Redis RTT, a synchronous approach would need 1,160 consumer threads just for Redis I/O. Flink's async approach handles this with ~75 TaskManagers, each running 3 task slots with 100-way async I/O concurrency.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.3: 4-PHASE DEPLOYMENT STRATEGY                     -->
+    <!-- ============================================================ -->
+
+    <h2>🚀 5.3 Four-Phase Deployment Strategy</h2>
+
+    <p>Deploying a new model version in a system that processes 50 billion bid requests per day is not a code push — it is a controlled experiment. A bad classifier update could misclassify millions of domains, corrupt user score arrays for hundreds of millions of users, and destroy audience segment quality that advertisers pay premium CPMs for. Our <strong>champion-challenger</strong> deployment strategy ensures every model version earns its way into production through four gates.</p>
+
+    <h3>Why Not Blue-Green?</h3>
+
+    <div class="warning-box">
+        <strong>Challenge:</strong> Traditional blue-green deployment (flip 100% of traffic at once) is dangerous for ML systems because model quality issues are <em>statistical</em>, not binary. A new classifier might work perfectly on 95% of domains but catastrophically misclassify news domains as adult content — something only visible at scale. We need gradual exposure to catch distribution-level failures that unit tests and offline evaluation cannot surface.
+    </div>
+
+    <h3>Phase 1: Shadow Mode (Days 1-3)</h3>
+
+    <div class="phase-box phase-shadow">
+        <h4>🔮 Shadow Mode — Observe Without Impact</h4>
+        <p><strong>Traffic:</strong> 100% of bid events processed by <em>both</em> champion (current) and challenger (new) models. Only champion results are written to user profiles.</p>
+        <p><strong>Goal:</strong> Compare challenger predictions against champion on live traffic without affecting any production outputs.</p>
+
+        <h4>How It Works</h4>
+        <ol>
+            <li>New domain lookup table (generated by challenger model) is loaded into a <strong>separate Redis keyspace</strong> (db=1 vs db=0 for champion)</li>
+            <li>Flink scoring job is modified to perform <strong>dual lookups</strong> — one against champion (db=0), one against challenger (db=1)</li>
+            <li>Only champion results update user score arrays. Challenger results are written to a <strong>shadow log topic</strong> in Kafka</li>
+            <li>A comparison job reads both outputs and computes agreement metrics</li>
+        </ol>
+
+        <h4>Metrics Tracked in Shadow Mode</h4>
+        <table>
+            <tr>
+                <th>Metric</th>
+                <th>Threshold to Pass</th>
+                <th>What It Catches</th>
+            </tr>
+            <tr>
+                <td>Category agreement rate (top-1)</td>
+                <td>≥ 85%</td>
+                <td>Catastrophic misclassification of common domains</td>
+            </tr>
+            <tr>
+                <td>Category agreement rate (top-3)</td>
+                <td>≥ 92%</td>
+                <td>Subtle shifts in secondary categories</td>
+            </tr>
+            <tr>
+                <td>New uncovered domains</td>
+                <td>≥ 500 net new (improvement)</td>
+                <td>Challenger should classify more domains, not fewer</td>
+            </tr>
+            <tr>
+                <td>P99 lookup latency (challenger Redis)</td>
+                <td>≤ 5ms (same as champion)</td>
+                <td>Larger lookup table or different data structure causing slowdowns</td>
+            </tr>
+            <tr>
+                <td>Probability calibration (Brier score)</td>
+                <td>≤ champion + 0.02</td>
+                <td>Challenger must not be worse-calibrated than champion</td>
+            </tr>
+        </table>
+
+        <h4>Automated Gate:</h4>
+        <p>If all metrics pass for 72 consecutive hours, an Airflow DAG automatically triggers Phase 2. If any metric breaches threshold, an alert fires and the challenger is held for investigation.</p>
+    </div>
+
+    <h3>Phase 2: Canary Deployment (Days 4-7)</h3>
+
+    <div class="phase-box phase-canary">
+        <h4>🐤 Canary — Small-Scale Real Impact</h4>
+        <p><strong>Traffic:</strong> 2% of users (randomly selected by user_id hash) receive score updates from the challenger model. 98% remain on champion.</p>
+        <p><strong>Goal:</strong> Detect downstream impact on audience segment quality with real users, but limit blast radius.</p>
+
+        <h4>How It Works</h4>
+        <ol>
+            <li>Istio VirtualService routes 2% of Flink output to the challenger scoring path based on consistent hashing of <code>user_id % 100 < 2</code></li>
+            <li>Canary users' score arrays are updated using challenger domain probabilities</li>
+            <li>Segment queries for canary users return segments computed from challenger-influenced scores</li>
+            <li>We compare segment-level metrics between canary and control populations</li>
+        </ol>
+
+        <h4>Metrics Tracked in Canary</h4>
+        <table>
+            <tr>
+                <th>Metric</th>
+                <th>Threshold to Pass</th>
+                <th>What It Catches</th>
+            </tr>
+            <tr>
+                <td>Avg segments per user</td>
+                <td>Within ±10% of champion</td>
+                <td>Model producing too many or too few segments</td>
+            </tr>
+            <tr>
+                <td>Segment coverage (% users with ≥1 segment)</td>
+                <td>≥ champion - 2%</td>
+                <td>Challenger not classifying enough domains = fewer user segments</td>
+            </tr>
+            <tr>
+                <td>Top-20 segment population sizes</td>
+                <td>Within ±15% of champion</td>
+                <td>Detecting category drift in popular segments</td>
+            </tr>
+            <tr>
+                <td>Segment stability (Jaccard similarity, 24h windows)</td>
+                <td>≥ 0.80</td>
+                <td>Users flipping in/out of segments too frequently</td>
+            </tr>
+            <tr>
+                <td>DSP bid rates on canary segments</td>
+                <td>Within ±5% of champion</td>
+                <td>If DSPs bid less on canary segments, quality may be worse</td>
+            </tr>
+        </table>
+
+        <h4>Automated Rollback Trigger:</h4>
+        <p>If segment coverage drops by &gt;3% or DSP bid rates drop by &gt;8% over any 6-hour window, automatic rollback: Istio routes 100% back to champion, canary users' scores are re-initialized from ScyllaDB warm tier (pre-canary snapshot).</p>
+    </div>
+
+    <h3>Phase 3: Gradual Rollout (Days 8-14)</h3>
+
+    <div class="phase-box phase-rollout">
+        <h4>📈 Gradual Rollout — Increasing Confidence</h4>
+        <p><strong>Traffic progression:</strong> 2% → 10% → 25% → 50% → 75% → 100%, with 24-hour holds at each stage.</p>
+        <p><strong>Goal:</strong> Verify that positive canary results hold at increasing scale, catching issues that only appear with large user populations (e.g., long-tail domain coverage).</p>
+
+        <table>
+            <tr>
+                <th>Day</th>
+                <th>Traffic %</th>
+                <th>Users Affected</th>
+                <th>Hold Duration</th>
+                <th>Key Risk at This Scale</th>
+            </tr>
+            <tr>
+                <td>Day 8</td>
+                <td>10%</td>
+                <td>12M daily active</td>
+                <td>24h</td>
+                <td>Long-tail domains not in challenger lookup table</td>
+            </tr>
+            <tr>
+                <td>Day 9</td>
+                <td>25%</td>
+                <td>30M daily active</td>
+                <td>24h</td>
+                <td>Redis cluster hotspots from changed key distribution</td>
+            </tr>
+            <tr>
+                <td>Day 10</td>
+                <td>50%</td>
+                <td>60M daily active</td>
+                <td>24h</td>
+                <td>Score array migration artifacts (mixed champion/challenger scores)</td>
+            </tr>
+            <tr>
+                <td>Day 12</td>
+                <td>75%</td>
+                <td>90M daily active</td>
+                <td>48h</td>
+                <td>Advertiser-reported segment quality issues (feedback delay)</td>
+            </tr>
+            <tr>
+                <td>Day 14</td>
+                <td>100%</td>
+                <td>120M daily active</td>
+                <td>Permanent</td>
+                <td>Full-scale operation</td>
+            </tr>
+        </table>
+
+        <h4>Rollback Criteria at Each Stage:</h4>
+        <ul>
+            <li><strong>Automatic rollback:</strong> P99 latency exceeds 12ms (20% above budget), segment coverage drops &gt;5%, or error rate exceeds 0.1%</li>
+            <li><strong>Manual review gate:</strong> Triggered if any Tier-1 IAB category (e.g., IAB1-Arts, IAB12-News) population shifts by &gt;20%</li>
+            <li><strong>Business review gate at 50%:</strong> Advertising ops team reviews segment-level CPM trends before proceeding to 75%</li>
+        </ul>
+    </div>
+
+    <h3>Phase 4: Full Production (Day 14+)</h3>
+
+    <div class="phase-box phase-prod">
+        <h4>✅ Full Production — Champion Promotion</h4>
+        <p><strong>Traffic:</strong> 100% on new model. Old champion model is decommissioned after a 7-day bake period.</p>
+
+        <h4>Post-Deployment Actions:</h4>
+        <ol>
+            <li><strong>Promote challenger to champion</strong> in MLflow Model Registry (stage: "Production")</li>
+            <li><strong>Archive old champion</strong> artifacts to S3 Glacier (stage: "Archived")</li>
+            <li><strong>Update domain lookup table</strong> — swap Redis db=1 (challenger) to db=0 (new champion)</li>
+            <li><strong>Clear shadow infrastructure</strong> — remove dual-lookup code path from Flink job</li>
+            <li><strong>Generate deployment report</strong> — automated summary of all phase metrics, model diff, and approval chain</li>
+            <li><strong>Retain rollback capability</strong> — old champion's lookup table remains in S3 for 30 days for emergency rollback</li>
+        </ol>
+    </div>
+
+    <h3>Worked Example: Deploying a Retrained Classifier</h3>
+
+    <div class="example-box">
+        <h4>Scenario: Weekly retrain adds 5,000 new domains and updates TF-IDF vocabulary with 1,200 new terms</h4>
+
+        <p><strong>Context:</strong> Our weekly Airflow DAG has retrained the TF-IDF + OvR Logistic Regression classifier. The new model includes text from 5,000 newly crawled domains and the TF-IDF vocabulary has expanded from 150,000 to 151,200 terms. The 700 One-vs-Rest LogReg classifiers have updated weights.</p>
+
+        <pre>
+Day 0 (Sunday 2am UTC): Airflow DAG completes retraining
+  ├── Model artifacts saved to S3: s3://models/iab-classifier/v47/
+  │   ├── tfidf_vectorizer_v47.joblib (180 MB)
+  │   └── ovr_logreg_v47.joblib (420 MB, 700 classifiers)
+  ├── MLflow: registered as "iab-classifier" version 47, stage="Staging"
+  └── Offline metrics: macro-F1 = 0.73 (v46 was 0.72), coverage = 197,500 domains
+
+Day 0 (Sunday 4am): Batch scoring pipeline runs
+  ├── Load v47 model from S3
+  ├── Score all 205,000 domains (200K existing + 5K new)
+  │   ├── 20 workers × c5.2xlarge, completed in 9.2 minutes
+  │   └── Output: 205,000 domain → IAB probability vectors
+  ├── Validate: 99.2% of existing domains have top-1 agreement with v46
+  ├── Generate lookup table: filter to P > 0.05 → avg 12.3 categories/domain
+  └── Push to Redis db=1 (challenger keyspace): 205K entries, 40.1 MB
+
+Day 1-3: Shadow Mode
+  ├── Flink dual-lookup enabled
+  ├── Shadow comparison results:
+  │   ├── Top-1 agreement: 94.8% (threshold: ≥85%) ✓
+  │   ├── Top-3 agreement: 97.1% (threshold: ≥92%) ✓
+  │   ├── Net new domains classified: 4,850 (threshold: ≥500) ✓
+  │   ├── P99 lookup latency: 3.1ms (threshold: ≤5ms) ✓
+  │   └── Brier score delta: -0.008 (improved, threshold: ≤+0.02) ✓
+  └── All gates passed → auto-trigger Phase 2
+
+Day 4-7: Canary (2% traffic)
+  ├── 2.4M daily active users on challenger
+  ├── Canary metrics:
+  │   ├── Avg segments/user: 8.2 vs champion 8.0 (+2.5%) ✓
+  │   ├── Segment coverage: 91.3% vs champion 90.8% (+0.5%) ✓
+  │   ├── Top-20 segment sizes: max deviation 7.2% (threshold: ±15%) ✓
+  │   ├── Segment stability (Jaccard): 0.87 (threshold: ≥0.80) ✓
+  │   └── DSP bid rate: +1.2% vs champion ✓
+  └── All gates passed → auto-trigger Phase 3
+
+Day 8-14: Gradual Rollout
+  ├── 10% → 25% → 50% (business review) → 75% → 100%
+  ├── No rollback triggers fired
+  ├── 50% business review: CPM trends stable, ad ops approves
+  └── Day 14: 100% traffic on v47
+
+Day 14: Full Production
+  ├── MLflow: v47 promoted to "Production", v46 to "Archived"
+  ├── Redis: db=1 swapped to db=0, old db=0 backed up to S3
+  ├── Deployment report generated and sent to ML team + ad ops
+  └── v46 lookup table retained in S3 for 30-day rollback window
+        </pre>
+    </div>
+
+    <div class="key-insight">
+        <strong>Key Insight:</strong> The entire deployment from retrain to full production takes 14 days. This may seem slow, but in AdTech, audience segment quality directly impacts advertiser spend. A 2% degradation in segment precision across 500M users could cost advertisers millions in wasted impressions and permanently damage platform trust. The 14-day cadence is a feature, not a limitation — it matches our weekly retrain cycle, so a new challenger begins Phase 1 as the previous challenger completes Phase 4.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.4: MODEL EXPORT & SERVING                          -->
+    <!-- ============================================================ -->
+
+    <h2>📦 5.4 Model Export &amp; Serving</h2>
+
+    <p>Our IAB classification model is a two-stage pipeline: a <strong>TF-IDF vectorizer</strong> (150K+ vocabulary, producing sparse vectors) followed by <strong>700 One-vs-Rest Logistic Regression classifiers</strong> (one per IAB Tier-2 category). Unlike deep learning models that need GPU serving infrastructure, our scikit-learn pipeline's primary serving path is <em>batch scoring</em> — we classify all 200K domains offline, then serve the results from a lookup table. The model itself never sees real-time traffic.</p>
+
+    <h3>Why Batch Scoring (Not Real-Time Model Inference)?</h3>
+
+    <div class="decision-matrix">
+        <h4>Decision: Pre-computed lookup table over real-time model inference</h4>
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>✅ Why Batch + Lookup Table</h4>
+                <ul>
+                    <li><strong>Latency:</strong> Redis lookup = 2ms vs. TF-IDF + 700 LogReg inference = 50ms+ per domain</li>
+                    <li><strong>Cost:</strong> Score 200K domains once/week on spot instances ($3.50) vs. maintaining always-on inference fleet ($8,000/month)</li>
+                    <li><strong>Simplicity:</strong> No model serving framework needed (no TFServing, Triton, etc.)</li>
+                    <li><strong>Determinism:</strong> Every Flink worker sees exactly the same classification for a domain — no model version skew</li>
+                    <li><strong>Domain cardinality:</strong> 200K unique domains is small enough to pre-compute exhaustively</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>❌ When Batch Fails (Handled via Fallback)</h4>
+                <ul>
+                    <li><strong>New domains:</strong> A domain not in the lookup table gets no classification → fallback to OpenRTB <code>site.cat</code> field</li>
+                    <li><strong>Stale classifications:</strong> A domain changes content between weekly retrains → exponential decay naturally down-weights stale signals</li>
+                    <li><strong>Long-tail domains:</strong> Domains with &lt;100 daily impressions may not be in our curated list → accepted trade-off (they contribute negligible signal)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h3>Model Serialization: Joblib vs. Pickle vs. ONNX</h3>
+
+    <div class="decision-matrix">
+        <h4>Decision: Joblib for model serialization</h4>
+        <table>
+            <tr>
+                <th>Format</th>
+                <th>Size (our model)</th>
+                <th>Load Time</th>
+                <th>Pros</th>
+                <th>Cons</th>
+                <th>Verdict</th>
+            </tr>
+            <tr>
+                <td><strong>Joblib</strong></td>
+                <td>~600 MB</td>
+                <td>~8 sec</td>
+                <td>Native scikit-learn support, efficient numpy array serialization, compressed option</td>
+                <td>Python-only, version coupling</td>
+                <td><strong>✅ Chosen</strong></td>
+            </tr>
+            <tr>
+                <td>Pickle</td>
+                <td>~750 MB</td>
+                <td>~12 sec</td>
+                <td>Standard Python, no extra dependency</td>
+                <td>Larger files (no numpy optimization), security risks with untrusted sources</td>
+                <td>❌ Larger, slower</td>
+            </tr>
+            <tr>
+                <td>ONNX</td>
+                <td>~400 MB</td>
+                <td>~3 sec</td>
+                <td>Language-agnostic, optimized runtime, smaller footprint</td>
+                <td>scikit-learn→ONNX conversion is lossy for sparse TF-IDF; OvR with 700 classifiers not well supported</td>
+                <td>❌ Conversion issues</td>
+            </tr>
+        </table>
+        <p><strong>Why Joblib wins:</strong> Since we only load the model in batch scoring jobs (not real-time serving), load time is not critical. Joblib's native scikit-learn integration means zero conversion overhead and guaranteed round-trip fidelity. The 600MB compressed artifact is stored in S3 and loaded once per batch run.</p>
+    </div>
+
+    <h3>Batch Scoring Pipeline: Model → Lookup Table → Redis</h3>
+
+    <div class="architecture-diagram">
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                   BATCH SCORING PIPELINE (Airflow DAG: weekly)               │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Task 1: Model Load (30 sec)                                                │
+│  ┌──────────────────────────────────────────────────────┐                   │
+│  │ S3: s3://models/iab-classifier/v47/                  │                   │
+│  │   ├── tfidf_vectorizer_v47.joblib (180 MB)           │                   │
+│  │   └── ovr_logreg_v47.joblib (420 MB)                 │                   │
+│  │                                                       │                   │
+│  │ MLflow: Validate model stage == "Staging"             │                   │
+│  │ Load into memory on driver node                       │                   │
+│  └──────────────────────────────────────────────────────┘                   │
+│                           │                                                  │
+│                           ▼                                                  │
+│  Task 2: Domain Text Retrieval (5 min)                                      │
+│  ┌──────────────────────────────────────────────────────┐                   │
+│  │ Read domain registry from S3 (205K domains)           │                   │
+│  │ For each domain, fetch cached crawl text from S3      │                   │
+│  │ (Text was crawled by separate Scrapy pipeline)        │                   │
+│  │ Filter: skip domains with &lt;500 chars of text         │                   │
+│  │ Result: 200K domains with extracted text               │                   │
+│  └──────────────────────────────────────────────────────┘                   │
+│                           │                                                  │
+│                           ▼                                                  │
+│  Task 3: Parallel Scoring (9 min, 20 workers)                               │
+│  ┌──────────────────────────────────────────────────────┐                   │
+│  │ Partition 200K domains into 20 shards (10K each)      │                   │
+│  │ Each worker:                                          │                   │
+│  │   1. tfidf.transform(texts) → sparse matrix           │                   │
+│  │   2. For each of 700 classifiers:                     │                   │
+│  │      probs = clf_i.predict_proba(X)[:, 1]             │                   │
+│  │   3. Filter: keep only (category, prob) where P > 0.05│                   │
+│  │   4. Apply Platt scaling for calibration               │                   │
+│  │   Result: domain → [(IAB_cat_id, prob), ...]          │                   │
+│  └──────────────────────────────────────────────────────┘                   │
+│                           │                                                  │
+│                           ▼                                                  │
+│  Task 4: Validation (2 min)                                                  │
+│  ┌──────────────────────────────────────────────────────┐                   │
+│  │ Compare vs. previous lookup table:                    │                   │
+│  │   - Top-1 agreement: must be ≥ 90%                    │                   │
+│  │   - No domain should lose ALL categories              │                   │
+│  │   - Avg categories/domain: within ±20% of previous    │                   │
+│  │ Spot-check: verify 100 known domains (CNN→News, etc.) │                   │
+│  │ Schema validation: all category IDs in IAB taxonomy    │                   │
+│  └──────────────────────────────────────────────────────┘                   │
+│                           │                                                  │
+│                           ▼                                                  │
+│  Task 5: Redis Push (3 min)                                                  │
+│  ┌──────────────────────────────────────────────────────┐                   │
+│  │ Serialize to Redis HASH per domain:                   │                   │
+│  │   Key:   dom:{domain}                                 │                   │
+│  │   Field: IAB category ID (e.g., "IAB12-1")            │                   │
+│  │   Value: probability (float32, 4 bytes)               │                   │
+│  │                                                       │                   │
+│  │ Pipeline write (batch 1000 at a time) to db=1         │                   │
+│  │ Total: 200K HSET commands, ~40 MB                     │                   │
+│  │                                                       │                   │
+│  │ Verification: RANDOMKEY spot checks (100 domains)     │                   │
+│  │ Set TTL: 14 days (2x retrain cadence as safety net)   │                   │
+│  └──────────────────────────────────────────────────────┘                   │
+│                                                                              │
+│  Total Pipeline Duration: ~18 minutes                                        │
+│  Cost: 20 × c5.2xlarge spot × 0.15h = $0.51 compute + $0.02 S3 = $0.53    │
+└──────────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Redis Data Structure Design</h3>
+
+    <h4>Domain Lookup Table</h4>
+
+    <div class="math-box">
+<strong>Data Structure: Redis HASH</strong>
+
+Key Pattern:    dom:{domain}
+Example:        dom:cnn.com
+
+Fields:
+  IAB12    → 0.85    (News)
+  IAB12-1  → 0.72    (News - National News)
+  IAB12-3  → 0.45    (News - Politics)
+  IAB3     → 0.15    (Business)
+  IAB1     → 0.12    (Arts & Entertainment)
+
+Commands:
+  HGETALL dom:cnn.com           → returns all (category, probability) pairs
+  HMGET dom:cnn.com IAB12 IAB3  → returns specific category probabilities
+
+Memory per entry: ~194 bytes (with Redis overhead)
+Total for 200K domains: ~38.8 MB
+TTL: 14 days (safety net; refreshed weekly)
+    </div>
+
+    <h4>User Score Arrays</h4>
+
+    <div class="math-box">
+<strong>Data Structure: Redis HASH + metadata key</strong>
+
+Key Pattern:    usr:{device_id}
+Example:        usr:a1b2c3d4-e5f6-7890-abcd-ef1234567890
+
+Fields (score array):
+  IAB12    → 3.72    (accumulated News score)
+  IAB12-1  → 2.15    (National News)
+  IAB19    → 1.89    (Technology)
+  IAB7     → 0.95    (Health)
+  _ts      → 1712345678  (last update timestamp, epoch seconds)
+  _ver     → 47          (model version that last updated this profile)
+  _cnt     → 342         (total events accumulated)
+
+Commands:
+  HGETALL usr:{id}              → read full score array for decay + update
+  HMSET usr:{id} IAB12 3.85 ... → write updated scores (pipelined)
+  EXPIRE usr:{id} 7776000       → 90-day TTL (user not seen → auto-cleanup)
+
+Memory per entry: ~380 bytes (avg 15 non-zero categories + metadata)
+Hot tier (120M daily active users): ~45.6 GB
+Redis cluster: 6 primary + 6 replica nodes = 12 nodes, 192 GB total
+    </div>
+
+    <h3>Worked Example: Model Export → Batch Scoring → Redis Push → Verification</h3>
+
+    <div class="example-box">
+        <h4>Tracing a single domain through the pipeline: expedia.com</h4>
+        <pre>
+Step 1: Model Export
+  Model v47 saved to S3 via MLflow:
+  mlflow.sklearn.log_model(pipeline, "iab-classifier",
+                           registered_model_name="iab-classifier")
+  Artifacts:
+    tfidf_vectorizer_v47.joblib  → 151,200 vocab terms, max_features=150000
+    ovr_logreg_v47.joblib        → 700 binary LogReg classifiers
+
+Step 2: Text Retrieval
+  S3: s3://crawl-data/domains/expedia.com/latest.json
+  Extracted text (truncated): "Book flights, hotels, vacation packages...
+    All-inclusive resorts... Travel deals... Caribbean cruise..."
+  Text length: 12,847 chars ✓ (above 500 char minimum)
+
+Step 3: Scoring
+  tfidf_vector = vectorizer.transform(["Book flights, hotels..."])
+  → Sparse vector: 151,200 dims, 847 non-zero entries
+
+  For each of 700 classifiers:
+    prob_i = clf_i.predict_proba(tfidf_vector)[0, 1]
+
+  Raw probabilities (top 8, before filtering):
+    IAB20 (Travel):          0.92
+    IAB20-3 (Hotels):        0.78
+    IAB20-1 (Adventure):     0.34
+    IAB20-18 (Vacations):    0.71
+    IAB20-7 (Caribbean):     0.29
+    IAB3 (Business):         0.08
+    IAB4 (Careers):          0.04  ← below 0.05 threshold, filtered
+    IAB15 (Science):         0.01  ← below 0.05 threshold, filtered
+
+  After Platt scaling (calibration):
+    IAB20:     0.92 → 0.89  (slight downward calibration)
+    IAB20-3:   0.78 → 0.76
+    IAB20-18:  0.71 → 0.68
+    IAB20-1:   0.34 → 0.31
+    IAB20-7:   0.29 → 0.26
+    IAB3:      0.08 → 0.07
+
+  Final sparse vector: 6 categories (filtered from 700)
+
+Step 4: Validation
+  Previous v46 for expedia.com: top-1 = IAB20 (Travel) ✓ agreement
+  Previous avg categories: 5.8, new: 6 (within ±20%) ✓
+  Category IDs all in IAB taxonomy v2.2 ✓
+
+Step 5: Redis Push
+  HMSET dom:expedia.com IAB20 0.89 IAB20-3 0.76 IAB20-18 0.68 \
+                         IAB20-1 0.31 IAB20-7 0.26 IAB3 0.07
+  EXPIRE dom:expedia.com 1209600  (14 days)
+
+Step 6: Verification
+  HGETALL dom:expedia.com
+  → {IAB20: 0.89, IAB20-3: 0.76, IAB20-18: 0.68,
+     IAB20-1: 0.31, IAB20-7: 0.26, IAB3: 0.07}  ✓ matches scored output
+        </pre>
+    </div>
+
+    <div class="warning-box">
+        <strong>Failure Scenario — Vocabulary Mismatch:</strong> If the batch scoring workers load a different TF-IDF vocabulary version than the one the LogReg classifiers were trained with, every probability becomes meaningless. <strong>Mitigation:</strong> The vectorizer and classifiers are always saved and loaded as a single scikit-learn Pipeline object. The Airflow DAG validates the vocabulary size matches the expected feature count of the LogReg weight matrix before scoring begins. Mismatch triggers immediate DAG failure with PagerDuty alert.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.5: REAL-TIME SCORING INFRASTRUCTURE                -->
+    <!-- ============================================================ -->
+
+    <h2>⚡ 5.5 Real-Time Scoring Infrastructure</h2>
+
+    <p>A postal sorting facility processing 580,000 letters per second is the apt analogy: each letter (bid request) arrives with a return address (domain), must be looked up in a directory (domain lookup table), and the result stamped onto the recipient's file (user score array). The facility must never lose a letter, never stamp the wrong file, and complete each operation in under 10 milliseconds. This is the Flink-based real-time scoring pipeline.</p>
+
+    <h3>Flink Job Architecture</h3>
+
+    <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                     FLINK SCORING JOB TOPOLOGY                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Source: KafkaSource                                                        │
+│  ┌────────────────────────────────────────────────────┐                    │
+│  │ Topic: bidstream.events (256 partitions)            │                    │
+│  │ Consumer group: iab-scoring-v47                     │                    │
+│  │ Deserialization: Protobuf → BidEvent POJO           │                    │
+│  │ Watermark: BoundedOutOfOrderness(5 seconds)         │                    │
+│  │ Parallelism: 75 (1 subtask per Kafka partition max) │                    │
+│  └────────────────────────┬───────────────────────────┘                    │
+│                           │                                                 │
+│                           ▼                                                 │
+│  Operator 1: FilterAndValidate (parallelism: 75)                           │
+│  ┌────────────────────────────────────────────────────┐                    │
+│  │ - Drop events with missing device_id or domain      │                    │
+│  │ - Validate domain format (strip www., normalize)     │                    │
+│  │ - Check consent flags (GDPR/TCF: discard if no       │                    │
+│  │   consent for "legitimate interest" purpose)         │                    │
+│  │ - Extract: user_id, domain, timestamp, openrtb_cats  │                    │
+│  │ Drop rate: ~8% (missing IDs, no consent)             │                    │
+│  └────────────────────────┬───────────────────────────┘                    │
+│                           │                                                 │
+│                           ▼                                                 │
+│  Operator 2: KeyBy(user_id) → Repartition                                  │
+│  ┌────────────────────────────────────────────────────┐                    │
+│  │ - Hash user_id to ensure all events for same user    │                    │
+│  │   land on same task slot                             │                    │
+│  │ - Enables local state access for user score cache    │                    │
+│  │ - 256 key groups (matches Kafka partitions)          │                    │
+│  └────────────────────────┬───────────────────────────┘                    │
+│                           │                                                 │
+│                           ▼                                                 │
+│  Operator 3: AsyncDomainLookup (parallelism: 75)                           │
+│  ┌────────────────────────────────────────────────────┐                    │
+│  │ - AsyncFunction with Lettuce Redis client            │                    │
+│  │ - Capacity: 100 concurrent async requests per slot   │                    │
+│  │ - Timeout: 10ms (fail fast, use fallback)            │                    │
+│  │ - Fallback: if domain not found, use openrtb_cats    │                    │
+│  │   from bid request (site.cat field)                  │                    │
+│  │ - Output: BidEvent enriched with IAB probability vec │                    │
+│  │ - Cache hit rate: ~92% (top domains repeated often)  │                    │
+│  └────────────────────────┬───────────────────────────┘                    │
+│                           │                                                 │
+│                           ▼                                                 │
+│  Operator 4: ScoreUpdateProcess (parallelism: 75)                          │
+│  ┌────────────────────────────────────────────────────┐                    │
+│  │ - KeyedProcessFunction with RocksDB state backend    │                    │
+│  │ - State: MapState&lt;String, Float&gt; (user score array) │                    │
+│  │ - On each event:                                     │                    │
+│  │   1. Read current scores from state                  │                    │
+│  │   2. Apply exponential decay: s_i × e^(-λ_i × Δt)   │                    │
+│  │   3. Add domain probabilities: s_i += domain_prob_i  │                    │
+│  │   4. Write updated scores to state                   │                    │
+│  │ - State TTL: 90 days (idle users evicted)            │                    │
+│  │ - Checkpoint interval: 60 seconds                    │                    │
+│  └────────────────────────┬───────────────────────────┘                    │
+│                           │                                                 │
+│                           ▼                                                 │
+│  Sink 1: RedisScoreSink (async, parallelism: 75)                           │
+│  ┌────────────────────────────────────────────────────┐                    │
+│  │ - Write updated user scores to Redis (hot tier)      │                    │
+│  │ - Pipelined HMSET (batch 50 users per pipeline)      │                    │
+│  │ - Fire-and-forget (eventual consistency acceptable)   │                    │
+│  └────────────────────────────────────────────────────┘                    │
+│                                                                             │
+│  Sink 2: ScyllaDBSink (async, parallelism: 25)                             │
+│  ┌────────────────────────────────────────────────────┐                    │
+│  │ - Write to ScyllaDB warm tier every 5 minutes        │                    │
+│  │   (micro-batch aggregation, not per-event)           │                    │
+│  │ - Ensures durability if Redis fails                  │                    │
+│  └────────────────────────────────────────────────────┘                    │
+│                                                                             │
+│  Checkpoint: RocksDB incremental, every 60s, to S3                          │
+│  Savepoints: Triggered before every deployment                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Exactly-Once vs. At-Least-Once Semantics</h3>
+
+    <div class="decision-matrix">
+        <h4>Decision: At-Least-Once with Idempotent Updates</h4>
+        <div class="pros-cons">
+            <div class="pros">
+                <h4>✅ Why At-Least-Once</h4>
+                <ul>
+                    <li><strong>Score updates are additive:</strong> Adding the same domain probability twice to a user score array is a minor overcount, not a catastrophic error. With 50B events/day and 500M users, average events/user/day = 100; a duplicate adds ~1% noise</li>
+                    <li><strong>Throughput gain:</strong> Exactly-once requires Kafka transactions + 2-phase commit with Redis, reducing throughput by ~40%</li>
+                    <li><strong>Checkpoint overhead:</strong> Exactly-once requires aligned barriers, causing back-pressure spikes at 580K QPS</li>
+                    <li><strong>Business tolerance:</strong> Audience segments use percentile-based normalization — small score noise is washed out in the normalization step</li>
+                </ul>
+            </div>
+            <div class="cons">
+                <h4>❌ Why Not Exactly-Once</h4>
+                <ul>
+                    <li><strong>Kafka EOS:</strong> Requires idempotent producer + transactional consumer → 40% throughput penalty at our scale</li>
+                    <li><strong>Redis transactions:</strong> MULTI/EXEC blocks are not compatible with pipelined writes, forcing serial execution</li>
+                    <li><strong>Complexity:</strong> 2PC between Flink state, Kafka offsets, and Redis is operationally fragile at 580K QPS</li>
+                </ul>
+            </div>
+        </div>
+        <p><strong>Safeguard:</strong> We deduplicate at the Kafka consumer level using a Bloom filter (10M entries, 0.1% FPR) keyed on <code>(user_id, domain, timestamp_bucket_1min)</code>. This catches >99% of duplicates from Kafka rebalances while adding only 0.3ms latency.</p>
+    </div>
+
+    <h3>Backpressure Handling at 580K QPS</h3>
+
+    <div class="step-box">
+        <p><span class="step-badge">1</span> <strong>Flink Native Backpressure:</strong> Flink's credit-based flow control automatically slows upstream operators when a downstream operator (e.g., Redis sink) falls behind. No data is lost — events buffer in network channels.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">2</span> <strong>Kafka Consumer Lag Monitoring:</strong> If consumer lag exceeds 100,000 events (17 seconds at steady state), auto-scaling triggers additional Flink TaskManagers. Scaling action: add 10 TMs (30 task slots) per trigger, up to max 256.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">3</span> <strong>Redis Circuit Breaker:</strong> If Redis P99 latency exceeds 8ms, the async domain lookup operator trips a circuit breaker. Events proceed with OpenRTB fallback categories (from <code>site.cat</code>). Circuit re-closes after 10 successful probes over 30 seconds.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">4</span> <strong>Kafka Partition Overflow:</strong> Kafka brokers are configured with <code>log.retention.bytes=50GB</code> per partition. At 580K QPS × 500 bytes/event, each of 256 partitions fills at ~1.1 MB/sec = ~95 GB/day. With 50GB retention, we have ~12 hours of buffer before oldest events are dropped — providing ample recovery time for any consumer outage.</p>
+    </div>
+
+    <h3>Worked Example: Single Bid Request End-to-End</h3>
+
+    <div class="example-box">
+        <h4>User "u_abc123" visits cnn.com/travel at 14:32:05 UTC</h4>
+        <pre>
+T+0.0ms   SSP sends OpenRTB bid request:
+          {
+            "id": "br-98765",
+            "imp": [{"id": "1", "banner": {"w": 728, "h": 90}}],
+            "site": {
+              "domain": "cnn.com",
+              "page": "https://cnn.com/travel/best-beaches-2026",
+              "cat": ["IAB20"]    ← SSP-provided hint: Travel
+            },
+            "device": {
+              "ifa": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "user": {"id": "u_abc123"},
+            "regs": {"ext": {"gdpr": 1}},
+            "user.ext.consent": "CPzKGYAPzKGYAPoABAENBkCgAP_AAH_AAAqIJDtd..."
+          }
+
+T+0.5ms   Kafka producer ACK. Event lands on partition 142
+          (hash("u_abc123") % 256 = 142)
+
+T+1.5ms   Flink consumer picks up event on task slot 47
+          (subtask for partitions 140-143)
+
+T+1.7ms   FilterAndValidate:
+          ✓ device.ifa present
+          ✓ domain "cnn.com" normalized (strip www, lowercase)
+          ✓ GDPR consent string decoded → legitimate interest purpose granted
+          ✓ Extract: user_id="u_abc123", domain="cnn.com",
+                     ts=1712345525, openrtb_cats=["IAB20"]
+
+T+2.0ms   AsyncDomainLookup: HGETALL dom:cnn.com
+          Redis responds in 1.8ms:
+          {IAB12: 0.85, IAB12-1: 0.72, IAB12-3: 0.45,
+           IAB3: 0.15, IAB1: 0.12}
+
+T+3.8ms   OpenRTB supplement: site.cat contains "IAB20" (Travel)
+          but our classifier didn't assign IAB20 to cnn.com.
+          Since the page URL contains "/travel", and SSP says IAB20,
+          we add IAB20 with boosted probability: 0.10 (metadata boost)
+          Final domain vector:
+          {IAB12: 0.85, IAB12-1: 0.72, IAB12-3: 0.45,
+           IAB20: 0.10, IAB3: 0.15, IAB1: 0.12}
+
+T+4.0ms   ScoreUpdateProcess: Read user state from RocksDB
+          Current scores (last updated 3 hours ago at 11:32 UTC):
+          {IAB12: 2.50, IAB19: 1.80, IAB20: 3.10, IAB7: 0.45, _ts: 1712334725}
+
+T+4.5ms   Apply exponential decay (Δt = 3 hours = 0.125 days):
+          λ values: IAB12=0.05/day, IAB19=0.06/day, IAB20=0.15/day, IAB7=0.03/day
+
+          IAB12: 2.50 × e^(-0.05 × 0.125) = 2.50 × 0.9938 = 2.484
+          IAB19: 1.80 × e^(-0.06 × 0.125) = 1.80 × 0.9925 = 1.787
+          IAB20: 3.10 × e^(-0.15 × 0.125) = 3.10 × 0.9814 = 3.042
+          IAB7:  0.45 × e^(-0.03 × 0.125) = 0.45 × 0.9963 = 0.448
+
+T+5.0ms   Add domain probabilities:
+          IAB12:   2.484 + 0.85  = 3.334
+          IAB12-1: 0     + 0.72  = 0.720  (new category for this user)
+          IAB12-3: 0     + 0.45  = 0.450  (new category for this user)
+          IAB19:   1.787 + 0     = 1.787  (no contribution from cnn.com)
+          IAB20:   3.042 + 0.10  = 3.142  (boosted from OpenRTB metadata)
+          IAB3:    0     + 0.15  = 0.150  (new)
+          IAB1:    0     + 0.12  = 0.120  (new)
+          IAB7:    0.448 + 0     = 0.448  (no contribution)
+
+T+5.5ms   Write to RocksDB state:
+          {IAB12: 3.334, IAB12-1: 0.720, IAB12-3: 0.450,
+           IAB19: 1.787, IAB20: 3.142, IAB3: 0.150,
+           IAB1: 0.120, IAB7: 0.448, _ts: 1712345525, _cnt: 343}
+
+T+6.5ms   RedisScoreSink: HMSET usr:u_abc123 IAB12 3.334 IAB12-1 0.720 ...
+          (pipelined, fire-and-forget, completes async)
+
+T+8.0ms   ScyllaDBSink: Batched (will write in next 5-min micro-batch)
+
+TOTAL END-TO-END: 8.0ms  ✓ (within 10ms P99 budget)
+
+Timing Breakdown:
+  Kafka ingestion:     0.5ms  (6%)
+  Kafka→Flink:         1.0ms  (13%)
+  Validation:          0.3ms  (4%)
+  Domain lookup:       1.8ms  (23%)
+  OpenRTB supplement:  0.2ms  (2%)
+  State read + decay:  1.0ms  (13%)
+  Score addition:      0.5ms  (6%)
+  State write:         0.5ms  (6%)
+  Redis sink:          2.0ms  (25%)
+  Overhead/GC:         0.2ms  (2%)
+        </pre>
+    </div>
+
+    <div class="key-insight">
+        <strong>Key Insight:</strong> Redis operations (domain lookup + score write) consume 48% of the total latency budget. This is why Redis cluster placement and connection pooling are critical. We co-locate Flink TaskManagers and Redis nodes in the same AWS Availability Zone, reducing network RTT from ~1ms (cross-AZ) to ~0.3ms (same-AZ), saving 1.4ms per event. The trade-off is reduced AZ-level resilience, which we mitigate with cross-AZ replicas.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.6: AUTO-SCALING & CAPACITY PLANNING                -->
+    <!-- ============================================================ -->
+
+    <h2>📈 5.6 Auto-Scaling &amp; Capacity Planning</h2>
+
+    <p>AdTech traffic is not steady — it follows predictable daily cycles (morning ramp, afternoon peak, overnight trough) overlaid with unpredictable spikes (breaking news, sporting events, flash sales). Our auto-scaling strategy must handle both patterns without over-provisioning during troughs or under-provisioning during spikes.</p>
+
+    <h3>Traffic Patterns and Peak Multipliers</h3>
+
+    <table>
+        <tr>
+            <th>Event</th>
+            <th>Multiplier vs. Steady State</th>
+            <th>Duration</th>
+            <th>Ramp Time</th>
+            <th>Example</th>
+        </tr>
+        <tr>
+            <td>Normal daily peak (2-5pm EST)</td>
+            <td>1.5x</td>
+            <td>3 hours</td>
+            <td>Gradual (1 hour)</td>
+            <td>870K QPS</td>
+        </tr>
+        <tr>
+            <td>Breaking news event</td>
+            <td>2x</td>
+            <td>30 min - 2 hours</td>
+            <td>Sudden (&lt;5 min)</td>
+            <td>1.16M QPS</td>
+        </tr>
+        <tr>
+            <td>Black Friday / Cyber Monday</td>
+            <td>3x</td>
+            <td>48 hours</td>
+            <td>Gradual (6 hours)</td>
+            <td>1.74M QPS</td>
+        </tr>
+        <tr>
+            <td>Super Bowl</td>
+            <td>2.5x</td>
+            <td>4 hours</td>
+            <td>Sudden at kickoff</td>
+            <td>1.45M QPS</td>
+        </tr>
+        <tr>
+            <td>Election night</td>
+            <td>2.8x</td>
+            <td>8 hours</td>
+            <td>Gradual then spiky</td>
+            <td>1.62M QPS</td>
+        </tr>
+        <tr>
+            <td>Overnight trough (2-6am EST)</td>
+            <td>0.3x</td>
+            <td>4 hours</td>
+            <td>Gradual</td>
+            <td>174K QPS</td>
+        </tr>
+    </table>
+
+    <h3>Horizontal Scaling Strategy Per Component</h3>
+
+    <table>
+        <tr>
+            <th>Component</th>
+            <th>Min Instances</th>
+            <th>Steady State</th>
+            <th>Max Instances</th>
+            <th>Scale Trigger</th>
+            <th>Scale Cooldown</th>
+        </tr>
+        <tr>
+            <td><strong>Flink TaskManagers</strong></td>
+            <td>10</td>
+            <td>25</td>
+            <td>85</td>
+            <td>Kafka consumer lag &gt; 50K events OR CPU &gt; 70%</td>
+            <td>5 min up / 15 min down</td>
+        </tr>
+        <tr>
+            <td><strong>Flink Task Slots (per TM)</strong></td>
+            <td>3</td>
+            <td>3</td>
+            <td>3</td>
+            <td>Fixed (memory-bound per slot)</td>
+            <td>N/A</td>
+        </tr>
+        <tr>
+            <td><strong>Redis Cluster (domain)</strong></td>
+            <td>3 primary + 3 replica</td>
+            <td>3+3</td>
+            <td>3+3</td>
+            <td>No scaling needed (39MB data fits on minimum)</td>
+            <td>N/A</td>
+        </tr>
+        <tr>
+            <td><strong>Redis Cluster (user scores)</strong></td>
+            <td>6 primary + 6 replica</td>
+            <td>6+6</td>
+            <td>12+12</td>
+            <td>Memory &gt; 75% OR ops/sec/node &gt; 80K</td>
+            <td>30 min (resharding is expensive)</td>
+        </tr>
+        <tr>
+            <td><strong>Segment Service Pods</strong></td>
+            <td>5</td>
+            <td>20</td>
+            <td>60</td>
+            <td>Request latency P99 &gt; 12ms OR CPU &gt; 65%</td>
+            <td>2 min up / 10 min down</td>
+        </tr>
+        <tr>
+            <td><strong>Kafka Brokers</strong></td>
+            <td>3</td>
+            <td>5</td>
+            <td>9</td>
+            <td>Disk I/O &gt; 80% OR network throughput &gt; 70%</td>
+            <td>15 min (partition rebalance)</td>
+        </tr>
+        <tr>
+            <td><strong>ScyllaDB Nodes</strong></td>
+            <td>3</td>
+            <td>6</td>
+            <td>12</td>
+            <td>Read latency P99 &gt; 15ms OR storage &gt; 60%</td>
+            <td>1 hour (data streaming)</td>
+        </tr>
+    </table>
+
+    <h3>Capacity Planning Calculations</h3>
+
+    <div class="math-box">
+<strong>Flink Cluster Sizing for Peak (Black Friday, 3x traffic = 1.74M QPS)</strong>
+
+Events per second:           1,740,000
+Processing time per event:   ~8ms (end-to-end)
+Events per task slot/sec:    125 (1000ms / 8ms, assuming async I/O fills gaps)
+Task slots needed:           1,740,000 / 125 = 13,920
+  → With async I/O (100x concurrency): 1,740,000 / (125 × 30) = ~465 effective slots
+  → Conservative (50% async efficiency): 1,740,000 / (125 × 15) = ~928 slots
+  → Actual needed (measured in load test): ~220 slots
+
+TaskManagers at 3 slots each: 220 / 3 = 74 TMs (round up to 75)
+Instance type: m5.2xlarge (8 vCPU, 32 GB)
+  → 75 × m5.2xlarge = 600 vCPU, 2.4 TB RAM
+
+<strong>Kafka Cluster Sizing</strong>
+
+Partitions:                  256
+Events/sec:                  1,740,000 (peak)
+Events/partition/sec:        6,797
+Avg event size:              500 bytes
+Throughput/partition:         3.4 MB/sec
+Total throughput:            870 MB/sec
+Retention:                   24 hours
+Storage per partition:       3.4 MB/s × 86,400s = 293 GB
+Total storage:               256 × 293 GB = 75 TB
+Replication factor 3:        225 TB
+
+Brokers: 9 (i3.2xlarge: 1.9 TB NVMe each × 9 = 17.1 TB per broker)
+  → 9 × 17.1 TB = 154 TB usable (with RF=3 across 9 brokers)
+  → Sufficient for 24h retention at peak
+
+<strong>Redis Cluster Sizing (User Scores) for Peak</strong>
+
+Daily active users at peak:  200M
+Avg score array size:        380 bytes
+Hot tier memory:             200M × 380 = 76 GB
+Redis overhead (fragmentation, replication buffers): 1.5x = 114 GB
+Target utilization:          60%
+Required memory:             114 / 0.6 = 190 GB
+
+Nodes: 12 primary (r6g.xlarge: 26 GB each) = 312 GB capacity
+  + 12 replicas = 24 nodes total
+Ops/sec at peak:             ~1.74M reads + 1.74M writes = 3.48M ops/sec
+Ops/node:                    3.48M / 12 = 290K ops/sec (within r6g.xlarge limit of ~350K)
+    </div>
+
+    <h3>Pre-Scaling for Predictable Events</h3>
+
+    <div class="info-box">
+        <strong>Why This Matters:</strong> Auto-scaling reacts to load <em>after</em> it arrives. For events like Black Friday or the Super Bowl, we know traffic will spike 2-3x. Waiting for auto-scaling adds 3-5 minutes of degraded performance while new instances warm up. Instead, we <strong>pre-scale</strong> 2 hours before predicted peak events using a calendar-based Airflow DAG that increases minimum instance counts for Flink, Segment Service, and Kafka.
+    </div>
+
+    <table>
+        <tr>
+            <th>Scheduled Event</th>
+            <th>Pre-Scale Time</th>
+            <th>Action</th>
+            <th>Post-Event Scale-Down</th>
+        </tr>
+        <tr>
+            <td>Black Friday</td>
+            <td>Wednesday 10pm UTC</td>
+            <td>Flink min → 75 TMs, Segment pods min → 50</td>
+            <td>Tuesday after Cyber Monday</td>
+        </tr>
+        <tr>
+            <td>Super Bowl</td>
+            <td>Game day 4pm EST</td>
+            <td>Flink min → 60 TMs, Redis user cluster → 10+10</td>
+            <td>Next day 6am EST</td>
+        </tr>
+        <tr>
+            <td>Daily afternoon peak</td>
+            <td>1pm EST daily</td>
+            <td>Flink min → 35 TMs, Segment pods min → 30</td>
+            <td>8pm EST daily</td>
+        </tr>
+    </table>
+
+    <h3>Cost Analysis: Monthly Infrastructure Breakdown</h3>
+
+    <table>
+        <tr>
+            <th>Component</th>
+            <th>Instance Type</th>
+            <th>Count (Steady)</th>
+            <th>Pricing Model</th>
+            <th>Monthly Cost</th>
+        </tr>
+        <tr>
+            <td><strong>Flink TaskManagers</strong></td>
+            <td>m5.2xlarge</td>
+            <td>25 steady (avg 40 with scaling)</td>
+            <td>Reserved (1yr) + On-Demand surge</td>
+            <td>$9,200</td>
+        </tr>
+        <tr>
+            <td><strong>Flink JobManager</strong></td>
+            <td>m5.xlarge</td>
+            <td>2 (HA pair)</td>
+            <td>Reserved</td>
+            <td>$220</td>
+        </tr>
+        <tr>
+            <td><strong>Kafka Brokers</strong></td>
+            <td>i3.2xlarge</td>
+            <td>5 steady (avg 6)</td>
+            <td>Reserved</td>
+            <td>$4,550</td>
+        </tr>
+        <tr>
+            <td><strong>Redis (Domain Lookup)</strong></td>
+            <td>r6g.large</td>
+            <td>3+3 (primary + replica)</td>
+            <td>Reserved</td>
+            <td>$1,080</td>
+        </tr>
+        <tr>
+            <td><strong>Redis (User Scores)</strong></td>
+            <td>r6g.xlarge</td>
+            <td>6+6 steady (avg 8+8)</td>
+            <td>Reserved + On-Demand</td>
+            <td>$5,760</td>
+        </tr>
+        <tr>
+            <td><strong>ScyllaDB Cluster</strong></td>
+            <td>i3.xlarge</td>
+            <td>6</td>
+            <td>Reserved</td>
+            <td>$2,730</td>
+        </tr>
+        <tr>
+            <td><strong>Segment Service (K8s)</strong></td>
+            <td>c5.xlarge pods</td>
+            <td>20 pods (avg 30)</td>
+            <td>Spot (80%) + On-Demand (20%)</td>
+            <td>$2,880</td>
+        </tr>
+        <tr>
+            <td><strong>Kong API Gateway</strong></td>
+            <td>c5.large</td>
+            <td>3</td>
+            <td>Reserved</td>
+            <td>$270</td>
+        </tr>
+        <tr>
+            <td><strong>Batch Scoring (weekly)</strong></td>
+            <td>c5.2xlarge</td>
+            <td>20 × 0.15hr × 4/month</td>
+            <td>Spot</td>
+            <td>$8</td>
+        </tr>
+        <tr>
+            <td><strong>S3 Storage</strong></td>
+            <td>Standard + Glacier</td>
+            <td>~2 TB</td>
+            <td>Pay-per-use</td>
+            <td>$50</td>
+        </tr>
+        <tr>
+            <td><strong>Data Transfer</strong></td>
+            <td>Inter-AZ + egress</td>
+            <td>~30 TB/month</td>
+            <td>Pay-per-use</td>
+            <td>$2,700</td>
+        </tr>
+        <tr>
+            <td><strong>Monitoring (Datadog)</strong></td>
+            <td>Pro plan</td>
+            <td>~100 hosts</td>
+            <td>Per-host</td>
+            <td>$1,500</td>
+        </tr>
+        <tr style="font-weight: bold; background: #e8f5e9;">
+            <td><strong>TOTAL</strong></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><strong>$30,948/month</strong></td>
+        </tr>
+    </table>
+
+    <div class="math-box">
+<strong>Unit Economics</strong>
+
+Monthly cost:                          $30,948
+Bid events processed/month:            50B × 30 = 1.5 trillion
+Cost per 1M bid events:                $30,948 / 1,500,000 = $0.021
+
+Users scored/month:                    500M
+Cost per 1M users scored:              $30,948 / 500 = $61.90
+
+Segment queries/month:                 50K QPS × 86,400 × 30 = 129.6B
+Cost per 1M segment lookups:           $30,948 / 129,600 = $0.24
+
+Revenue impact (audience segment CPM uplift):
+  Avg CPM without audience targeting:  $2.50
+  Avg CPM with IAB audience segments:  $6.50 (+$4.00 premium)
+  Impressions/month (our platform):    ~10B
+  Revenue uplift:                      10B / 1000 × $4.00 = $40,000,000/month
+
+  → Infrastructure cost is 0.077% of revenue uplift = massive ROI
+    </div>
+
+    <div class="key-insight">
+        <strong>Key Insight:</strong> At $0.021 per million bid events processed, our infrastructure cost is negligible relative to the $40M/month revenue uplift from audience-targeted inventory. The largest cost drivers are Flink compute (30%) and Redis user score storage (19%). Cost optimization should focus on these two components — for example, moving from r6g.xlarge to Graviton-based r7g instances could save ~15% on Redis costs.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.7: SECURITY & ACCESS CONTROL                       -->
+    <!-- ============================================================ -->
+
+    <h2>🔒 5.7 Security &amp; Access Control</h2>
+
+    <p>In programmatic advertising, we handle device IDs (IDFA, GAID), browsing behavior (domain visits), and interest profiles (IAB scores) — data that is <strong>personal data under GDPR</strong> and <strong>personally identifiable information under CCPA</strong>. A security breach does not just expose data; it destroys advertiser trust, triggers regulatory fines (up to 4% of global revenue under GDPR), and can lead to platform delistment from major SSPs.</p>
+
+    <h3>Data Classification and Handling</h3>
+
+    <table>
+        <tr>
+            <th>Data Type</th>
+            <th>Classification</th>
+            <th>Examples</th>
+            <th>Encryption</th>
+            <th>Access Control</th>
+            <th>Retention</th>
+        </tr>
+        <tr>
+            <td><strong>Device IDs</strong></td>
+            <td>PII (GDPR Personal Data)</td>
+            <td>IDFA, GAID, cookie IDs</td>
+            <td>AES-256 at rest, TLS 1.3 in transit</td>
+            <td>ML pipeline only, no human access without approval</td>
+            <td>90 days or consent withdrawal</td>
+        </tr>
+        <tr>
+            <td><strong>User score arrays</strong></td>
+            <td>Derived PII</td>
+            <td>IAB category affinity scores per user</td>
+            <td>AES-256 at rest, TLS 1.3 in transit</td>
+            <td>Scoring pipeline + segment service</td>
+            <td>90 days from last activity</td>
+        </tr>
+        <tr>
+            <td><strong>Bid events (raw)</strong></td>
+            <td>PII (contains device ID + browsing)</td>
+            <td>OpenRTB bid requests</td>
+            <td>AES-256 at rest in Kafka, TLS in transit</td>
+            <td>Kafka consumers only</td>
+            <td>24 hours in Kafka, then deleted</td>
+        </tr>
+        <tr>
+            <td><strong>Domain lookup table</strong></td>
+            <td>Non-PII (aggregated model output)</td>
+            <td>cnn.com → {IAB12: 0.85, ...}</td>
+            <td>TLS in transit</td>
+            <td>Read-only by scoring pipeline</td>
+            <td>Until next model version</td>
+        </tr>
+        <tr>
+            <td><strong>Audience segments</strong></td>
+            <td>Derived PII (user-level)</td>
+            <td>user_123 ∈ {IAB20-Travel, IAB3-Business}</td>
+            <td>TLS 1.3 in API responses</td>
+            <td>Authenticated DSP partners only</td>
+            <td>Real-time (not stored separately)</td>
+        </tr>
+        <tr>
+            <td><strong>Model artifacts</strong></td>
+            <td>Confidential IP</td>
+            <td>TF-IDF weights, LogReg classifiers</td>
+            <td>S3 SSE-KMS</td>
+            <td>ML team + CI/CD pipeline</td>
+            <td>Indefinite (versioned)</td>
+        </tr>
+    </table>
+
+    <h3>Encryption Strategy</h3>
+
+    <div class="step-box">
+        <p><span class="step-badge">1</span> <strong>In Transit:</strong> All inter-service communication uses <strong>mTLS (mutual TLS 1.3)</strong> enforced by Istio. Kafka uses SASL/SCRAM + TLS for broker-to-client and broker-to-broker. Redis connections use TLS with certificate pinning. External API (segment serving) requires TLS 1.2+ with HSTS headers.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">2</span> <strong>At Rest:</strong> Redis uses in-memory encryption (no persistence to unencrypted disk). ScyllaDB uses transparent data encryption (TDE) with AES-256 keys managed by AWS KMS. S3 uses SSE-KMS with customer-managed keys (CMK), auto-rotated every 365 days. Kafka log segments encrypted with LUKS on NVMe volumes.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">3</span> <strong>Key Management:</strong> AWS KMS for all encryption keys. Separate CMKs per data classification level. Key policy restricts access to specific IAM roles — no human has direct key access. Key usage logged in CloudTrail.</p>
+    </div>
+
+    <h3>API Authentication for Segment Queries</h3>
+
+    <div class="example-box">
+        <h4>DSP Partner Authentication Flow</h4>
+        <pre>
+DSP Partner Request:
+  POST /v1/segments/lookup
+  Headers:
+    Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+    X-Partner-ID: dsp-partner-42
+    X-Request-ID: req-abc-123
+  Body:
+    {
+      "user_ids": ["device_id_1", "device_id_2"],
+      "max_segments": 5,
+      "min_confidence": 0.6
+    }
+
+Kong API Gateway Processing:
+  1. Rate limit check: dsp-partner-42 → 10,000 req/sec (within quota) ✓
+  2. JWT validation: RS256 signature verified against partner's public key ✓
+  3. Scope check: partner has "segments:read" scope ✓
+  4. IP allowlist: request from 203.0.113.0/24 (partner's registered CIDR) ✓
+  5. Forward to Segment Service with X-Authenticated-Partner header
+
+Segment Service Response:
+  {
+    "results": [
+      {
+        "user_id": "device_id_1",  ← Note: we echo back their ID format
+        "segments": [
+          {"category": "IAB20", "name": "Travel", "score": 0.89},
+          {"category": "IAB3", "name": "Business", "score": 0.72}
+        ]
+      }
+    ],
+    "meta": {"model_version": "v47", "freshness": "2026-04-04T14:00:00Z"}
+  }
+        </pre>
+    </div>
+
+    <h3>PII Handling and Data Masking</h3>
+
+    <ul>
+        <li><strong>Device IDs in logs:</strong> All logging pipelines hash device IDs with SHA-256 + salt before writing to log storage. Raw IDs never appear in application logs, Datadog, or Grafana dashboards.</li>
+        <li><strong>Consent enforcement:</strong> The Flink FilterAndValidate operator checks TCF consent strings. Events without valid consent for purpose 1 (store/access info on device) and purpose 4 (select personalized ads) are dropped before any processing occurs.</li>
+        <li><strong>Right to erasure (GDPR Art. 17):</strong> A dedicated Kafka topic <code>user.deletion.requests</code> triggers removal of all user data from Redis (immediate), ScyllaDB (within 1 hour), and S3 logs (within 30 days via lifecycle policy).</li>
+        <li><strong>Data minimization:</strong> User score arrays store only category scores and timestamps — no raw browsing history, no page URLs, no IP addresses.</li>
+    </ul>
+
+    <h3>Network Security</h3>
+
+    <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────┐
+│                        VPC: 10.0.0.0/16                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌─── Public Subnet (10.0.1.0/24) ───┐                         │
+│  │  Kong API Gateway (NLB)            │ ← DSP partner traffic   │
+│  │  WAF: rate limiting, geo-blocking  │   (TLS 1.2+ only)      │
+│  └─────────────┬──────────────────────┘                         │
+│                │ Security Group: allow 443 from partner CIDRs   │
+│                ▼                                                 │
+│  ┌─── Private Subnet A (10.0.10.0/24) ──────────────────────┐  │
+│  │  Segment Service pods (K8s)                                │  │
+│  │  Flink TaskManagers                                        │  │
+│  │  SG: allow from Kong SG on port 8080, from Kafka SG       │  │
+│  └─────────────┬──────────────────────────────────────────────┘  │
+│                │                                                 │
+│  ┌─── Private Subnet B (10.0.20.0/24) ──────────────────────┐  │
+│  │  Redis Clusters (domain + user scores)                     │  │
+│  │  ScyllaDB Cluster                                          │  │
+│  │  SG: allow from Private Subnet A on Redis/ScyllaDB ports   │  │
+│  │  No internet access (no NAT gateway)                       │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│                                                                  │
+│  ┌─── Private Subnet C (10.0.30.0/24) ──────────────────────┐  │
+│  │  Kafka Brokers                                             │  │
+│  │  SG: allow from SSP ingestion endpoints + Flink            │  │
+│  └────────────────────────────────────────────────────────────┘  │
+│                                                                  │
+│  All subnets: VPC Flow Logs → S3 (7-year retention)             │
+│  DNS: Route 53 private hosted zone (no public DNS for internal) │
+└─────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Audit Logging for Compliance</h3>
+
+    <table>
+        <tr>
+            <th>Event Type</th>
+            <th>What Is Logged</th>
+            <th>Storage</th>
+            <th>Retention</th>
+        </tr>
+        <tr>
+            <td>Segment API access</td>
+            <td>Partner ID, user_ids queried (hashed), timestamp, response size</td>
+            <td>CloudWatch Logs → S3</td>
+            <td>2 years</td>
+        </tr>
+        <tr>
+            <td>Model deployment</td>
+            <td>Model version, deployer identity, phase transitions, approval chain</td>
+            <td>MLflow + CloudTrail</td>
+            <td>5 years</td>
+        </tr>
+        <tr>
+            <td>Data deletion requests</td>
+            <td>User ID (hashed), request timestamp, completion timestamp, systems purged</td>
+            <td>DynamoDB (immutable)</td>
+            <td>7 years (GDPR proof)</td>
+        </tr>
+        <tr>
+            <td>Redis/ScyllaDB access</td>
+            <td>Source service, operation type, key patterns (not values)</td>
+            <td>CloudWatch</td>
+            <td>90 days</td>
+        </tr>
+        <tr>
+            <td>Infrastructure changes</td>
+            <td>All AWS API calls via CloudTrail</td>
+            <td>S3 + CloudTrail Lake</td>
+            <td>7 years</td>
+        </tr>
+    </table>
+
+    <div class="warning-box">
+        <strong>Critical Compliance Risk:</strong> If a DSP partner queries user segments for users who have withdrawn consent (via TCF opt-out or CCPA "Do Not Sell"), we must return an empty segment list, not stale data. The Segment Service checks a consent-revocation Bloom filter (synced every 60 seconds from the consent management platform) before returning any user data. False positives (blocking a consented user) are acceptable; false negatives (serving a non-consented user) are a regulatory violation.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.8: DISASTER RECOVERY & HIGH AVAILABILITY           -->
+    <!-- ============================================================ -->
+
+    <h2>🛡️ 5.8 Disaster Recovery &amp; High Availability</h2>
+
+    <p>In programmatic advertising, downtime has an immediate, measurable cost. If our audience segment service is unavailable for 10 minutes during peak traffic, DSPs cannot enrich bids with IAB audience data, impressions are sold without audience targeting (at $2.50 CPM instead of $6.50 CPM), and we lose approximately $6,667 per minute of downtime. Our availability target is <strong>99.95%</strong> — allowing no more than 22 minutes of downtime per month.</p>
+
+    <h3>RTO and RPO Targets</h3>
+
+    <table>
+        <tr>
+            <th>Component</th>
+            <th>RTO (Recovery Time)</th>
+            <th>RPO (Data Loss)</th>
+            <th>Impact of Failure</th>
+            <th>Recovery Strategy</th>
+        </tr>
+        <tr>
+            <td><strong>Segment Service</strong></td>
+            <td>30 seconds</td>
+            <td>0 (stateless)</td>
+            <td>DSPs cannot query segments</td>
+            <td>K8s auto-restart + multi-AZ replicas</td>
+        </tr>
+        <tr>
+            <td><strong>Redis (Domain Lookup)</strong></td>
+            <td>60 seconds</td>
+            <td>0 (can rebuild from S3)</td>
+            <td>Domain classification unavailable → OpenRTB fallback</td>
+            <td>Redis Sentinel failover to replica</td>
+        </tr>
+        <tr>
+            <td><strong>Redis (User Scores)</strong></td>
+            <td>2 minutes</td>
+            <td>&lt;5 min of score updates</td>
+            <td>Stale user scores (minor quality impact)</td>
+            <td>Redis Cluster auto-failover + ScyllaDB backfill</td>
+        </tr>
+        <tr>
+            <td><strong>Kafka Cluster</strong></td>
+            <td>5 minutes</td>
+            <td>0 (replicated)</td>
+            <td>Bidstream events buffered at SSP endpoints</td>
+            <td>ISR (in-sync replica) leader election</td>
+        </tr>
+        <tr>
+            <td><strong>Flink Scoring Job</strong></td>
+            <td>3 minutes</td>
+            <td>&lt;60 sec (last checkpoint)</td>
+            <td>Score updates paused (events buffered in Kafka)</td>
+            <td>Auto-restart from latest checkpoint</td>
+        </tr>
+        <tr>
+            <td><strong>ScyllaDB Cluster</strong></td>
+            <td>10 minutes</td>
+            <td>0 (RF=3)</td>
+            <td>Warm tier reads fail → Redis serves from hot tier</td>
+            <td>Rack-aware topology, node replacement</td>
+        </tr>
+        <tr>
+            <td><strong>Full AZ Failure</strong></td>
+            <td>5 minutes</td>
+            <td>&lt;5 min</td>
+            <td>33% capacity loss → remaining AZs absorb</td>
+            <td>Multi-AZ deployment, auto-scaling in surviving AZs</td>
+        </tr>
+        <tr>
+            <td><strong>Full Region Failure</strong></td>
+            <td>30 minutes</td>
+            <td>&lt;15 min</td>
+            <td>Complete outage until DR region activates</td>
+            <td>Warm standby in us-west-2 (primary: us-east-1)</td>
+        </tr>
+    </table>
+
+    <h3>Multi-AZ Deployment Architecture</h3>
+
+    <div class="architecture-diagram">
+┌─────────────────────── AWS Region: us-east-1 ──────────────────────────┐
+│                                                                         │
+│  ┌──── AZ-a (us-east-1a) ────┐  ┌──── AZ-b (us-east-1b) ────┐       │
+│  │                             │  │                             │       │
+│  │  Flink TMs: 8-25           │  │  Flink TMs: 8-25           │       │
+│  │  Segment Svc: 7-20 pods    │  │  Segment Svc: 7-20 pods    │       │
+│  │  Kafka Broker: 1-3         │  │  Kafka Broker: 2-3         │       │
+│  │  Redis Domain: 1P + 1R     │  │  Redis Domain: 1P + 1R     │       │
+│  │  Redis User: 2P + 2R       │  │  Redis User: 2P + 2R       │       │
+│  │  ScyllaDB: 2 nodes         │  │  ScyllaDB: 2 nodes         │       │
+│  │                             │  │                             │       │
+│  └─────────────────────────────┘  └─────────────────────────────┘       │
+│                                                                         │
+│  ┌──── AZ-c (us-east-1c) ────┐                                        │
+│  │                             │  ┌─────────────────────────────┐       │
+│  │  Flink TMs: 9-25           │  │  Shared (cross-AZ):         │       │
+│  │  Segment Svc: 6-20 pods    │  │  - Kong API GW (NLB, 3 AZ) │       │
+│  │  Kafka Broker: 2-3         │  │  - Flink JobManager (HA)    │       │
+│  │  Redis Domain: 1P + 1R     │  │  - ZooKeeper ensemble (3)   │       │
+│  │  Redis User: 2P + 2R       │  │  - S3 (region-level)        │       │
+│  │  ScyllaDB: 2 nodes         │  │  - Route 53 (global)        │       │
+│  │                             │  └─────────────────────────────┘       │
+│  └─────────────────────────────┘                                        │
+│                                                                         │
+│  AZ Failure Scenario (AZ-a down):                                       │
+│  - NLB routes traffic to AZ-b + AZ-c                                    │
+│  - Redis: replicas in AZ-b/c promoted to primary (60 sec)              │
+│  - Kafka: ISR replicas in AZ-b/c elected as leaders (5 sec)            │
+│  - Flink: checkpoint restored on TMs in AZ-b/c (3 min)                 │
+│  - ScyllaDB: reads served by nodes in AZ-b/c (RF=3, immediate)        │
+│  - Capacity: 67% → auto-scale AZ-b/c to compensate in 5 min           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌────── DR Region: us-west-2 (Warm Standby) ──────────────────────────────┐
+│                                                                          │
+│  - S3 cross-region replication: model artifacts, lookup tables           │
+│  - ScyllaDB: async replication (15 min lag)                              │
+│  - Redis: snapshot restore from S3 (domain lookup: 2 min, user: 30 min) │
+│  - Kafka MirrorMaker 2: async topic replication (5 min lag)              │
+│  - Flink: pre-deployed job (paused), resume from DR Kafka                │
+│  - Segment Service: pre-deployed pods (scaled to 0), scale-up in 5 min  │
+│                                                                          │
+│  DR Activation: Route 53 health check fails on us-east-1                │
+│  → DNS failover to us-west-2 NLB in 30 seconds                         │
+│  → DR services scale up in 5 minutes                                     │
+│  → Full capacity in us-west-2 within 30 minutes                         │
+│  → RPO: ~15 minutes (ScyllaDB async replication lag)                    │
+└──────────────────────────────────────────────────────────────────────────┘
+    </div>
+
+    <h3>Failover Strategies by Component</h3>
+
+    <h4>Redis Cluster (User Scores) — Most Critical</h4>
+
+    <div class="step-box">
+        <p><span class="step-badge">1</span> <strong>Node Failure:</strong> Redis Cluster automatic failover. Replica promoted to primary within 15 seconds (configurable <code>cluster-node-timeout</code>). Client libraries (Lettuce) auto-discover new topology. Zero application code changes needed.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">2</span> <strong>Full Cluster Failure:</strong> ScyllaDB warm tier serves as fallback. Segment Service detects Redis timeout (&gt;50ms) and falls back to ScyllaDB read (20ms latency, acceptable under degradation). Flink continues processing but writes only to ScyllaDB until Redis recovers.</p>
+    </div>
+    <div class="step-box">
+        <p><span class="step-badge">3</span> <strong>Data Corruption:</strong> Redis RDB snapshot taken every 6 hours. Restore from latest clean snapshot (max 6 hours data loss). Gap filled by replaying Kafka events from checkpoint.</p>
+    </div>
+
+    <h4>Flink Job Recovery</h4>
+
+    <div class="math-box">
+<strong>Checkpoint Configuration</strong>
+
+checkpoint.interval:           60,000ms (every 60 seconds)
+checkpoint.timeout:            120,000ms
+checkpoint.min.pause:          30,000ms
+checkpoint.max.concurrent:     1
+state.backend:                 RocksDB (incremental checkpoints)
+state.checkpoints.dir:         s3://checkpoints/iab-scoring/
+state.savepoints.dir:          s3://savepoints/iab-scoring/
+
+<strong>Recovery Scenarios:</strong>
+
+TaskManager crash → JobManager restarts task on new TM
+  Downtime: ~30 seconds
+  Data loss: events since last checkpoint (≤60 sec)
+  Kafka replay: consumer offsets rolled back to checkpoint
+
+JobManager crash → Standby JM takes over via ZooKeeper leader election
+  Downtime: ~60 seconds
+  Job restarted from latest checkpoint
+
+Full cluster restart → Restore from savepoint in S3
+  Downtime: ~3 minutes (savepoint restore + state rebuild)
+  Kafka replay: all events since savepoint timestamp
+    </div>
+
+    <h3>Chaos Engineering Practices</h3>
+
+    <p>We run monthly <strong>Game Day</strong> exercises to validate our DR procedures. In addition, automated chaos experiments run weekly in our staging environment:</p>
+
+    <table>
+        <tr>
+            <th>Experiment</th>
+            <th>Tool</th>
+            <th>Frequency</th>
+            <th>Expected Outcome</th>
+            <th>Last Result</th>
+        </tr>
+        <tr>
+            <td>Kill random Redis node</td>
+            <td>Litmus Chaos</td>
+            <td>Weekly</td>
+            <td>Failover &lt;15 sec, no segment query failures</td>
+            <td>Pass (12 sec failover)</td>
+        </tr>
+        <tr>
+            <td>Kill 50% of Flink TMs</td>
+            <td>Litmus Chaos</td>
+            <td>Weekly</td>
+            <td>Job recovers from checkpoint in &lt;3 min</td>
+            <td>Pass (2.1 min recovery)</td>
+        </tr>
+        <tr>
+            <td>Network partition (AZ isolation)</td>
+            <td>AWS FIS</td>
+            <td>Monthly</td>
+            <td>Traffic served from remaining AZs, no errors to DSPs</td>
+            <td>Pass (0 failed queries)</td>
+        </tr>
+        <tr>
+            <td>Kafka broker failure</td>
+            <td>Litmus Chaos</td>
+            <td>Weekly</td>
+            <td>Leader election &lt;10 sec, no message loss</td>
+            <td>Pass (6 sec election)</td>
+        </tr>
+        <tr>
+            <td>DNS failover (simulate region failure)</td>
+            <td>Route 53 + manual</td>
+            <td>Quarterly</td>
+            <td>DR region serves traffic within 30 min</td>
+            <td>Pass (22 min full activation)</td>
+        </tr>
+    </table>
+
+    <div class="highlight-box">
+        <strong>Backup Procedures Summary:</strong> Redis RDB snapshots every 6 hours → S3. ScyllaDB incremental backups daily → S3. Flink checkpoints every 60 seconds → S3. Kafka log segments retained 24 hours (self-recovering via replication). Model artifacts versioned in MLflow + S3 (indefinite retention). All backups encrypted with AWS KMS CMK and verified with weekly restore tests.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.9: COST ANALYSIS (DEEP DIVE)                      -->
+    <!-- ============================================================ -->
+
+    <h2>💰 5.9 Cost Analysis &amp; Optimization</h2>
+
+    <p>Infrastructure cost in AdTech is measured not in absolute dollars but in <strong>cost per 1,000 scored impressions</strong> — the AdTech equivalent of unit economics. Our goal: keep the cost of audience generation below $0.01 per 1,000 impressions, ensuring the $4.00 CPM uplift from audience targeting is almost entirely margin.</p>
+
+    <h3>Detailed Cost Breakdown by Category</h3>
+
+    <div class="grid-2">
+        <div class="card">
+            <h4>Compute (58% of total)</h4>
+            <table>
+                <tr><th>Resource</th><th>Monthly</th></tr>
+                <tr><td>Flink TaskManagers (avg 40 × m5.2xlarge)</td><td>$9,200</td></tr>
+                <tr><td>Flink JobManagers (2 × m5.xlarge, HA)</td><td>$220</td></tr>
+                <tr><td>Segment Service (avg 30 × c5.xlarge pods)</td><td>$2,880</td></tr>
+                <tr><td>Kong API Gateway (3 × c5.large)</td><td>$270</td></tr>
+                <tr><td>Batch scoring (weekly, spot)</td><td>$8</td></tr>
+                <tr><td>Airflow scheduler (1 × m5.large)</td><td>$65</td></tr>
+                <tr><td>K8s control plane (EKS)</td><td>$146</td></tr>
+                <tr style="font-weight:bold;"><td>Subtotal</td><td>$12,789</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <h4>Storage & Data (32% of total)</h4>
+            <table>
+                <tr><th>Resource</th><th>Monthly</th></tr>
+                <tr><td>Redis Domain Lookup (6 × r6g.large)</td><td>$1,080</td></tr>
+                <tr><td>Redis User Scores (avg 16 × r6g.xlarge)</td><td>$5,760</td></tr>
+                <tr><td>ScyllaDB Cluster (6 × i3.xlarge)</td><td>$2,730</td></tr>
+                <tr><td>Kafka Brokers (avg 6 × i3.2xlarge)</td><td>$4,550</td></tr>
+                <tr><td>S3 (models, checkpoints, backups ~2TB)</td><td>$50</td></tr>
+                <tr><td>S3 Glacier (audit logs, compliance)</td><td>$10</td></tr>
+                <tr style="font-weight:bold;"><td>Subtotal</td><td>$14,180</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+            <h4>Networking (10% of total)</h4>
+            <table>
+                <tr><th>Resource</th><th>Monthly</th></tr>
+                <tr><td>Inter-AZ data transfer (~20 TB)</td><td>$1,800</td></tr>
+                <tr><td>Internet egress (API responses, ~5 TB)</td><td>$450</td></tr>
+                <tr><td>VPC endpoints (S3, KMS, CloudWatch)</td><td>$150</td></tr>
+                <tr><td>NLB (Kong, ~500M requests)</td><td>$300</td></tr>
+                <tr style="font-weight:bold;"><td>Subtotal</td><td>$2,700</td></tr>
+            </table>
+        </div>
+        <div class="card">
+            <h4>Observability & Ops (5% of total)</h4>
+            <table>
+                <tr><th>Resource</th><th>Monthly</th></tr>
+                <tr><td>Datadog (100 hosts, APM + logs)</td><td>$1,500</td></tr>
+                <tr><td>PagerDuty (on-call rotations)</td><td>$120</td></tr>
+                <tr><td>CloudTrail + CloudWatch Logs</td><td>$200</td></tr>
+                <tr style="font-weight:bold;"><td>Subtotal</td><td>$1,820</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="math-box">
+<strong>Total Monthly Infrastructure Cost: $31,489</strong>
+
+<strong>Unit Economics:</strong>
+
+Cost per 1M bid events processed:     $31,489 / 1,500,000M = $0.021
+Cost per 1M user profiles maintained: $31,489 / 500 = $62.98
+Cost per 1M segment API queries:      $31,489 / 129,600M = $0.24
+Cost per 1,000 impressions scored:    $31,489 / (50B × 30 / 1000) = $0.000021
+
+<strong>Revenue Context:</strong>
+
+Revenue uplift (audience CPM premium): $40,000,000 / month
+Infrastructure cost:                   $31,489 / month
+Gross margin on audience product:      ($40M - $31.5K) / $40M = 99.92%
+
+→ For every $1 spent on infrastructure, we generate $1,270 in audience CPM uplift.
+    </div>
+
+    <h3>Cost Optimization Strategies</h3>
+
+    <table>
+        <tr>
+            <th>Strategy</th>
+            <th>Component</th>
+            <th>Savings</th>
+            <th>Risk</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td><strong>Graviton migration</strong></td>
+            <td>Flink (m5 → m7g), Redis (r6g → r7g)</td>
+            <td>~20% ($3,000/mo)</td>
+            <td>Low (Flink on ARM is well-tested)</td>
+            <td>Planned Q3</td>
+        </tr>
+        <tr>
+            <td><strong>Spot instances for Flink surge</strong></td>
+            <td>Flink TMs (above baseline of 25)</td>
+            <td>~60% on surge ($2,200/mo)</td>
+            <td>Medium (spot interruptions need graceful handling)</td>
+            <td>In testing</td>
+        </tr>
+        <tr>
+            <td><strong>Redis tiered storage</strong></td>
+            <td>User scores: move cold users to ScyllaDB faster</td>
+            <td>~30% on Redis ($1,700/mo)</td>
+            <td>Low (users inactive 7d moved to warm tier)</td>
+            <td>Active</td>
+        </tr>
+        <tr>
+            <td><strong>Kafka tiered storage</strong></td>
+            <td>Kafka: offload old segments to S3</td>
+            <td>~25% on Kafka ($1,100/mo)</td>
+            <td>Low (only affects replay from >6h ago)</td>
+            <td>Planned Q4</td>
+        </tr>
+        <tr>
+            <td><strong>Score array compression</strong></td>
+            <td>Redis: quantize scores to uint8 (0-255)</td>
+            <td>~40% on Redis memory ($2,300/mo)</td>
+            <td>Medium (quantization noise, needs validation)</td>
+            <td>Under evaluation</td>
+        </tr>
+        <tr>
+            <td><strong>Savings Plans (3-year)</strong></td>
+            <td>All reserved instances</td>
+            <td>~40% vs on-demand ($5,000/mo)</td>
+            <td>Low (committed workload is stable)</td>
+            <td>Active</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <strong>Why This Matters:</strong> The most impactful cost optimization is not a technical change — it is the <strong>Savings Plans</strong> commitment. Our baseline infrastructure (Flink 25 TMs, Redis 12 nodes, Kafka 5 brokers) is stable and predictable. A 3-year Compute Savings Plan at $15,000/month commitment covers our baseline and reduces effective hourly rates by 40%. Surge capacity above baseline uses on-demand or spot pricing.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.10: FAILURE SCENARIOS & GRACEFUL DEGRADATION       -->
+    <!-- ============================================================ -->
+
+    <h2>🔥 5.10 Failure Scenarios &amp; Graceful Degradation</h2>
+
+    <p>Every component in our system <em>will</em> fail. The question is not if, but how we degrade gracefully when it happens. Our design principle: <strong>stale data is better than no data, and no data is better than wrong data</strong>. Each failure mode has a detection mechanism, an automatic mitigation, and a recovery procedure.</p>
+
+    <h3>Scenario 1: Redis Cluster Failure (Domain Lookup)</h3>
+
+    <div class="warning-box">
+        <strong>Failure:</strong> Redis cluster serving domain → IAB lookup table becomes unavailable (network partition, all nodes crash, or cluster enters FAIL state).
+    </div>
+
+    <div class="example-box">
+        <h4>Detection → Mitigation → Recovery</h4>
+        <pre>
+DETECTION (within 5 seconds):
+  - Flink AsyncDomainLookup operator: Redis timeout rate exceeds 5%
+  - Datadog alert: redis.domain.error_rate > 0.05 for 5 consecutive checks
+  - Circuit breaker trips after 10 consecutive failures (Resilience4j)
+
+MITIGATION (immediate, automatic):
+  1. Circuit breaker OPEN → all domain lookups bypass Redis
+  2. Fallback chain activates:
+     a. OpenRTB site.cat field → use SSP-provided IAB categories
+        (available in ~60% of bid requests, accuracy ~70%)
+     b. If no site.cat → check domain suffix heuristics:
+        .edu → IAB5 (Education), .gov → IAB11 (Law/Gov)
+     c. If no heuristic match → skip score update for this event
+        (user profile unchanged, no harm done)
+  3. Kafka consumer lag increases slightly (fallback is faster than Redis)
+
+IMPACT:
+  - Audience quality degrades: ~70% accuracy vs ~85% with Redis
+  - ~40% of events get no domain signal (no site.cat, no heuristic)
+  - User scores become stale but don't become wrong
+  - Segment queries still work (read existing user scores from Redis user cluster)
+  - Duration of degradation: minutes to hours depending on failure mode
+
+RECOVERY:
+  1. If node failure: Redis Sentinel promotes replica (automatic, 15 sec)
+  2. If cluster failure: restore from S3 RDB snapshot + reload lookup table
+     → Airflow trigger: reload_domain_lookup_table DAG
+     → Time: 3 minutes (download 40MB + RESTORE commands)
+  3. Circuit breaker half-open: probe Redis every 10 sec
+  4. When 5 consecutive probes succeed → circuit CLOSED → resume normal lookups
+  5. Post-incident: verify domain lookup hit rate returns to >95%
+        </pre>
+    </div>
+
+    <h3>Scenario 2: Kafka Consumer Lag Spike</h3>
+
+    <div class="warning-box">
+        <strong>Failure:</strong> Flink consumers cannot keep pace with incoming bid events. Consumer lag exceeds 1 million events (≈100 seconds of traffic), growing continuously.
+    </div>
+
+    <div class="example-box">
+        <h4>Detection → Mitigation → Recovery</h4>
+        <pre>
+DETECTION (within 2 minutes):
+  - Flink dashboard: consumer lag metric exceeds 100K threshold
+  - Datadog alert: kafka.consumer.lag > 1,000,000
+  - Flink backpressure indicator shows upstream operators at >80%
+
+ROOT CAUSES (in order of likelihood):
+  a. Redis user score cluster slow (GC pause, network) → Flink blocked on writes
+  b. Flink TaskManager OOM (memory leak, state growth) → restart loop
+  c. Kafka rebalance storm (frequent TM restarts) → stop-the-world
+  d. Traffic spike beyond auto-scale capacity
+
+MITIGATION (tiered):
+  Tier 1 (automatic, within 5 min):
+    - Auto-scaler adds 10 Flink TaskManagers per trigger
+    - Flink redistributes key groups to new TMs
+    - Max scale: 85 TMs (256 Kafka partitions / 3 slots per TM)
+
+  Tier 2 (if lag still growing after 10 min):
+    - Enable "fast path" mode: skip ScyllaDB write sink
+      (Redis-only writes, accept reduced durability)
+    - Reduces per-event processing from 8ms to 5ms → 60% throughput gain
+
+  Tier 3 (if lag exceeds 10M events / 30 min):
+    - Activate sampling: process 1-in-N events (N=2 at 10M, N=5 at 50M)
+    - Ensures we keep up with freshest events, sacrifice some history
+    - Sampling is user-consistent (same hash as canary routing)
+
+RECOVERY:
+  - Once lag clears (< 50K events), disable sampling and fast-path
+  - Scale down Flink TMs gradually (15 min cooldown between reductions)
+  - Post-incident: analyze root cause, adjust baseline TM count if needed
+  - Kafka retention (24h) ensures no data loss even with hours of lag
+        </pre>
+    </div>
+
+    <h3>Scenario 3: Model Serving Failure (Stale Lookup Table)</h3>
+
+    <div class="warning-box">
+        <strong>Failure:</strong> Weekly batch scoring pipeline fails — new domain lookup table is not generated. Current lookup table is now 7+ days stale.
+    </div>
+
+    <div class="example-box">
+        <h4>Detection → Mitigation → Recovery</h4>
+        <pre>
+DETECTION:
+  - Airflow DAG failure alert (immediate)
+  - Monitoring: domain_lookup_table.age_hours > 168 (7 days)
+  - MLflow: no new model version promoted to "Staging" this week
+
+IMPACT ASSESSMENT:
+  - Existing 200K domains: classifications still valid (content drift
+    is slow — websites don't change categories week-to-week)
+  - New domains (est. 500-1,000/week): not classified → OpenRTB fallback
+  - Measured quality degradation: ~0.3% audience accuracy loss per week
+  - Acceptable for 1 missed cycle; concerning at 2+ missed cycles
+
+MITIGATION:
+  1. Redis TTL on domain keys is 14 days (2x retrain cadence)
+     → Existing lookup table remains valid and served from Redis
+  2. Alert on-call ML engineer for manual investigation
+  3. Escalation timeline:
+     - Day 7: Warning alert, auto-retry Airflow DAG
+     - Day 10: Critical alert, notify ML team lead
+     - Day 12: Emergency: force-deploy last successful model version
+     - Day 14: Redis TTL starts expiring domains → coverage degrades
+
+RECOVERY:
+  1. Fix pipeline failure (common causes: crawler timeout, S3 permission,
+     scikit-learn version incompatibility after infrastructure update)
+  2. Trigger manual Airflow DAG run
+  3. Verify new lookup table passes validation gates
+  4. Push to Redis db=1 → run abbreviated shadow mode (24h)
+  5. If shadow passes → swap to db=0 (skip full 14-day deployment cycle
+     for pipeline fixes that don't change the model)
+        </pre>
+    </div>
+
+    <h3>Scenario 4: Network Partition Between Services</h3>
+
+    <div class="warning-box">
+        <strong>Failure:</strong> Network partition isolates the Flink cluster from Redis user score cluster. Domain lookup Redis is still reachable (different AZ configuration).
+    </div>
+
+    <div class="example-box">
+        <h4>Detection → Mitigation → Recovery</h4>
+        <pre>
+DETECTION (within 10 seconds):
+  - Flink RedisScoreSink: connection timeout rate > 10%
+  - Datadog: redis.user.connection.errors spikes
+  - VPC Flow Logs: dropped packets between subnets
+
+IMPACT:
+  - Flink CAN read domain lookups (different Redis cluster, reachable)
+  - Flink CANNOT write user score updates to Redis
+  - Flink state (RocksDB) accumulates updates locally
+  - Segment Service CAN read existing (stale) scores from Redis user cluster
+  - Users get score updates, but Segment Service serves stale scores
+
+MITIGATION (automatic):
+  1. Flink score sink switches to "buffer mode":
+     - Write score updates to RocksDB state only (already happening)
+     - Queue Redis writes in a bounded buffer (100K entries max)
+     - When buffer full, oldest entries evicted (LRU)
+  2. Segment Service: detect freshness degradation
+     - Add "X-Score-Freshness: degraded" header to API responses
+     - DSPs informed that scores may be stale
+
+RECOVERY (when partition heals):
+  1. Flink drains buffered writes to Redis (burst of ~100K HMSET ops)
+  2. For evicted entries: next user event triggers full score recalculation
+  3. Freshness header returns to normal within 1 event cycle per user
+  4. Post-incident: review VPC security group rules, consider dedicated
+     ENI for Flink-to-Redis traffic
+        </pre>
+    </div>
+
+    <h3>Scenario 5: Catastrophic Model Regression</h3>
+
+    <div class="warning-box">
+        <strong>Failure:</strong> A model update passes all deployment gates but gradually corrupts user scores over 48 hours due to a subtle calibration error — probabilities for IAB20 (Travel) are systematically inflated by 0.3, causing 60% of users to be incorrectly assigned to Travel audience segments.
+    </div>
+
+    <div class="example-box">
+        <h4>Detection → Mitigation → Recovery</h4>
+        <pre>
+DETECTION (slow — this is the dangerous scenario):
+  - Day 1: Normal monitoring shows Travel segment growing 40% (within
+    the ±50% alerting threshold for gradual rollout — does not trigger)
+  - Day 2: DSP partner reports anomalous bid rates on Travel segments
+    ("Travel inventory doubled overnight, seems wrong")
+  - Day 2: On-call investigates. Compares Travel segment population
+    pre/post model update. Confirms: 60% of users now in IAB20 vs 22% baseline
+
+MITIGATION (manual, high-priority):
+  1. IMMEDIATE: Roll back to previous champion (v46) lookup table
+     → Airflow DAG: emergency_rollback_domain_table
+     → Copies v46 backup from S3 to Redis db=0 (2 minutes)
+  2. IMMEDIATE: Halt current Flink scoring job (savepoint)
+  3. Deploy Flink job with "score correction" mode:
+     → For all users updated since model v47 went live:
+       - Read user score array
+       - Subtract v47 Travel inflation (estimated from shadow comparison)
+       - Write corrected scores
+     → Runs as batch job over ScyllaDB warm tier (~4 hours for 500M users)
+  4. Resume normal scoring with v46 lookup table
+
+RECOVERY (1-2 weeks):
+  1. Root cause analysis: why did calibration error pass Platt scaling
+     validation and shadow mode?
+  2. Add detection: monitor per-category segment population growth rate
+     → Alert if any Tier-1 category grows >25% in 24 hours
+  3. Add gate: per-category calibration check during shadow mode
+     → Compare probability distributions, not just agreement rates
+  4. Retrain v48 with calibration fix
+  5. Deploy v48 through full 14-day cycle (no shortcuts after regression)
+
+BUSINESS IMPACT:
+  - ~48 hours of inflated Travel audience → some DSPs overbid on Travel
+  - Estimated advertiser waste: ~$50K (Travel CPM paid for non-Travel users)
+  - Trust impact: 2 DSP partners request post-incident review
+  - Remediation: credit affected DSPs, publish incident report
+        </pre>
+    </div>
+
+    <div class="key-insight">
+        <strong>Key Insight:</strong> The most dangerous failures are <em>slow, statistical degradations</em> that pass threshold-based alerts. Scenario 5 illustrates why monitoring must include <strong>distribution-level metrics</strong> (segment population distributions, per-category probability distributions), not just aggregate accuracy. A 0.3 probability inflation on a single category looks fine in macro-F1 but catastrophically distorts audience segments.
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5.11: SECTION SUMMARY                                -->
+    <!-- ============================================================ -->
+
+    <h2>📋 5.11 Section Summary</h2>
+
+    <div class="hero-section">
+        <h2>Production Deployment — Key Outcomes</h2>
+        <p>We have designed a production system that transforms trained ML models into a reliable, scalable audience generation engine operating within the strict demands of programmatic advertising.</p>
+    </div>
+
+    <div class="success-box">
+        <h3>Deployment Achievements</h3>
+        <ul>
+            <li>&#10004; <strong>Architecture:</strong> End-to-end system processing 580K QPS (1.74M peak) through Kafka → Flink → Redis pipeline with &lt;10ms P99 latency</li>
+            <li>&#10004; <strong>4-Phase Deployment:</strong> Shadow → Canary → Gradual Rollout → Full Production with automated gates and rollback at every phase</li>
+            <li>&#10004; <strong>Model Serving:</strong> Batch scoring pipeline generates domain lookup table in 18 minutes for $0.53, served from 40MB Redis cache with 2ms P99 lookup</li>
+            <li>&#10004; <strong>Real-Time Scoring:</strong> Flink streaming job with async Redis I/O, at-least-once semantics with deduplication, and multi-tier backpressure handling</li>
+            <li>&#10004; <strong>Auto-Scaling:</strong> Horizontal scaling for all components with pre-scaling for predictable events (Black Friday, Super Bowl)</li>
+            <li>&#10004; <strong>Security:</strong> mTLS everywhere, AES-256 encryption at rest, GDPR-compliant consent enforcement, and comprehensive audit logging</li>
+            <li>&#10004; <strong>High Availability:</strong> Multi-AZ deployment (99.95% SLA), warm DR in us-west-2, and chaos engineering validation</li>
+            <li>&#10004; <strong>Cost:</strong> $31,489/month total infrastructure — $0.021 per 1M bid events, generating $1,270 revenue per $1 spent</li>
+            <li>&#10004; <strong>Graceful Degradation:</strong> Five failure scenarios with automatic detection, mitigation, and recovery procedures</li>
+        </ul>
+    </div>
+
+    <h3>Key Deployment Metrics</h3>
+
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Target</th>
+            <th>Measured (Load Test)</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>Domain lookup P99 latency</td>
+            <td>&lt;5ms</td>
+            <td>3.1ms</td>
+            <td>&#10004; Pass</td>
+        </tr>
+        <tr>
+            <td>User score update P99 latency</td>
+            <td>&lt;10ms</td>
+            <td>8.7ms</td>
+            <td>&#10004; Pass</td>
+        </tr>
+        <tr>
+            <td>Segment query P99 latency</td>
+            <td>&lt;15ms</td>
+            <td>11.2ms</td>
+            <td>&#10004; Pass</td>
+        </tr>
+        <tr>
+            <td>Throughput (sustained)</td>
+            <td>580K QPS</td>
+            <td>620K QPS (headroom)</td>
+            <td>&#10004; Pass</td>
+        </tr>
+        <tr>
+            <td>Throughput (peak, 3x burst)</td>
+            <td>1.74M QPS</td>
+            <td>1.82M QPS</td>
+            <td>&#10004; Pass</td>
+        </tr>
+        <tr>
+            <td>Availability (30-day test)</td>
+            <td>99.95%</td>
+            <td>99.97%</td>
+            <td>&#10004; Pass</td>
+        </tr>
+        <tr>
+            <td>Redis failover time</td>
+            <td>&lt;30 sec</td>
+            <td>12 sec</td>
+            <td>&#10004; Pass</td>
+        </tr>
+        <tr>
+            <td>Flink recovery time</td>
+            <td>&lt;3 min</td>
+            <td>2.1 min</td>
+            <td>&#10004; Pass</td>
+        </tr>
+        <tr>
+            <td>Model deployment (end-to-end)</td>
+            <td>14 days</td>
+            <td>14 days</td>
+            <td>&#10004; On target</td>
+        </tr>
+        <tr>
+            <td>Monthly infrastructure cost</td>
+            <td>&lt;$50K</td>
+            <td>$31,489</td>
+            <td>&#10004; Under budget</td>
+        </tr>
+    </table>
+
+    <h3>Storage Strategy Summary</h3>
+
+    <table>
+        <tr>
+            <th>Tier</th>
+            <th>Technology</th>
+            <th>Data Types</th>
+            <th>Access Pattern</th>
+            <th>Retention</th>
+            <th>Monthly Cost</th>
+        </tr>
+        <tr>
+            <td><strong>Hot</strong></td>
+            <td>Redis Cluster</td>
+            <td>Domain lookup table, active user scores</td>
+            <td>Read/write every event (&lt;5ms)</td>
+            <td>24h - 90 days (TTL)</td>
+            <td>$6,840</td>
+        </tr>
+        <tr>
+            <td><strong>Warm</strong></td>
+            <td>ScyllaDB</td>
+            <td>All user profiles, historical scores</td>
+            <td>Batch read/write, fallback reads (&lt;20ms)</td>
+            <td>90 days</td>
+            <td>$2,730</td>
+        </tr>
+        <tr>
+            <td><strong>Cold</strong></td>
+            <td>S3 Standard</td>
+            <td>Model artifacts, checkpoints, lookup table backups</td>
+            <td>Load on deployment, restore on failure (seconds)</td>
+            <td>1 year</td>
+            <td>$40</td>
+        </tr>
+        <tr>
+            <td><strong>Archive</strong></td>
+            <td>S3 Glacier</td>
+            <td>Compliance audit logs, old model versions, training data</td>
+            <td>Rare retrieval (hours)</td>
+            <td>7 years</td>
+            <td>$10</td>
+        </tr>
+    </table>
+
+
+</div>
+</body>
+</html>
