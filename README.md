@@ -66,7 +66,7 @@ This system solves that by decomposing the problem into four interconnected comp
  ┌──────────────────────────────────────────────────────────────────────┐
  │  Domain Corpus ──► TF-IDF Vectorizer ──► Multi-Label Classifier     │
  │  (200K domains)    (20K features,        (CalibratedCV + OneVsRest  │
- │                     bigrams)              Logistic Regression)       │
+ │                     bigrams)              SGD Log Loss)              │
  │                                              │                      │
  │                              ┌────────────────┘                     │
  │                              ▼                                      │
@@ -117,11 +117,11 @@ The complete end-to-end pipeline in a single notebook (50 cells) covering every 
 1. **Synthetic corpus generation** -- 500 domains across 23 IAB Tier-1 categories with realistic, category-specific vocabulary pools (production: replace with web crawler output)
 2. **TF-IDF vectorization** -- 20,000 features, unigrams + bigrams, sublinear TF scaling, with a worked example showing exact term-weight calculations
 3. **Model comparison** -- 4 classifiers evaluated via stratified 5-fold cross-validation:
-   - Logistic Regression (OneVsRest + CalibratedClassifierCV)
-   - SGD Classifier (linear SVM with hinge loss)
+   - Logistic Regression (OneVsRest)
+   - **SGD Classifier (log loss + L2)** -- winner by macro F1
    - Random Forest
-   - **XGBoost**
-4. **Full-data model training** -- Best performer trained on full data, calibrated for probability output
+   - XGBoost
+4. **Full-data model training** -- Best performer (SGD) trained on full data with CalibratedClassifierCV for probability output
 5. **Domain lookup table** -- Pre-computed `{domain → {IAB_category: probability}}` mapping
 
 **Part 2 -- Scoring, Segments & Evaluation**
@@ -158,8 +158,8 @@ The pipeline generates 9 diagnostic plots covering every stage of the system:
 | Layer | Technology | Why |
 |---|---|---|
 | **Text Vectorization** | TF-IDF (scikit-learn) | 50x cheaper than BERT with only 2-3% accuracy gap; no GPU required; interpretable feature weights |
-| **Classification** | Calibrated Logistic Regression (OneVsRest) | Well-calibrated probability distributions across 700 categories; fast inference; industry standard in AdTech |
-| **Model Comparison** | XGBoost, Random Forest, SGD | Evaluated for completeness; LR wins on calibration quality and inference speed at this scale |
+| **Classification** | Calibrated SGD Classifier (OneVsRest, log loss + L2) | Best cross-validated F1 (0.93); well-calibrated via Platt scaling; sub-millisecond inference; industry standard in AdTech |
+| **Model Comparison** | Logistic Regression, XGBoost, Random Forest, SGD | All four evaluated; SGD wins on macro F1 with competitive AUC and fast training |
 | **Bidstream Scoring** | Two-tier: dict lookup + live inference | O(1) for known domains (<1ms); graceful fallback for long-tail domains (~10ms with caching) |
 | **Score Decay** | Exponential decay (e^−λt) | Smooth, continuous; category-specific half-lives; computed lazily at read-time (no batch job) |
 | **Data Format** | Parquet (Apache Arrow) | Columnar, compressed, fast I/O -- industry standard for ML pipelines |
