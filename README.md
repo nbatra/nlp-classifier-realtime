@@ -6,8 +6,6 @@
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?logo=jupyter&logoColor=white)](https://jupyter.org)
 [![License](https://img.shields.io/badge/License-Educational-green)](LICENSE)
 
-**Keywords:** `NLP` `IAB Content Taxonomy` `AdTech` `Programmatic Advertising` `Real-Time Bidding (RTB)` `Audience Segmentation` `Multi-Label Text Classification` `TF-IDF` `Bidstream Processing` `Demand-Side Platform (DSP)` `Supply-Side Platform (SSP)` `OpenRTB` `User Interest Modeling` `Behavioral Targeting` `Contextual Advertising` `Machine Learning Pipeline` `XGBoost` `Logistic Regression` `Scikit-Learn` `Domain Classification` `CPM Optimization`
-
 A **foundation-level ML pipeline** for **programmatic advertising** that classifies website domains into **IAB Content Taxonomy v2.2** categories (~700 categories) using **NLP text classification** and generates high-value **audience segments** from **real-time bidstream** data. Built with **TF-IDF**, **multi-label classification** (Logistic Regression, XGBoost, Random Forest, SGD), **exponential time-decay scoring**, and a **two-tier real-time inference** architecture designed for AdTech-scale traffic. This notebook serves as a **foundation that can be extended into a production system** -- the architecture, algorithms, and scoring logic are production-proven, while the synthetic data and local execution environment would be replaced with real data sources and distributed infrastructure for deployment.
 
 > **Production lineage:** The core architecture and scoring methodology in this project were designed and deployed at a real **AdTech company** by the author and an amazing engineering team. The model was deployed to calculate user interests in real time on bidstreams running at **8 million QPS**, enabled the company to detect intent and win bids earlier than competitors, and drove a fundamental shift in the **KV-store** data storage approach -- from materialized segment memberships to compact probability vectors, reducing storage footprint by 3-8x. This repository is a clean-room reimplementation with synthetic data for educational and portfolio purposes -- the pipeline design, two-tier lookup strategy, decay math, and segment economics are all drawn from that production system.
@@ -26,7 +24,6 @@ A **foundation-level ML pipeline** for **programmatic advertising** that classif
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [Real-World Scale Context](#real-world-scale-context)
-- [Keywords & Topics](#keywords--topics)
 - [Author](#author)
 
 ---
@@ -276,27 +273,6 @@ The architecture in this repo was designed for the following real-world constrai
 
 ---
 
-## Keywords & Topics
-
-This project covers the intersection of **Natural Language Processing (NLP)** and **AdTech / Programmatic Advertising**. Below are the domains and technologies for discoverability:
-
-**Advertising Technology (AdTech):**
-Programmatic Advertising, Real-Time Bidding (RTB), OpenRTB Protocol, Demand-Side Platform (DSP), Supply-Side Platform (SSP), Ad Exchange, Bid Request, Bid Response, CPM Optimization, Impression-Level Data, Bidstream Processing, Ad Targeting, Behavioral Targeting, Contextual Targeting, Audience Targeting, Interest-Based Advertising, First-Party Data, Third-Party Data, Cookie Deprecation, Identity Resolution, UID2, RampID, IDFA, GAID
-
-**IAB Standards:**
-IAB Content Taxonomy v2.2, IAB Audience Taxonomy, IAB Tech Lab, Content Classification, Domain Categorization, Brand Safety, Ad Verification, Inventory Quality
-
-**Machine Learning & NLP:**
-Multi-Label Text Classification, TF-IDF Vectorization, Logistic Regression, XGBoost, Random Forest, SGD Classifier, OneVsRest Classification, Calibrated Classifier, Platt Scaling, Probability Calibration, Cross-Validation, F1 Score, AUC-ROC, Precision-Recall, Confusion Matrix, Feature Importance, Model Interpretability, Scikit-Learn, Text Mining, Document Classification, Web Content Classification
-
-**Real-Time Systems & Data Engineering:**
-Stream Processing, Kafka, Redis, Aerospike, Key-Value Store, In-Memory Computing, Low-Latency Inference, Sub-Millisecond Lookup, Exponential Time Decay, Score Accumulation, User Profiling, User Interest Graph, Probability Vector Storage, Segment Generation, Data Pipeline, ETL, Batch Processing, Apache Parquet, Apache Arrow
-
-**Scale & Architecture:**
-8 Million QPS, High-Throughput ML, ML Pipeline Foundation, ML System Design, MLOps, Two-Tier Architecture, Lookup Table Pattern, Cache-Aside Pattern, Blue-Green Deployment, Capacity Planning, Diurnal Traffic Patterns, Power-Law Distribution
-
----
-
 ## Author
 
 Built by **Nipun Batra**
@@ -311,3 +287,10 @@ Built from real-world production experience designing and deploying IAB audience
 ## License
 
 This project is released for educational and portfolio purposes. The synthetic data, code, and documentation are original work. No proprietary data, model weights, or trade secrets from any employer are included.
+
+<details>
+<summary>Keywords</summary>
+
+Programmatic Advertising, Real-Time Bidding (RTB), OpenRTB Protocol, Demand-Side Platform (DSP), Supply-Side Platform (SSP), Ad Exchange, Bid Request, Bid Response, CPM Optimization, Impression-Level Data, Bidstream Processing, Ad Targeting, Behavioral Targeting, Contextual Targeting, Audience Targeting, Interest-Based Advertising, First-Party Data, Third-Party Data, Cookie Deprecation, Identity Resolution, UID2, RampID, IDFA, GAID, IAB Content Taxonomy v2.2, IAB Audience Taxonomy, IAB Tech Lab, Content Classification, Domain Categorization, Brand Safety, Ad Verification, Inventory Quality, Multi-Label Text Classification, TF-IDF Vectorization, Logistic Regression, XGBoost, Random Forest, SGD Classifier, OneVsRest Classification, Calibrated Classifier, Platt Scaling, Probability Calibration, Cross-Validation, F1 Score, AUC-ROC, Precision-Recall, Scikit-Learn, Text Mining, Document Classification, Web Content Classification, Stream Processing, Kafka, Redis, Aerospike, Key-Value Store, In-Memory Computing, Low-Latency Inference, Sub-Millisecond Lookup, Exponential Time Decay, Score Accumulation, User Profiling, User Interest Graph, Probability Vector Storage, Segment Generation, Data Pipeline, ETL, Apache Parquet, Apache Arrow, 8 Million QPS, High-Throughput ML, ML System Design, MLOps, Two-Tier Architecture, Lookup Table Pattern, Cache-Aside Pattern, Capacity Planning, NLP, Audience Segmentation, Machine Learning Pipeline
+
+</details>
